@@ -7,7 +7,7 @@
 }
 
 
-.statsTable <- function(countryYear,removeOutliers,outlierIQRfactor,indicatorDesc,indicatorQuantileDesc){
+.statsTable <- function(countryYear,removeOutliers,outlierIQRfactor,indicatorDesc,indicatorQuantileDesc,weightType){
 
 # removeOutliers <- TRUE
 # outlierIQRfactor <- 10
@@ -26,7 +26,15 @@
     filter(country == countryYear) %>%
     mutate(sampleSizeBefore=sum(N_indicator,na.rm=TRUE))
   sampleSizeBefore = data_aux$sampleSizeBefore[1]
-#  
+  
+  # selected weight type
+  if (weightType==2){ # market share
+    data <- mutate(data, wt = d2_n2a)
+  } else if (weightType==3){ # employment share
+    data <- mutate(data, wt = strata)
+  } 
+  
+  # calculate statistics
   if (removeOutliers==1){
     
     data2 <- data %>%

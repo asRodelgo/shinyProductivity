@@ -17,7 +17,8 @@ shinyServer(function(input, output,session) {
       removeOutliers <- input$inOutliers,
       outlierIQRfactor <- input$inIQRfactor,
       indicatorDesc <- input$inIndicator,
-      indicatorQuantileDesc <- input$inIndicatorQuant
+      indicatorQuantileDesc <- input$inIndicatorQuant,
+      weightType <- input$inWeights
     ))
     
   })
@@ -32,7 +33,8 @@ shinyServer(function(input, output,session) {
                          input$inOutliers,
                          input$inIQRfactor,
                          input$inIndicator,
-                         input$inIndicatorQuant),Country=country,Income=income,OPcov,OPcovNoWeights,
+                         input$inIndicatorQuant,
+                         input$inWeights),Country=country,Income=income,OPcov,OPcovNoWeights,
              ratio_median_emp90_50,ratio_median_emp10_50)
       if ((readData$OPcov > 0) & (readData$ratio_median_emp90_50/readData$ratio_median_emp10_50 > 1)){
         return(paste0(input$inIndicator," is Allocation Efficient (O-P covariance > 0 and 50-90percentile/employment > 10-50percentile/employment)"))
@@ -58,7 +60,8 @@ shinyServer(function(input, output,session) {
                                      input$inOutliers,
                                      input$inIQRfactor,
                                      input$inIndicator,
-                                     input$inIndicatorQuant),outliersOut)
+                                     input$inIndicatorQuant,
+                                     input$inWeights),outliersOut)
       
       return(paste0("Number of outliers removed from sample: ",readData$outliersOut))
       
@@ -76,7 +79,8 @@ shinyServer(function(input, output,session) {
                          input$inOutliers,
                          input$inIQRfactor,
                          input$inIndicator,
-                         input$inIndicatorQuant),Country=country,Income=income,OPcov,OPcovNoWeights,
+                         input$inIndicatorQuant,
+                         input$inWeights),Country=country,Income=income,OPcov,OPcovNoWeights,
                                                 ratio_median_emp90_50,ratio_median_emp10_50)
       
     })
@@ -94,9 +98,10 @@ shinyServer(function(input, output,session) {
                 input$inOutliers,
                 input$inIQRfactor,
                 input$inIndicator,
-                input$inIndicatorQuant),-country,-income,-OPcov,-OPcovNoWeights,
-                                           -ratio_median_emp90_50,
-                                           -ratio_median_emp10_50)
+                input$inIndicatorQuant,
+                input$inWeights),-country,-income,-OPcov,-OPcovNoWeights,
+                                           -ratio_median_emp90_50,-ratio_median_emp10_50,
+                                            -outliersOut)
     
     })
     

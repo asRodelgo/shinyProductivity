@@ -23,6 +23,7 @@ shinyUI(fluidPage(
       textInput("inIQRfactor","Outlier threshold (Ot): [Q1 - Ot*IQR,Q3 + Ot*IQR]",value=3),
       selectInput("inIndicator","Select indicator",indicatorList,selected = "labor cost (n2a) over sales (d2)"),
       selectInput("inIndicatorQuant","Select indicator with which to calculate quantiles",indicatorList,selected = "sales (d2) over labor cost (n2a)"),
+      radioButtons("inWeights","Select type of weight",choices = list("Sampling"=1,"Market share"=2,"Employment share"=3),selected = 1),
       actionButton("goButton","View table")
       #actionButton("goPlotsButton","View table")
     ),
