@@ -29,9 +29,13 @@
   
   # selected weight type
   if (weightType==2){ # market share
-    data <- mutate(data, wt = d2_n2a)
+    data <- data %>%
+      group_by(country) %>%
+      mutate(wt = wt*d2_gdp09/sum(wt*d2_gdp09,na.rm=TRUE))
   } else if (weightType==3){ # employment share
-    data <- mutate(data, wt = strata)
+    data <- data %>%
+      group_by(country) %>%
+      mutate(wt = wt*l1/sum(wt*l1,na.rm=TRUE))
   } 
   
   # calculate statistics
