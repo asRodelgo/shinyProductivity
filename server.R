@@ -9,10 +9,16 @@ library(shiny)
 source("global_utils.R", local=TRUE)
 
 shinyServer(function(input, output,session) {
+  
+  # source server files
+  files <- list.files("server_files", full.names=TRUE,recursive = TRUE)
+  for (f in files) source(f,local = TRUE)
+  
 
   statsTable <- eventReactive(input$goButton,{
     
     do.call(".statsTable", args = list(
+      sector <- input$inSector,
       countryYear <- input$inCountry,
       removeOutliers <- input$inOutliers,
       outlierIQRfactor <- input$inIQRfactor,
@@ -29,12 +35,13 @@ shinyServer(function(input, output,session) {
     
     isolate({
       
-      readData <- select(.statsTable(input$inCountry,
-                         input$inOutliers,
-                         input$inIQRfactor,
-                         input$inIndicator,
-                         input$inIndicatorQuant,
-                         input$inWeights),Country=country,Income=income,OPcov,OPcovNoWeights,
+      readData <- select(.statsTable(input$inSector,
+                                     input$inCountry,
+                                     input$inOutliers,
+                                     input$inIQRfactor,
+                                     input$inIndicator,
+                                     input$inIndicatorQuant,
+                                     input$inWeights),Country=country,Income=income,OPcov,OPcovNoWeights,
              ratio_median_emp90_50,ratio_median_emp10_50)
       if ((readData$OPcov > 0) & (readData$ratio_median_emp90_50/readData$ratio_median_emp10_50 > 1)){
         return(paste0(input$inIndicator," is Allocation Efficient (O-P covariance > 0 and 50-90percentile/employment > 10-50percentile/employment)"))
@@ -56,7 +63,8 @@ shinyServer(function(input, output,session) {
     
     isolate({
       
-      readData <- select(.statsTable(input$inCountry,
+      readData <- select(.statsTable(input$inSector,
+                                     input$inCountry,
                                      input$inOutliers,
                                      input$inIQRfactor,
                                      input$inIndicator,
@@ -75,7 +83,8 @@ shinyServer(function(input, output,session) {
     
     isolate({
       
-      select(.statsTable(input$inCountry,
+      select(.statsTable(input$inSector,
+                         input$inCountry,
                          input$inOutliers,
                          input$inIQRfactor,
                          input$inIndicator,
@@ -94,12 +103,13 @@ shinyServer(function(input, output,session) {
     isolate({
       
       # data to plot
-      select(.statsTable(input$inCountry,
-                input$inOutliers,
-                input$inIQRfactor,
-                input$inIndicator,
-                input$inIndicatorQuant,
-                input$inWeights),-country,-income,-OPcov,-OPcovNoWeights,
+      select(.statsTable(input$inSector,
+                         input$inCountry,
+                         input$inOutliers,
+                         input$inIQRfactor,
+                         input$inIndicator,
+                         input$inIndicatorQuant,
+                         input$inWeights),-country,-income,-OPcov,-OPcovNoWeights,
                                            -ratio_median_emp90_50,-ratio_median_emp10_50,
                                             -outliersOut)
     
@@ -114,11 +124,12 @@ shinyServer(function(input, output,session) {
     
     isolate({
       
-      .statsPlots(input$inCountry,
-                         input$inOutliers,
-                         input$inIQRfactor,
-                         input$inIndicator,
-                         input$inIndicatorQuant)
+      .statsPlots(input$inSector,
+                  input$inCountry,
+                  input$inOutliers,
+                  input$inIQRfactor,
+                  input$inIndicator,
+                  input$inIndicatorQuant)
       
     })
     

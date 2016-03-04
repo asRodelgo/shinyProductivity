@@ -7,5 +7,7 @@ dataMaps <- read.csv("data/codeMappings.csv",stringsAsFactors = FALSE)
 # country List
 countryList <- sort(unique(data$country))
 #indicators List
-indicatorList <- sort(unique(dataMaps$indicator))
+indicatorList <- sort(unique(filter(dataMaps, allSectors == 1)$indicator))
+#
+sectorList <- c("All sectors", "Manufacturing", "Services")
 #

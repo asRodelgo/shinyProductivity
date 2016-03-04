@@ -7,7 +7,7 @@
 }
 
 
-.statsTable <- function(countryYear,removeOutliers,outlierIQRfactor,indicatorDesc,indicatorQuantileDesc,weightType){
+.statsTable <- function(sector,countryYear,removeOutliers,outlierIQRfactor,indicatorDesc,indicatorQuantileDesc,weightType){
 
 # removeOutliers <- TRUE
 # outlierIQRfactor <- 10
@@ -15,11 +15,18 @@
 # indicatorQuantile <- "d2_n2a"
 # removeOutliers <- 1
 # countryYear <- "Brazil2009"  
+  # some mappings
   indicator <- .indicatorToCode(indicatorDesc)
   indicatorQuantile <- .indicatorToCode(indicatorQuantileDesc)
   N_indicator <- paste0("N_",indicator)
   outlierIQRfactor <- as.numeric(outlierIQRfactor)
 
+  # filter data by sector
+  if (sector == "All sectors") {
+    sector <- c("Manufacturing","Services")
+  }
+  data <- filter(data, sector_MS %in% sector)
+  
   # to calculate number of outliers left out
   data_aux <- data %>%
     select(country,N_indicator = one_of(N_indicator)) %>%
@@ -122,11 +129,20 @@
 }
 
 # plot boxplots
-.statsPlots <- function(countryYear,removeOutliers,outlierIQRfactor,indicatorDesc,indicatorQuantileDesc) {
+.statsPlots <- function(sector,countryYear,removeOutliers,outlierIQRfactor,indicatorDesc,indicatorQuantileDesc) {
 
+  # some mappings
   indicator <- .indicatorToCode(indicatorDesc)
   indicatorQuantile <- .indicatorToCode(indicatorQuantileDesc)
   outlierIQRfactor <- as.numeric(outlierIQRfactor)
+  
+  # filter data by sector
+  if (sector == "All sectors") {
+    sector <- c("Manufacturing","Services")
+  }
+  data <- filter(data, sector_MS %in% sector)
+  
+  # prepare plots
   if (removeOutliers==1){
     data2 <- data %>%
       filter(country==countryYear) %>%
