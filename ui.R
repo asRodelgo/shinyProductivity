@@ -6,6 +6,7 @@
 #
 
 library(shiny)
+library(shinyjs)
 source("global_utils.R", local=TRUE)
 
 
@@ -19,24 +20,50 @@ navbarPage(
            
   # Application title
     titlePanel("ES Innovation and Productivity Indicators"),
+    shinyjs::useShinyjs(), # to make hide/show work
   
     # Sidebar with a slider input for number of bins
     sidebarLayout(
       sidebarPanel(
         # input variables
-        selectInput("inSector", "Select sector:", sectorList, selected="All sectors"),
         selectInput("inCountry", "Select country:", countryList, selected="Afghanistan"),
-        radioButtons("inOutliers","Remove outliers?",choices = list("Yes"=1,"No"=0),selected = 0),
-        textInput("inIQRfactor","Outlier threshold (Ot): [Q1 - Ot*IQR,Q3 + Ot*IQR]",value=3),
+        selectInput("inSector", "Select sector:", sectorList, selected="All sectors"),
         selectInput("inIndicator","Select indicator",indicatorList,selected = "labor cost (n2a) over sales (d2)"),
-        selectInput("inIndicatorQuant","Select indicator with which to calculate quantiles",indicatorList,selected = "sales (d2) over labor cost (n2a)"),
-        radioButtons("inWeights","Select type of weight",choices = list("Sampling"=1,"Market share"=2,"Employment share"=3),selected = 1),
-        actionButton("goButton","View table")
+        # types of firm
+        #selectInput("inFirmType","Filter by firm type",firmTypeList,selected = "All firms"),
+        shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
+          div(id="firmTypes",
+            sliderInput("inFirmAge","Select firm age range",min = 0,max = 100, value = c(0,100), 
+                        step = 5),
+            selectInput("inFirmSize","Select firm size range",firmSizeList,selected = "All firms"),
+            sliderInput("inFirmExpStatus","Select firm export status % range",min = 0,max = 100, value = c(0,100), 
+                        step = 10),
+            #selectInput("inFirmTechInnov","Select firm tech innovation",firmTechInnovList,selected = "All firms"),
+            sliderInput("inFirmForeignOwner","Select firm foreign ownership % range",min = 0,max = 100, value = c(0,100), 
+                        step = 10)
+          )
+        ),
+        br(),
+        div(id="showFiltersButton",
+            actionButton("showFilters","Show filters")
+        ),
+        shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
+          div(id="filters",
+            actionButton("hideFilters","Hide filters"),
+            br(),  
+            selectInput("inIndicatorQuant","Select indicator with which to calculate quantiles",indicatorList,selected = "sales (d2) over labor cost (n2a)"),
+            radioButtons("inOutliers","Remove outliers?",choices = list("Yes"=1,"No"=0),selected = 0),
+            textInput("inIQRfactor","Outlier threshold (Ot): [Q1 - Ot*IQR,Q3 + Ot*IQR]",value=3),
+            radioButtons("inWeights","Select type of weight",choices = list("Sampling"=1,"Market share"=2,"Employment share"=3),selected = 1),
+            actionButton("goButton","View table")
+          )
+        )
         #actionButton("goPlotsButton","View table")
       ),
   
       mainPanel(
         # output objects
+        #textOutput("ageOutput"),
         h4(textOutput("efficiency")),
         br(),
         h5(textOutput("outliersText")),

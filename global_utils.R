@@ -21,6 +21,8 @@ library(Hmisc) # calculate weighted quantiles
 #     Sector: Aggregated, Manufacture and Services
 # 4. Look at the ES country profile report for more visualization ideas
 # --------------------------------------------------------
+# this year
+thisYear <- substr(Sys.Date(),1,4)
 # Read the global data available for the whole session. Will be loaded only once
 source("data/read_data.R", local = TRUE)
 # These functions are called before the actual server work. They will be loaded for the
