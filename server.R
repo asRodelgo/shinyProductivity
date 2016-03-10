@@ -55,11 +55,12 @@ shinyServer(function(input, output,session) {
              ratio_median_emp90_50,ratio_median_emp10_50)
       if (!is.na(readData$OPcov)){
         if ((readData$OPcov > 0) & (readData$ratio_median_emp90_50/readData$ratio_median_emp10_50 > 1)){
-          return(paste0(input$inIndicator," is Allocation Efficient (O-P covariance > 0 and 50-90percentile/employment > 10-50percentile/employment)"))
+          return(paste0(input$inIndicator," is Allocation Efficient"))
+          # (O-P covariance > 0 and 50-90percentile/employment > 10-50percentile/employment)"))
         } else if (readData$OPcov > 0){
-          return(paste0(input$inIndicator," is Directly Allocation Efficient (O-P covariance > 0)"))
+          return(paste0(input$inIndicator," is Directly Allocation Efficient")) #(O-P covariance > 0)"))
         } else if (readData$ratio_median_emp90_50/readData$ratio_median_emp10_50 > 1){
-          return(paste0(input$inIndicator," is Indirectly Allocation Efficient (50-90percentile/employment > 10-50percentile/employment)"))
+          return(paste0(input$inIndicator," is Indirectly Allocation Efficient")) #(50-90percentile/employment > 10-50percentile/employment)"))
         } else {
           return(paste0(input$inIndicator," is Allocation Inefficient"))
         }
@@ -118,7 +119,7 @@ shinyServer(function(input, output,session) {
       
     })
     
-  })
+  },include.rownames=FALSE)
   
   output$statsTable <- renderTable({
     
@@ -143,7 +144,7 @@ shinyServer(function(input, output,session) {
     
     })
     
-  })
+  },include.rownames=FALSE)
   
   
   output$statsPlots <- renderPlot({

@@ -18,4 +18,7 @@ firmSizeList <- c("All firms","Small firms","Medium firms","Large firms")
 #firmExpStatusList
 #firmTechInnovList
 #firmForeignOwnerList
+noResponse <- data.frame(code = c(-5,-6,-7,-8,-9), 
+                         desc = c("Application denied","Still in process","Does not apply",
+                                  "refusal (spontaneous)","Don't know (spontaneous)"))
 

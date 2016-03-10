@@ -3,7 +3,7 @@
 ###
 .indicatorToCode <- function(indicatorDesc){
   
-  indicator <- filter(dataMaps,indicator == indicatorDesc)$code
+  indicatorCode <- filter(dataMaps,indicator == indicatorDesc)$code
 }
 
 
@@ -60,7 +60,7 @@
   
   # If sample too small, not worth it
   if (nrow(data[data$country==countryYear,])>=5){
-    # to calculate number of outliers left out  
+    # Calculate number of outliers left out  
     data_aux <- data %>%
       select(country,N_indicator = one_of(N_indicatorCode)) %>%
       filter(country == countryYear) %>%
@@ -81,12 +81,21 @@
     # calculate statistics
     if (removeOutliers==1){
       
-      data2 <- data %>%
-        filter(country == countryYear) %>%
-        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
-                indicatorQuantile = one_of(indicatorQuantileCode),N_indicator = one_of(N_indicatorCode)) %>%
-        #group_by(country) %>% 
-        filter(!is.na(indicator)) %>% # remove NAs
+      if (indicatorCode == indicatorQuantileCode){ # if indicator and indicatorQuantile are the same, keep just one
+        data2 <- data %>%
+          filter(country == countryYear) %>%
+          select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
+                 N_indicator = one_of(N_indicatorCode)) %>%
+          filter(!is.na(indicator)) %>%
+          mutate(indicatorQuantile = indicator)
+      } else {
+        data2 <- data %>%
+          filter(country == countryYear) %>%
+          select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
+                 indicatorQuantile = one_of(indicatorQuantileCode),N_indicator = one_of(N_indicatorCode)) %>%
+          filter(!is.na(indicator)) # remove NAs
+      }
+      data2 <- data2 %>%
         filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
                & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
                ) %>% # remove outliers
@@ -119,12 +128,21 @@
       
     } else {
       
-      data2 <- data %>%
-        filter(country == countryYear) %>%
-        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
-               indicatorQuantile = one_of(indicatorQuantileCode),N_indicator = one_of(N_indicatorCode)) %>%
-        #group_by(country) %>% 
-        filter(!is.na(indicator)) %>% # remove NAs
+      if (indicatorCode == indicatorQuantileCode){ # if indicator and indicatorQuantile are the same, keep just one
+        data2 <- data %>%
+          filter(country == countryYear) %>%
+          select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
+                 N_indicator = one_of(N_indicatorCode)) %>%
+          filter(!is.na(indicator)) %>%
+          mutate(indicatorQuantile = indicator)
+      } else {
+        data2 <- data %>%
+          filter(country == countryYear) %>%
+          select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
+                 indicatorQuantile = one_of(indicatorQuantileCode),N_indicator = one_of(N_indicatorCode)) %>%
+          filter(!is.na(indicator)) # remove NAs
+      }  
+      data2 <- data2 %>%  
         mutate(N = sum(N_indicator,na.rm=TRUE),
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
                mean = weighted.mean(indicator,wt,na.rm=TRUE),
@@ -171,8 +189,8 @@
                         ageRange,sizeRange,expStatus,forOwner) {
 
   # some mappings
-  indicator <- .indicatorToCode(indicatorDesc)
-  indicatorQuantile <- .indicatorToCode(indicatorQuantileDesc)
+  indicatorCode <- .indicatorToCode(indicatorDesc)
+  indicatorQuantileCode <- .indicatorToCode(indicatorQuantileDesc)
   outlierIQRfactor <- as.numeric(outlierIQRfactor)
   ageB <- ageRange[1]
   ageU <- ageRange[2]
@@ -208,22 +226,22 @@
     if (removeOutliers==1){
       data2 <- data %>%
         filter(country==countryYear) %>%
-        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicator),
-               indicatorQuantile = one_of(indicatorQuantile)) %>%
+        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
+               indicatorQuantile = one_of(indicatorQuantileCode)) %>%
         filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
                & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
         ) # remove outliers
     } else{
       data2 <- data %>%
         filter(country==countryYear) %>%
-        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicator),
-               indicatorQuantile = one_of(indicatorQuantile))
+        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
+               indicatorQuantile = one_of(indicatorQuantileCode))
     }
     par(mfrow = c(2,2))
-    hist(data2$indicator)
-    boxplot(data2$indicator)
-    plot(data2$indicator,data2$indicatorQuantile)
-    boxplot(data2$indicator,data2$indicatorQuantile)
+    hist(data2$indicator, main = indicatorCode,xlab=indicatorCode,col="lightgreen")
+    boxplot(data2$indicator,xlab=indicatorCode)
+    plot(data2$indicator,data2$indicatorQuantile,xlab=indicatorCode,ylab=indicatorQuantileCode)
+    boxplot(data2$indicator,data2$indicatorQuantile,names=c(indicatorCode,indicatorQuantileCode))
   } else {
     plot(c(1,1),type="n", frame.plot = FALSE, axes=FALSE, ann=FALSE)
     graphics::text(1.5, 1,"", col="red", cex=2)
