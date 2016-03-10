@@ -12,14 +12,23 @@
 
 # removeOutliers <- FALSE
 # outlierIQRfactor <- 10
-# indicator <- "n2a_d2"
-# indicatorQuantile <- "d2_n2a"
+# indicatorCode <- "d2_l1"
+# indicatorQuantileCode <- "d2_l1"
 # removeOutliers <- 0
-# countryYear <- "Brazil2009"  
+# countryYear <- "Afghanistan2014"  
+#   ageB <- 0
+#   ageU <- 200
+#   expStatusB <- 0
+#   expStatusU <- 100
+#   forOwnerB <- 0
+#   forOwnerU <- 100
+#   sector <- "All sectors"
+#   sizeRange <- "All firms"
+  
   # some mappings
-  indicator <- .indicatorToCode(indicatorDesc)
-  indicatorQuantile <- .indicatorToCode(indicatorQuantileDesc)
-  N_indicator <- paste0("N_",indicator)
+  indicatorCode <- .indicatorToCode(indicatorDesc)
+  indicatorQuantileCode <- .indicatorToCode(indicatorQuantileDesc)
+  N_indicatorCode <- paste0("N_",indicatorCode)
   outlierIQRfactor <- as.numeric(outlierIQRfactor)
   ageB <- ageRange[1]
   ageU <- ageRange[2]
@@ -28,31 +37,32 @@
   forOwnerB <- forOwner[1]
   forOwnerU <- forOwner[2]
 
-  # filter data by sector
-  if (sector == "All sectors") {
-    sector <- c("Manufacturing","Services")
+  # filter data by sector. Only drill down for manufacturing 
+  if (sector == "Manufacturing") {
+    data <- filter(data, sector_MS %in% sector)
+    # calculate age, size, export status, foreign ownership and tech innov status and filter
+    if (sizeRange == "All firms") {
+      sizeRange <- c("Small firm","Medium firm","Large firm")
+    }
+    data <- data %>%
+      group_by(country,idstd) %>%
+      mutate(age = as.numeric(thisYear) - b5, 
+             size = as.character(ifelse(l1 < 20,"Small firm",ifelse(l1 < 100,"Medium firm","Large firm"))), 
+             expStatus = d3b + d3c, forOwner = b2a) %>% # filter by age, size, etc...
+      filter(age >= ageB & age <= ageU & size %in% sizeRange &
+               expStatus >= expStatusB & expStatus <= expStatusU & 
+               forOwner >= forOwnerB & forOwner <= forOwnerU)
+    
+    data <- as.data.frame(data)
+  } else if (sector == "Services") {
+    data <- filter(data, sector_MS %in% sector)
   }
-  data <- filter(data, sector_MS %in% sector)
   
-  # calculate age, size, export status, foreign ownership and tech innov status and filter
-  if (sizeRange == "All firms") {
-    sizeRange <- c("Small firm","Medium firm","Large firm")
-  }
-  data <- data %>%
-    group_by(country,idstd) %>%
-    mutate(age = as.numeric(thisYear) - b5, 
-           size = as.character(ifelse(l1 < 20,"Small firm",ifelse(l1 < 100,"Medium firm","Large firm"))), 
-           expStatus = d3b + d3c, forOwner = b2a) %>% # filter by age, size, etc...
-    filter(age >= ageB & age <= ageU & size %in% sizeRange &
-           expStatus >= expStatusB & expStatus <= expStatusU & 
-           forOwner >= forOwnerB & forOwner <= forOwnerU)
-  
-  data <- as.data.frame(data)
   # If sample too small, not worth it
   if (nrow(data[data$country==countryYear,])>=5){
     # to calculate number of outliers left out  
     data_aux <- data %>%
-      select(country,N_indicator = one_of(N_indicator)) %>%
+      select(country,N_indicator = one_of(N_indicatorCode)) %>%
       filter(country == countryYear) %>%
       mutate(sampleSizeBefore=sum(N_indicator,na.rm=TRUE))
     sampleSizeBefore = data_aux$sampleSizeBefore[1]
@@ -73,8 +83,8 @@
       
       data2 <- data %>%
         filter(country == countryYear) %>%
-        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicator),
-                indicatorQuantile = one_of(indicatorQuantile),N_indicator = one_of(N_indicator)) %>%
+        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
+                indicatorQuantile = one_of(indicatorQuantileCode),N_indicator = one_of(N_indicatorCode)) %>%
         #group_by(country) %>% 
         filter(!is.na(indicator)) %>% # remove NAs
         filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
@@ -111,8 +121,8 @@
       
       data2 <- data %>%
         filter(country == countryYear) %>%
-        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicator),
-               indicatorQuantile = one_of(indicatorQuantile),N_indicator = one_of(N_indicator)) %>%
+        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
+               indicatorQuantile = one_of(indicatorQuantileCode),N_indicator = one_of(N_indicatorCode)) %>%
         #group_by(country) %>% 
         filter(!is.na(indicator)) %>% # remove NAs
         mutate(N = sum(N_indicator,na.rm=TRUE),
@@ -171,25 +181,26 @@
   forOwnerB <- forOwner[1]
   forOwnerU <- forOwner[2]
   
-  # filter data by sector
-  if (sector == "All sectors") {
-    sector <- c("Manufacturing","Services")
+  # filter data by sector. Only drill down for manufacturing 
+  if (sector == "Manufacturing") {
+    data <- filter(data, sector_MS %in% sector)
+    # calculate age, size, export status, foreign ownership and tech innov status and filter
+    if (sizeRange == "All firms") {
+      sizeRange <- c("Small firm","Medium firm","Large firm")
+    }
+    data <- data %>%
+      group_by(country,idstd) %>%
+      mutate(age = as.numeric(thisYear) - b5, 
+             size = as.character(ifelse(l1 < 20,"Small firm",ifelse(l1 < 100,"Medium firm","Large firm"))), 
+             expStatus = d3b + d3c, forOwner = b2a) %>% # filter by age, size, etc...
+      filter(age >= ageB & age <= ageU & size %in% sizeRange &
+               expStatus >= expStatusB & expStatus <= expStatusU & 
+               forOwner >= forOwnerB & forOwner <= forOwnerU)
+    
+    data <- as.data.frame(data)
+  } else if (sector == "Services") {
+    data <- filter(data, sector_MS %in% sector)
   }
-  data <- filter(data, sector_MS %in% sector)
-  # calculate age, size, export status, foreign ownership and tech innov status and filter
-  if (sizeRange == "All firms") {
-    sizeRange <- c("Small firm","Medium firm","Large firm")
-  }
-  data <- data %>%
-    group_by(country,idstd) %>%
-    mutate(age = as.numeric(thisYear) - b5, 
-           size = as.character(ifelse(l1 < 20,"Small firm",ifelse(l1 < 100,"Medium firm","Large firm"))), 
-           expStatus = d3b + d3c, forOwner = b2a) %>% # filter by age, size, etc...
-    filter(age >= ageB & age <= ageU & size %in% sizeRange &
-             expStatus >= expStatusB & expStatus <= expStatusU & 
-             forOwner >= forOwnerB & forOwner <= forOwnerU)
-  
-  data <- as.data.frame(data)
   
   # If sample too small, not worth it
   if (nrow(data[data$country==countryYear,])>=5){
