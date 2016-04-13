@@ -3,7 +3,7 @@
 ###
 .indicatorToCode <- function(indicatorDesc){
   
-  indicatorCode <- filter(dataMaps,indicator == indicatorDesc)$code
+  indicatorCode <- filter(summaryMaps,indicator == indicatorDesc)$code
 }
 
 
@@ -103,7 +103,7 @@
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
                mean = weighted.mean(indicator,wt,na.rm=TRUE),
                median = weightedMedian(indicator,wt,na.rm=TRUE),
-               sd = sqrt(sum(wt*(indicator-mean)^2,na.rm=TRUE)/sum(wt)),
+               sd = sqrt(sum(wt*(indicator-mean)^2,na.rm=TRUE)*(sum(wt)/(sum(wt)^2-sum(wt^2)))),
                se = sd/sqrt(sum(wt)),
                iqr = wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE),
                iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
@@ -147,7 +147,7 @@
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
                mean = weighted.mean(indicator,wt,na.rm=TRUE),
                median = weightedMedian(indicator,wt,na.rm=TRUE),
-               sd = sqrt(sum(wt*(indicator-mean)^2,na.rm=TRUE)/sum(wt)),
+               sd = sqrt(sum(wt*(indicator-mean)^2,na.rm=TRUE)*(sum(wt)/(sum(wt)^2-sum(wt^2)))),
                se = sd/sqrt(sum(wt)),
                iqr = wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE),
                iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
