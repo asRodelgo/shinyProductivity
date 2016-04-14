@@ -23,7 +23,26 @@ firmExpStatusList <- c("All firms","0-25%","26-50%","51-75%","+75%")
 #firmTechInnovList
 firmForeignOwnerList <- c("All firms","0-50%","50-75%","+75%")
 
-noResponse <- data.frame(code = c(-5,-6,-7,-8,-9), 
-                         desc = c("Application denied","Still in process","Does not apply",
-                                  "refusal (spontaneous)","Don't know (spontaneous)"))
+# pre-process data (execute once at start up) -----------------------
+data <- data %>%
+  group_by(country,idstd) %>%
+  mutate(ageVal = as.numeric(thisYear) - b5,
+         age = as.character(ifelse(ageVal < 6,firmAgeList[2],ifelse(ageVal < 16,firmAgeList[3],ifelse(ageVal < 31,firmAgeList[4],firmAgeList[5])))),
+         size = as.character(ifelse(l1 < 20,firmSizeList[2],ifelse(l1 < 100,firmSizeList[3],firmSizeList[4]))), 
+         expVal = d3b + d3c,
+         expStatus = as.character(ifelse(expVal < 26,firmExpStatusList[2],ifelse(expVal < 51,firmExpStatusList[3],ifelse(expVal < 75,firmExpStatusList[4],firmExpStatusList[5])))),
+         forOwner = as.character(ifelse(b2a < 51,firmForeignOwnerList[2],ifelse(b2a < 76,firmForeignOwnerList[3],firmForeignOwnerList[4])))) %>% # filter by age, size, etc...
+  select(-ageVal,-expVal)
+
+# prepare data for summary statistics
+dataBlock <- .calculateDataBlock(data,"all","All sectors")
+dataBlockServices <- .calculateDataBlock(data,"all","Services")
+dataBlock_age <- .calculateDataBlock(data,"age","Manufacturing")
+dataBlock_size <- .calculateDataBlock(data,"size","Manufacturing")
+dataBlock_expStatus <- .calculateDataBlock(data,"expStatus","Manufacturing")
+dataBlock_forOwner <- .calculateDataBlock(data,"forOwner","Manufacturing")
+
+# noResponse <- data.frame(code = c(-5,-6,-7,-8,-9), 
+#                          desc = c("Application denied","Still in process","Does not apply",
+#                                   "refusal (spontaneous)","Don't know (spontaneous)"))
 
