@@ -132,10 +132,6 @@
     # compute number of ouliers left out
     sampleSizeAfter <- data2$N
     data2 <- mutate(data2, outliersOut = sampleSizeBefore - sampleSizeAfter)
-    # Add country regions
-    countryRegions <- select(countryRegions, country,region,countryDes)
-    data2 <- mutate(data2, countryOnly = substr(country,1,nchar(country)-4),
-                    yearOnly = substr(country,nchar(country)-3,nchar(country)))
     
   } else {
     data2 <- data.frame(country,income=NA,OPcov=NA,OPcovNoWeights=NA,
@@ -194,20 +190,46 @@
   
   # calculate indicators by country according to the filters 
   dataBlock <- data.frame()
-  for (cou in countryList) {
-  #for (cou in c("Afghanistan2014","Albania2013","Bahamas2010")) {  
+  #for (cou in countryList) {
+  for (cou in c("Afghanistan2014","Albania2013","Bahamas2010")) {  
     
     addCountry <- .summaryStatsByCountry(data,cou)
     dataBlock <- rbind(dataBlock,addCountry)
   
   }
+  
+  # Add country regions
+  countryRegions <- select(countryRegions, country,region,countryDes,incomeLevel)
+  dataBlock <- mutate(dataBlock, countryOnly = substr(country,1,nchar(country)-4),
+                 yearOnly = substr(country,nchar(country)-3,nchar(country)))
+  dataBlock <- merge(dataBlock, countryRegions, by.x="countryOnly",by.y="country", all.x = TRUE)
+  
   # Calculate summary statistics for the selected countries ----------
   sumStats <- dataBlock %>%
     select(N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
-    mutate_each(funs(min,max,mean,median,sd))
+    summarise_each(funs(min,max,mean,median,sd))
   
+  sumStats2 <- data.frame(N_sum = as.numeric(select(sumStats, starts_with("N"))[1,]),
+                          mean_sum = as.numeric(select(sumStats, starts_with("mean"))[1,]),
+                          median_sum = as.numeric(select(sumStats, starts_with("median"))[1,]),
+                          sd_sum = as.numeric(select(sumStats, starts_with("sd"))[1,]),
+                          OPcov_sum = as.numeric(select(sumStats, starts_with("OPcov_"))[1,]),
+                          OPcovNoW_sum = as.numeric(select(sumStats, starts_with("OPcovNo"))[1,]),
+                          indAlloc_sum = as.numeric(select(sumStats, starts_with("indA"))[1,]),
+  stringsAsFactors = FALSE)
+  row.names(sumStats2) <- c("Min", "Max", "Mean", "Median", "Stdev")
   
+  # Calculate income level summary  ----------
+  incomeStats <- dataBlock %>%
+    select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
+    group_by(incomeLevel) %>%
+    summarise_each(funs(median))
   
+  # Calculate region level summary  ----------
+  regionStats <- dataBlock %>%
+    select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
+    group_by(region) %>%
+    summarise_each(funs(median))
 
   
   
