@@ -34,10 +34,11 @@
 #   forOwnerB <- forOwner[1]
 #   forOwnerU <- forOwner[2]
   
-  # Filter by sector
+  # Filter original data by sector
   if (sector == "Manufacturing") {
     data <- filter(data, sector_MS %in% sector)
-  } else if (sector == "Services") {
+  } 
+  if (sector == "Services") {
     data <- filter(data, sector_MS %in% sector)
   }
   
@@ -47,13 +48,14 @@
     data_aux <- data %>%
       select(country,N_indicator = one_of(N_indicatorCode)) %>%
       filter(country == countryYear) %>%
+      group_by(country) %>%
       mutate(sampleSizeBefore=sum(N_indicator,na.rm=TRUE))
     sampleSizeBefore = data_aux$sampleSizeBefore[1]
     
     # default weight type: "sampling"
      
-  # calculate statistics
-    if (indicatorCode == indicatorQuantileCode){ # if indicator and indicatorQuantile are the same, keep just one
+    # if indicator and indicatorQuantile are the same, keep just one
+    if (indicatorCode == indicatorQuantileCode){ 
       data2 <- data %>%
         filter(country == countryYear) %>%
         select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
@@ -68,9 +70,12 @@
                age,size,expStatus,forOwner) %>%
         filter(!is.na(indicator)) # remove NAs
     }
+    # remove NAs on l1 indicator
+    data2 <- filter(data2, !is.na(l1))
     data2 <- as.data.frame(data2)
     
-    # Improve this in the future
+    
+    # The actual calculations (Improve this in the future)
     if (groupByVar=="age") {
       data2 <- data2 %>%
         group_by(age) %>%
@@ -87,11 +92,11 @@
                iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
                tot_emp10_50 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
                tot_emp50_90 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
-               emp10 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA),
+               emp10 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA)),
                median_emp10 = weightedMedian(emp10,wt,na.rm=TRUE),
-               emp50 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA),
+               emp50 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA)),
                median_emp50 = weightedMedian(emp50,wt,na.rm=TRUE),
-               emp90 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA),
+               emp90 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA)),
                median_emp90 = weightedMedian(emp90,wt,na.rm=TRUE),
                ratio_median_emp10_50 = median_emp10/median_emp50,
                ratio_median_emp90_50 = median_emp90/median_emp50,
@@ -119,11 +124,11 @@
                iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
                tot_emp10_50 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
                tot_emp50_90 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
-               emp10 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA),
+               emp10 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA)),
                median_emp10 = weightedMedian(emp10,wt,na.rm=TRUE),
-               emp50 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA),
+               emp50 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA)),
                median_emp50 = weightedMedian(emp50,wt,na.rm=TRUE),
-               emp90 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA),
+               emp90 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA)),
                median_emp90 = weightedMedian(emp90,wt,na.rm=TRUE),
                ratio_median_emp10_50 = median_emp10/median_emp50,
                ratio_median_emp90_50 = median_emp90/median_emp50,
@@ -151,11 +156,11 @@
                iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
                tot_emp10_50 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
                tot_emp50_90 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
-               emp10 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA),
+               emp10 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA)),
                median_emp10 = weightedMedian(emp10,wt,na.rm=TRUE),
-               emp50 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA),
+               emp50 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA)),
                median_emp50 = weightedMedian(emp50,wt,na.rm=TRUE),
-               emp90 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA),
+               emp90 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA)),
                median_emp90 = weightedMedian(emp90,wt,na.rm=TRUE),
                ratio_median_emp10_50 = median_emp10/median_emp50,
                ratio_median_emp90_50 = median_emp90/median_emp50,
@@ -183,11 +188,11 @@
                iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
                tot_emp10_50 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
                tot_emp50_90 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
-               emp10 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA),
+               emp10 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA)),
                median_emp10 = weightedMedian(emp10,wt,na.rm=TRUE),
-               emp50 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA),
+               emp50 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA)),
                median_emp50 = weightedMedian(emp50,wt,na.rm=TRUE),
-               emp90 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA),
+               emp90 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA)),
                median_emp90 = weightedMedian(emp90,wt,na.rm=TRUE),
                ratio_median_emp10_50 = median_emp10/median_emp50,
                ratio_median_emp90_50 = median_emp90/median_emp50,
@@ -214,11 +219,11 @@
                iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
                tot_emp10_50 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
                tot_emp50_90 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
-               emp10 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA),
+               emp10 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA)),
                median_emp10 = weightedMedian(emp10,wt,na.rm=TRUE),
-               emp50 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA),
+               emp50 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA)),
                median_emp50 = weightedMedian(emp50,wt,na.rm=TRUE),
-               emp90 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA),
+               emp90 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA)),
                median_emp90 = weightedMedian(emp90,wt,na.rm=TRUE),
                ratio_median_emp10_50 = median_emp10/median_emp50,
                ratio_median_emp90_50 = median_emp90/median_emp50,
@@ -231,26 +236,31 @@
         select(country,N, mean, median, sd, iqr, OPcov, OPcovNoWeights, indAlloc)
     }         
   
-    # Remove duplicates, I only need 1 row per group_by 
+    # Remove duplicates, I only need 1 row per group_by. In case of non-Manufacturing
+    # firms, this will yield 1 row in total per country
     data2 <- data2[!(duplicated(data2)),]
     data2 <- as.data.frame(data2)
     # compute number of ouliers left out
     sampleSizeAfter <- sum(data2$N)
     # spread the rows into columns for presentation purposes
-    dataBind <- data2[1,-c(1)]
-    listNames <- names(dataBind)[2:ncol(dataBind)]
-    names(dataBind)[2:ncol(dataBind)] <- paste0(listNames,"_",data2[1,1])
-    i <- 2
-    j <- ncol(dataBind)
-    while (i <= nrow(data2)){
-      dataBind <- cbind(dataBind,data2[i,-c(1:2)])
-      names(dataBind)[(j+1):ncol(dataBind)] <- paste0(listNames,"_",data2[i,1])
-      i <- i + 1
+    # and differentiate column names by firm type if applicable
+    if (!(groupByVar=="all")){ 
+      dataBind <- data2[1,-c(1)]
+      listNames <- names(dataBind)[2:ncol(dataBind)]
+      names(dataBind)[2:ncol(dataBind)] <- paste0(listNames,"_",data2[1,1])
+      i <- 2
       j <- ncol(dataBind)
+      while (i <= nrow(data2)){
+        dataBind <- cbind(dataBind,data2[i,-c(1:2)])
+        names(dataBind)[(j+1):ncol(dataBind)] <- paste0(listNames,"_",data2[i,1])
+        i <- i + 1
+        j <- ncol(dataBind)
+      }
+      data2 <- dataBind
     }
-    data2 <- dataBind
     data2 <- mutate(data2, outliersOut = sampleSizeBefore - sampleSizeAfter)
-    
+  
+  # if number of firms is less than 5, return an empty dataset  
   } else {
     data2 <- data.frame(country,income=NA,OPcov=NA,OPcovNoWeights=NA,
                         ratio_median_emp90_50=NA,ratio_median_emp10_50=NA,outliersOut=NA,None=NA)
@@ -262,15 +272,21 @@
 
 
 # calculate indicators by country according to the filters ----------------
-.calculateDataBlock <- function(data,groupByVar) {
+.calculateDataBlock <- function(data,groupByVar,sector) {
   
   dataBlock <- data.frame()
   
   #for (cou in countryList) {
-  for (cou in c("Afghanistan2014","Albania2013")) {  
+  for (cou in c("Afghanistan2014","Albania2013","Angola2010")) {  
     addCountry <- .summaryStatsByCountry(data,cou,groupByVar,sector)
-    dataBlock <- rbind(dataBlock,addCountry)
-    
+    # rbind only if returned data is not empty to avoid errors
+    if (nrow(dataBlock)>0){ 
+      if (!is.na(addCountry[1,ncol(addCountry)])) {
+        dataBlock <- bind_rows(dataBlock,addCountry)
+      }
+    } else if (!is.na(addCountry[1,ncol(addCountry)])){
+      dataBlock <- bind_rows(dataBlock,addCountry)
+    }
   }
   
   # Add country regions
@@ -285,8 +301,8 @@
 
 
 # Calculate summary stats -----------------------------------
-.summaryStats <- function(sector,indicatorDesc,
-                                   ageRange,sizeRange,expRange,ownRange,firmType){
+.summaryStats <- function(sector,indicatorDesc,firmType){
+                                   #ageRange,sizeRange,expRange,ownRange,firmType){
   
   # Initial parameters ---------------------------
   indicatorCode <- .indicatorToCode(indicatorDesc)
@@ -326,18 +342,18 @@
     }
     
     # calculate age, size, export status, foreign ownership and tech innov status and filter
-    if (sizeRange == "All firms") {
-      sizeRange <- firmSizeList
-    }
-    if (ageRange == "All firms") {
-      ageRange <- firmAgeList
-    }
-    if (expRange == "All firms") {
-      expRange <- firmExpStatusList
-    }
-    if (ownRange == "All firms") {
-      ownRange <- firmForeignOwnerList
-    }
+#     if (sizeRange == "All firms") {
+#       sizeRange <- firmSizeList
+#     }
+#     if (ageRange == "All firms") {
+#       ageRange <- firmAgeList
+#     }
+#     if (expRange == "All firms") {
+#       expRange <- firmExpStatusList
+#     }
+#     if (ownRange == "All firms") {
+#       ownRange <- firmForeignOwnerList
+#     }
     
 #     data <- data %>%
 #       group_by(country,idstd) %>%
@@ -353,6 +369,7 @@
   
   # Calculate summary statistics for the selected countries ----------
   statsNames <- c("Min", "Max", "Mean", "Median", "Stdev")
+  
   # If sector is Manufacturing then group by groupByVar
   if (sector == "Manufacturing"){
     

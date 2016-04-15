@@ -24,6 +24,7 @@ firmExpStatusList <- c("All firms","0-25%","26-50%","51-75%","+75%")
 firmForeignOwnerList <- c("All firms","0-50%","50-75%","+75%")
 
 # pre-process data (execute once at start up) -----------------------
+# segment data according to firm types values
 data <- data %>%
   group_by(country,idstd) %>%
   mutate(ageVal = as.numeric(thisYear) - b5,
@@ -37,6 +38,7 @@ data <- data %>%
 # prepare data for summary statistics
 dataBlock <- .calculateDataBlock(data,"all","All sectors")
 dataBlockServices <- .calculateDataBlock(data,"all","Services")
+dataBlockManufacturing <- .calculateDataBlock(data,"all","Manufacturing")
 dataBlock_age <- .calculateDataBlock(data,"age","Manufacturing")
 dataBlock_size <- .calculateDataBlock(data,"size","Manufacturing")
 dataBlock_expStatus <- .calculateDataBlock(data,"expStatus","Manufacturing")
