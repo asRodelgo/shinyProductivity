@@ -276,8 +276,8 @@
   
   dataBlock <- data.frame()
   
-  #for (cou in countryList) {
-  for (cou in c("Afghanistan2014","Albania2013","Angola2010")) {  
+  for (cou in countryList) {
+  #for (cou in c("Afghanistan2014","Albania2013","Angola2010")) {  
     addCountry <- .summaryStatsByCountry(data,cou,groupByVar,sector)
     # rbind only if returned data is not empty to avoid errors
     if (nrow(dataBlock)>0){ 
@@ -299,6 +299,30 @@
 
 }
 
+.reorderColumns <- function(lenVar){
+  
+  col_per_block <- 6
+  if (lenVar == 3){
+    reorder <- c(1,seq(2,col_per_block*lenVar+2,lenVar),seq(3,col_per_block*lenVar+3,lenVar),
+                 seq(4,col_per_block*lenVar+4,lenVar))
+  }
+  if (lenVar == 4){
+    reorder <- c(1,seq(2,col_per_block*lenVar+2,lenVar),seq(3,col_per_block*lenVar+3,lenVar),
+                 seq(4,col_per_block*lenVar+4,lenVar),seq(5,col_per_block*lenVar+5,lenVar))
+  }
+  if (lenVar == 5){
+    reorder <- c(1,seq(2,col_per_block*lenVar+2,lenVar),seq(3,col_per_block*lenVar+3,lenVar),
+                 seq(4,col_per_block*lenVar+4,lenVar),seq(5,col_per_block*lenVar+5,lenVar)
+                 ,seq(6,col_per_block*lenVar+6,lenVar))
+  }
+  if (lenVar == 6){
+    reorder <- c(1,seq(2,col_per_block*lenVar+2,lenVar),seq(3,col_per_block*lenVar+3,lenVar),
+                 seq(4,col_per_block*lenVar+4,lenVar),seq(5,col_per_block*lenVar+5,lenVar)
+                 ,seq(6,col_per_block*lenVar+6,lenVar),seq(7,col_per_block*lenVar+7,lenVar))
+  }
+
+  return(reorder)
+}
 
 # Calculate summary stats -----------------------------------
 .summaryStats <- function(sector,indicatorDesc,firmType){
@@ -371,7 +395,9 @@
   statsNames <- c("Min", "Max", "Mean", "Median", "Stdev")
   
   # If sector is Manufacturing then group by groupByVar
-  if (sector == "Manufacturing"){
+  if (!(firmType == "All firms")){
+    
+    reorder <- .reorderColumns(lenVar) # call the reorder function to arrange columns
     
     sumStatsAux <- dataBlock %>%
       select(starts_with("N"),starts_with("mean"),starts_with("median"),
@@ -398,6 +424,7 @@
     }
     sumStats <- sumStats2  
     row.names(sumStats) <- statsNames
+    sumStats <- sumStats[,reorder]
     
   } else {
     
@@ -415,17 +442,28 @@
     stringsAsFactors = FALSE)
     row.names(sumStats) <- statsNames
   }
+  
   # Calculate income level summary  ----------
   incomeStats <- dataBlock %>%
-    select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
+    select(incomeLevel,starts_with("N"),starts_with("mean"),starts_with("median"),
+           starts_with("sd"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
+           starts_with("indAlloc")) %>%
+    #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(incomeLevel) %>%
     summarise_each(funs(median))
+  # reorder columns
+  incomeStats <- incomeStats[,reorder]
   
   # Calculate region level summary  ----------
   regionStats <- dataBlock %>%
-    select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
+    select(incomeLevel,starts_with("N"),starts_with("mean"),starts_with("median"),
+           starts_with("sd"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
+           starts_with("indAlloc")) %>%
+    #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(region) %>%
     summarise_each(funs(median))
-
+  regionStats <- regionsStats[,reorder]
   
 }  
+
+
