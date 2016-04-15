@@ -301,7 +301,7 @@
 
 .reorderColumns <- function(lenVar){
   
-  col_per_block <- 6
+  col_per_block <- 7
   if (lenVar == 3){
     reorder <- c(1,seq(2,col_per_block*lenVar+2,lenVar),seq(3,col_per_block*lenVar+3,lenVar),
                  seq(4,col_per_block*lenVar+4,lenVar))
@@ -401,14 +401,16 @@
     
     sumStatsAux <- dataBlock %>%
       select(starts_with("N"),starts_with("mean"),starts_with("median"),
-             starts_with("sd"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
+             starts_with("sd"),starts_with("iqr"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
              starts_with("indAlloc")) %>%
-      summarise_each(funs(min,max,mean,median,sd))
+      summarise_each(funs(min(., na.rm = TRUE),max(., na.rm = TRUE),mean(., na.rm = TRUE),
+                          median(., na.rm = TRUE),sd(., na.rm = TRUE)))
     
     sumStats <- data.frame(N_sum = as.numeric(select(sumStatsAux, starts_with("N"))[1,]),
                            mean_sum = as.numeric(select(sumStatsAux, starts_with("mean"))[1,]),
                            median_sum = as.numeric(select(sumStatsAux, starts_with("median"))[1,]),
                            sd_sum = as.numeric(select(sumStatsAux, starts_with("sd"))[1,]),
+                           iqr_sum = as.numeric(select(sumStatsAux, starts_with("iqr"))[1,]),
                            OPcov_sum = as.numeric(select(sumStatsAux, starts_with("OPcov_"))[1,]),
                            OPcovNoW_sum = as.numeric(select(sumStatsAux, starts_with("OPcovNo"))[1,]),
                            indAlloc_sum = as.numeric(select(sumStatsAux, starts_with("indA"))[1,]),
@@ -424,7 +426,7 @@
     }
     sumStats <- sumStats2  
     row.names(sumStats) <- statsNames
-    sumStats <- sumStats[,reorder]
+    names(sumStats) <- names(dataBlock)[3:(8*lenVar+2)]# add column names
     
   } else {
     
@@ -436,6 +438,7 @@
                             mean_sum = as.numeric(select(sumStatsAux, starts_with("mean"))[1,]),
                             median_sum = as.numeric(select(sumStatsAux, starts_with("median"))[1,]),
                             sd_sum = as.numeric(select(sumStatsAux, starts_with("sd"))[1,]),
+                            iqr_sum = as.numeric(select(sumStatsAux, starts_with("iqr"))[1,]),
                             OPcov_sum = as.numeric(select(sumStatsAux, starts_with("OPcov_"))[1,]),
                             OPcovNoW_sum = as.numeric(select(sumStatsAux, starts_with("OPcovNo"))[1,]),
                             indAlloc_sum = as.numeric(select(sumStatsAux, starts_with("indA"))[1,]),
@@ -446,7 +449,7 @@
   # Calculate income level summary  ----------
   incomeStats <- dataBlock %>%
     select(incomeLevel,starts_with("N"),starts_with("mean"),starts_with("median"),
-           starts_with("sd"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
+           starts_with("sd"),starts_with("iqr"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
            starts_with("indAlloc")) %>%
     #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(incomeLevel) %>%
@@ -456,13 +459,13 @@
   
   # Calculate region level summary  ----------
   regionStats <- dataBlock %>%
-    select(incomeLevel,starts_with("N"),starts_with("mean"),starts_with("median"),
-           starts_with("sd"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
+    select(region,starts_with("N"),starts_with("mean"),starts_with("median"),
+           starts_with("sd"),starts_with("iqr"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
            starts_with("indAlloc")) %>%
     #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(region) %>%
     summarise_each(funs(median))
-  regionStats <- regionsStats[,reorder]
+  regionStats <- regionStats[,reorder]
   
 }  
 
