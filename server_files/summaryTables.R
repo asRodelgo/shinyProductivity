@@ -16,9 +16,9 @@ output$summaryTable <- renderTable({
   
   isolate({
     
-    select(.summaryStats(input$inSectorSum,
+    .summaryStats(input$inSectorSum,
                        input$inIndicatorSum,
-                       input$inFirmTypeSum))
+                       input$inFirmTypeSum)
     
   })
   

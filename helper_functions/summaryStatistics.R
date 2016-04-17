@@ -2,6 +2,28 @@
 # Functions to calculate final tables with summary statistics by firm characteristics,
 # regions and income levels
 # -------------------------------------
+.indicatorList <- function(sector){
+  
+ if (sector == "Manufacturing"){
+   indList <- filter(summaryMaps, manufacturing == 1)$indicator
+ } else if (sector == "Services"){
+   indList <- filter(summaryMaps, services == 1)$indicator
+ } else {
+   indList <- filter(summaryMaps, allSectors == 1)$indicator
+ }
+  return(indList)   
+}
+
+.firmTypeList <- function(sector){
+  
+  if (sector == "Manufacturing"){
+    firmList <- c("all","age","size","expStatus","forOwner")
+  } else {
+    firmList <- c("all")
+  }
+  return(firmList)   
+}
+
 
 .summaryStatsByCountry <- function(countryYear,groupByVar,sector,indicatorDesc){
   
@@ -337,6 +359,9 @@
                                    #ageRange,sizeRange,expRange,ownRange,firmType){
   
   # filter data by sector. Only drill down for manufacturing -------------------
+  indicatorCode <- .indicatorToCode(indicatorDesc)
+  sectCode <- ifelse(sector=="All sectors","AllSect",ifelse(sector=="Manufacturing","Manuf","Serv"))
+  
   if (sector == "Manufacturing") {
     #data <- filter(data, sector_MS %in% sector)
     if (firmType == "By age") {
@@ -364,7 +389,7 @@
       lenVar <- length(firmForeignOwnerList)-1
       #dataBlock <- dataBlock_forOwner
     }
-    dataBlock <- .calculateDataBlock(groupByVar,sector,indicatorDesc)
+    dataBlock <- dataBlock[[paste(sectCode,groupByVar,indicatorCode,sep="_")]]
     # calculate age, size, export status, foreign ownership and tech innov status and filter
 #     if (sizeRange == "All firms") {
 #       sizeRange <- firmSizeList
@@ -388,7 +413,7 @@
 #     data <- as.data.frame(data)
   
   } else if (sector == "Services"){
-    dataBlock <- .calculateDataBlock("all",sector,indicatorDesc)
+    dataBlock <- dataBlock[[paste("Serv","all",indicatorCode,sep="_")]]
   }
   
   # Calculate summary statistics for the selected countries ----------

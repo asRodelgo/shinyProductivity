@@ -38,14 +38,49 @@ data <- data %>%
 # prepare data for summary statistics. Read dataBlocks --------------------
 
 # Calculate datablocks (for the actual UI, precalculate these and read.csv)
-# dataBlock <- .calculateDataBlock(data,"all","All sectors")
+# takes about 15 min. Creates list with 35 elements and saves it in disk
+# dataBlock <- list()
+# for (sect in sectorList){
+#   for (type in .firmTypeList(sect)){
+#     for (ind in .indicatorList(sect)) {
+#       indCode <- .indicatorToCode(ind)
+#       sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))
+#       dataBlock[[paste(sectCode,type,indCode,sep="_")]] <- .calculateDataBlock(type,sect,ind)
+#       write.csv(dataBlock[[paste(sectCode,type,indCode,sep="_")]],paste0("data/dataBlock_",paste(sectCode,type,indCode,sep="_"),".csv"),row.names = FALSE)
+#     }
+#   }
+# }
+# read dataBlocks
+dataBlock <- list()
+for (sect in sectorList){
+  for (type in .firmTypeList(sect)){
+    for (ind in .indicatorList(sect)) {
+      indCode <- .indicatorToCode(ind)
+      sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))
+      dataBlock[[paste(sectCode,type,indCode,sep="_")]] <- read.csv(paste0("data/dataBlock_",paste(sectCode,type,indCode,sep="_"),".csv"),stringsAsFactors = FALSE)
+    }
+  }
+}
+
+
 # dataBlockServices <- .calculateDataBlock(data,"all","Services")
 # dataBlockManufacturing <- .calculateDataBlock(data,"all","Manufacturing")
 # dataBlock_age <- .calculateDataBlock(data,"age","Manufacturing")
 # dataBlock_size <- .calculateDataBlock(data,"size","Manufacturing")
 # dataBlock_expStatus <- .calculateDataBlock(data,"expStatus","Manufacturing")
 # dataBlock_forOwner <- .calculateDataBlock(data,"forOwner","Manufacturing")
-# # write dataBlocks
+
+# write dataBlocks
+# for (sect in sectorList){
+#   for (type in .firmTypeList(sect)){
+#     for (ind in .indicatorList(sect)) {
+#       indCode <- .indicatorToCode(ind)
+#       sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))
+#       write.csv(dataBlock[[paste(sectCode,type,indCode,sep="_")]],paste0("data/dataBlock_",paste(sectCode,type,indCode,sep="_"),".csv"),row.names = FALSE)
+#     }
+#   }
+# }
+
 # write.csv(dataBlock,"data/dataBlock.csv",row.names = FALSE)
 # write.csv(dataBlockServices,"data/dataBlockServices.csv",row.names = FALSE)
 # write.csv(dataBlockManufacturing,"data/dataBlockManufacturing.csv",row.names = FALSE)
@@ -53,14 +88,15 @@ data <- data %>%
 # write.csv(dataBlock_size,"data/dataBlock_size.csv",row.names = FALSE)
 # write.csv(dataBlock_expStatus,"data/dataBlock_expStatus.csv",row.names = FALSE)
 # write.csv(dataBlock_forOwner,"data/dataBlock_forOwner.csv",row.names = FALSE)
+
 # read dataBlocks
-dataBlock <- read.csv("data/dataBlock.csv",stringsAsFactors = FALSE)
-dataBlockServices <- read.csv("data/dataBlockServices.csv",stringsAsFactors = FALSE)
-dataBlockManufacturing <- read.csv("data/dataBlockManufacturing.csv",stringsAsFactors = FALSE)
-dataBlock_age <- read.csv("data/dataBlock_age.csv",stringsAsFactors = FALSE)
-dataBlock_size <- read.csv("data/dataBlock_size.csv",stringsAsFactors = FALSE)
-dataBlock_expStatus <- read.csv("data/dataBlock_expStatus.csv",stringsAsFactors = FALSE)
-dataBlock_forOwner <- read.csv("data/dataBlock_forOwner.csv",stringsAsFactors = FALSE)
+# dataBlock <- read.csv("data/dataBlock.csv",stringsAsFactors = FALSE)
+# dataBlockServices <- read.csv("data/dataBlockServices.csv",stringsAsFactors = FALSE)
+# dataBlockManufacturing <- read.csv("data/dataBlockManufacturing.csv",stringsAsFactors = FALSE)
+# dataBlock_age <- read.csv("data/dataBlock_age.csv",stringsAsFactors = FALSE)
+# dataBlock_size <- read.csv("data/dataBlock_size.csv",stringsAsFactors = FALSE)
+# dataBlock_expStatus <- read.csv("data/dataBlock_expStatus.csv",stringsAsFactors = FALSE)
+# dataBlock_forOwner <- read.csv("data/dataBlock_forOwner.csv",stringsAsFactors = FALSE)
 
 # noResponse <- data.frame(code = c(-5,-6,-7,-8,-9), 
 #                          desc = c("Application denied","Still in process","Does not apply",
