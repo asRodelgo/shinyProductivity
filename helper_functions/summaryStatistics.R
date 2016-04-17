@@ -3,7 +3,7 @@
 # regions and income levels
 # -------------------------------------
 
-.summaryStatsByCountry <- function(data,countryYear,groupByVar,sector){
+.summaryStatsByCountry <- function(countryYear,groupByVar,sector,indicatorDesc){
   
   # indicatorCode <- "n2a_d2"
   # indicatorQuantileCode <- "d2_n2a"
@@ -33,6 +33,14 @@
 #   expStatusU <- expStatus[2]
 #   forOwnerB <- forOwner[1]
 #   forOwnerU <- forOwner[2]
+  
+  # Initial parameters ---------------------------
+  indicatorCode <- .indicatorToCode(indicatorDesc)
+  #indicatorCode <- "n2a_d2"
+  indicatorQuantileCode <- summaryMaps[summaryMaps$code==indicatorCode,]$indicatorQuant
+  N_indicatorCode <- paste0("N_",indicatorCode)
+  outlierIQRfactor <- 3
+  removeOutliers <- 1
   
   # Filter original data by sector
   if (sector == "Manufacturing") {
@@ -272,13 +280,13 @@
 
 
 # calculate indicators by country according to the filters ----------------
-.calculateDataBlock <- function(data,groupByVar,sector) {
+.calculateDataBlock <- function(groupByVar,sector,indicatorDesc) {
   
   dataBlock <- data.frame()
   
   for (cou in countryList) {
   #for (cou in c("Afghanistan2014","Albania2013","Angola2010")) {  
-    addCountry <- .summaryStatsByCountry(data,cou,groupByVar,sector)
+    addCountry <- .summaryStatsByCountry(cou,groupByVar,sector,indicatorDesc)
     # rbind only if returned data is not empty to avoid errors
     if (nrow(dataBlock)>0){ 
       if (!is.na(addCountry[1,ncol(addCountry)])) {
@@ -328,43 +336,35 @@
 .summaryStats <- function(sector,indicatorDesc,firmType){
                                    #ageRange,sizeRange,expRange,ownRange,firmType){
   
-  # Initial parameters ---------------------------
-  indicatorCode <- .indicatorToCode(indicatorDesc)
-  #indicatorCode <- "n2a_d2"
-  indicatorQuantileCode <- summaryMaps[summaryMaps$code==indicatorCode,]$indicatorQuant
-  N_indicatorCode <- paste0("N_",indicatorCode)
-  outlierIQRfactor <- 3
-  removeOutliers <- 1
-  
   # filter data by sector. Only drill down for manufacturing -------------------
   if (sector == "Manufacturing") {
     #data <- filter(data, sector_MS %in% sector)
     if (firmType == "By age") {
       groupByVar <- "age"
       lenVar <- length(firmAgeList)-1
-      dataBlock <- dataBlock_age
+      #dataBlock <- dataBlock_age
     }
     if (firmType == "By size") {
       groupByVar <- "size"
       lenVar <- length(firmSizeList)-1
-      dataBlock <- dataBlock_size
+      #dataBlock <- dataBlock_size
     }
     if (firmType == "By exports status") {
       groupByVar <- "expStatus"
       lenVar <- length(firmExpStatusList)-1
-      dataBlock <- dataBlock_expStatus
+      #dataBlock <- dataBlock_expStatus
     }
     if (firmType == "By foreign ownership") {
       groupByVar <- "forOwner"
       lenVar <- length(firmForeignOwnerList)-1
-      dataBlock <- dataBlock_forOwner
+      #dataBlock <- dataBlock_forOwner
     }
     if (firmType == "By tech. innovation") {
       groupByVar <- "forOwner"
       lenVar <- length(firmForeignOwnerList)-1
-      dataBlock <- dataBlock_forOwner
+      #dataBlock <- dataBlock_forOwner
     }
-    
+    dataBlock <- .calculateDataBlock(groupByVar,sector,indicatorDesc)
     # calculate age, size, export status, foreign ownership and tech innov status and filter
 #     if (sizeRange == "All firms") {
 #       sizeRange <- firmSizeList
@@ -388,7 +388,7 @@
 #     data <- as.data.frame(data)
   
   } else if (sector == "Services"){
-    dataBlock <- dataBlockServices
+    dataBlock <- .calculateDataBlock("all",sector,indicatorDesc)
   }
   
   # Calculate summary statistics for the selected countries ----------
@@ -447,25 +447,25 @@
     row.names(sumStats) <- statsNames
   }
   
-  # Calculate income level summary  ----------
+  # Calculate income level medians  ----------
   incomeStats <- dataBlock %>%
     select(incomeLevel,starts_with("N"),starts_with("mean"),starts_with("median"),
            starts_with("sd"),starts_with("iqr"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
            starts_with("indAlloc")) %>%
     #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(incomeLevel) %>%
-    summarise_each(funs(median))
+    summarise_each(funs(median(as.numeric(.))))
   # reorder columns
   incomeStats <- incomeStats[,reorder]
   
-  # Calculate region level summary  ----------
+  # Calculate region level medians  ----------
   regionStats <- dataBlock %>%
     select(region,starts_with("N"),starts_with("mean"),starts_with("median"),
            starts_with("sd"),starts_with("iqr"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
            starts_with("indAlloc")) %>%
     #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(region) %>%
-    summarise_each(funs(median))
+    summarise_each(funs(median(as.numeric(.))))
   regionStats <- regionStats[,reorder]
   
   # Group summary stats together

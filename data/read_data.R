@@ -54,13 +54,13 @@ data <- data %>%
 # write.csv(dataBlock_expStatus,"data/dataBlock_expStatus.csv",row.names = FALSE)
 # write.csv(dataBlock_forOwner,"data/dataBlock_forOwner.csv",row.names = FALSE)
 # read dataBlocks
-dataBlock <- read.csv("data/dataBlock.csv")
-dataBlockServices <- read.csv("data/dataBlockServices.csv")
-dataBlockManufacturing <- read.csv("data/dataBlockManufacturing.csv")
-dataBlock_age <- read.csv("data/dataBlock_age.csv")
-dataBlock_size <- read.csv("data/dataBlock_size.csv")
-dataBlock_expStatus <- read.csv("data/dataBlock_expStatus.csv")
-dataBlock_forOwner <- read.csv("data/dataBlock_forOwner.csv")
+dataBlock <- read.csv("data/dataBlock.csv",stringsAsFactors = FALSE)
+dataBlockServices <- read.csv("data/dataBlockServices.csv",stringsAsFactors = FALSE)
+dataBlockManufacturing <- read.csv("data/dataBlockManufacturing.csv",stringsAsFactors = FALSE)
+dataBlock_age <- read.csv("data/dataBlock_age.csv",stringsAsFactors = FALSE)
+dataBlock_size <- read.csv("data/dataBlock_size.csv",stringsAsFactors = FALSE)
+dataBlock_expStatus <- read.csv("data/dataBlock_expStatus.csv",stringsAsFactors = FALSE)
+dataBlock_forOwner <- read.csv("data/dataBlock_forOwner.csv",stringsAsFactors = FALSE)
 
 # noResponse <- data.frame(code = c(-5,-6,-7,-8,-9), 
 #                          desc = c("Application denied","Still in process","Does not apply",
