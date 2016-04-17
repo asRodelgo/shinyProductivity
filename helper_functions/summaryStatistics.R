@@ -416,11 +416,12 @@
                            indAlloc_sum = as.numeric(select(sumStatsAux, starts_with("indA"))[1,]),
                            stringsAsFactors = FALSE)
     
+    # transpose every lenVar number of rows into columns
     sumStats2 <- data.frame()
     for (i in 1:length(statsNames)){
       for (j in 1:lenVar){
         for (k in 1:ncol(sumStats)){
-          sumStats2[i,k+(j-1)*ncol(sumStats)] <- sumStats[i+j-1,k] 
+          sumStats2[i,k+(j-1)*ncol(sumStats)] <- sumStats[(i-1)*lenVar + j,k] 
         }
       }
     }
@@ -467,6 +468,15 @@
     summarise_each(funs(median))
   regionStats <- regionStats[,reorder]
   
+  # Group summary stats together
+  incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+  row.names(incomeStats) <- as.character(incomeStats$incomeLevel)
+  incomeStats <- select(incomeStats, -incomeLevel)
+  regionStats <- filter(regionStats, !is.na(region))
+  row.names(regionStats) <- as.character(regionStats$region)
+  regionStats <- select(regionStats, -region)
+  summaryStats <- rbind(sumStats,incomeStats,regionStats)
+  
 }  
 
-
+#write.csv(summaryStats,"summaryStats.csv")
