@@ -99,7 +99,8 @@ source("global_utils.R", local=TRUE)
                                 ,selected = "All countries"),
                     radioButtons("inWhichTable","Select table:",choices = list("Countries"=1,"Summary Stats"=2,"Income level medians"=3
                                                                                ,"Region medians"=4),selected = 1),
-                    actionButton("goSummaryButton","View table")
+                    actionButton("goSummaryButton","View table"),
+                    h6("Download: ",downloadLink("summaryDownTable","data"))
     #                actionButton("goPlotsButton","View table")
                   ),
     #              

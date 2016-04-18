@@ -41,3 +41,19 @@ observe({
   }
 })
 
+# download data ----------------------------
+output$summaryDownTable <- downloadHandler(
+  filename = function() { 
+    paste0("ProductivityTable.csv")
+  },
+  content = function(file) {
+    #write.csv(.GVA_Table(input$inCouSel), file)
+    write.csv(.summaryStats(input$inSectorSum,
+                            input$inIndicatorSum,
+                            input$inFirmTypeSum,
+                            input$inWhichAllocation,
+                            input$inWhichTable
+    ), file, row.names = FALSE)
+  }
+)
+
