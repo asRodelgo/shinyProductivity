@@ -504,15 +504,16 @@
   if (whichTable == 1){
     summaryStats <- dataBlock
     summaryStats <- select(summaryStats, -countryOnly, -yearOnly,-countryDes)
+    summaryStats[,2:(ncol(summaryStats)-2)] <- round(summaryStats[,2:(ncol(summaryStats)-2)],2)
   }
   if (whichTable == 2){
-    summaryStats <- sumStats
+    summaryStats <- round(sumStats,2)
   }
   if (whichTable == 3){
-    summaryStats <- incomeStats
+    summaryStats <- round(incomeStats,2)
   }
   if (whichTable == 4){
-    summaryStats <- regionStats
+    summaryStats <- round(regionStats,2)
   }
   
   # Group summary stats together

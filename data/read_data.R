@@ -51,6 +51,10 @@ firmForeignOwnerList <- c("All firms","0-50%","50-75%","+75%")
   
   indicatorCode <- filter(summaryMaps,indicator == indicatorDesc)$code
 }
+.indicatorToCodeOld <- function(indicatorDesc){
+  
+  indicatorCode <- filter(dataMaps,indicator == indicatorDesc)$code
+}
 
 # pre-process data (execute once at start up) -----------------------
 # segment data according to firm types values

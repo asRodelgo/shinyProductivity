@@ -7,7 +7,7 @@
                         ageRange,sizeRange,expStatus,forOwner){
 
 # removeOutliers <- FALSE
-# outlierIQRfactor <- 10
+# outlierIQRfactor <- 3
 # indicatorCode <- "n2a_d2"
 # indicatorQuantileCode <- "d2_n2a"
 # removeOutliers <- 0
@@ -22,8 +22,8 @@
 #   sizeRange <- "All firms"
   
   # some mappings
-  indicatorCode <- .indicatorToCode(indicatorDesc)
-  indicatorQuantileCode <- .indicatorToCode(indicatorQuantileDesc)
+  indicatorCode <- .indicatorToCodeOld(indicatorDesc)
+  indicatorQuantileCode <- .indicatorToCodeOld(indicatorQuantileDesc)
   N_indicatorCode <- paste0("N_",indicatorCode)
   outlierIQRfactor <- as.numeric(outlierIQRfactor)
   ageB <- ageRange[1]
@@ -92,6 +92,7 @@
                  indicatorQuantile = one_of(indicatorQuantileCode),N_indicator = one_of(N_indicatorCode)) %>%
           filter(!is.na(indicator)) # remove NAs
       }
+      data2 <- as.data.frame(data2)
       data2 <- data2 %>%
         filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
                & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
@@ -106,11 +107,11 @@
                iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
                tot_emp10_50 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
                tot_emp50_90 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
-               emp10 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA),
+               emp10 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA)),
                median_emp10 = weightedMedian(emp10,wt,na.rm=TRUE),
-               emp50 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA),
+               emp50 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA)),
                median_emp50 = weightedMedian(emp50,wt,na.rm=TRUE),
-               emp90 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA),
+               emp90 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA)),
                median_emp90 = weightedMedian(emp90,wt,na.rm=TRUE),
                ratio_median_emp10_50 = median_emp10/median_emp50,
                ratio_median_emp90_50 = median_emp90/median_emp50,
@@ -174,7 +175,7 @@
     data2 <- mutate(data2, outliersOut = sampleSizeBefore - sampleSizeAfter)
   
   } else {
-    data2 <- data.frame(country,income=NA,OPcov=NA,OPcovNoWeights=NA,
+    data2 <- data.frame(country = countryYear,income=NA,OPcov=NA,OPcovNoWeights=NA,
     ratio_median_emp90_50=NA,ratio_median_emp10_50=NA,outliersOut=NA,None=NA)
   }
   # output Indirect Allocative Efficiency
@@ -187,8 +188,8 @@
                         ageRange,sizeRange,expStatus,forOwner) {
 
   # some mappings
-  indicatorCode <- .indicatorToCode(indicatorDesc)
-  indicatorQuantileCode <- .indicatorToCode(indicatorQuantileDesc)
+  indicatorCode <- .indicatorToCodeOld(indicatorDesc)
+  indicatorQuantileCode <- .indicatorToCodeOld(indicatorQuantileDesc)
   outlierIQRfactor <- as.numeric(outlierIQRfactor)
   ageB <- ageRange[1]
   ageU <- ageRange[2]
@@ -225,8 +226,9 @@
       data2 <- data %>%
         filter(country==countryYear) %>%
         select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
-               indicatorQuantile = one_of(indicatorQuantileCode)) %>%
-        filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+               indicatorQuantile = one_of(indicatorQuantileCode))
+      data2 <- as.data.frame(data2)
+      data2 <- filter(data2, (indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
                & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
         ) # remove outliers
     } else{
