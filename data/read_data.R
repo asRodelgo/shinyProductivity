@@ -11,17 +11,44 @@ summaryMaps <- read.csv("data/codeMappings_summaryStats.csv",stringsAsFactors = 
 # country List
 countryList <- sort(unique(data$country))
 #indicators List
-indicatorList <- sort(unique(filter(dataMaps, allSectors == 1)$indicator))
+indicatorList <- sort(unique(filter(summaryMaps, allSectors == 1)$indicator))
 #
 sectorList <- c("All sectors", "Manufacturing", "Services")
 #
-firmTypeList <- c("All firms","By age","By size","By exports status","By tech. innovation","By foreign ownership")
+firmTypeList <- c("All firms","By age","By size","By exports status","By foreign ownership") #,"By tech. innovation"
 #
 firmAgeList <- c("All firms","0-5","6-15","16-30","+30")
 firmSizeList <- c("All firms","Small firms","Medium firms","Large firms")
 firmExpStatusList <- c("All firms","0-25%","26-50%","51-75%","+75%")
 #firmTechInnovList
 firmForeignOwnerList <- c("All firms","0-50%","50-75%","+75%")
+
+.indicatorList <- function(sector){
+  
+  if (sector == "Manufacturing"){
+    indList <- filter(summaryMaps, manufacturing == 1)$indicator
+  } else if (sector == "Services"){
+    indList <- filter(summaryMaps, services == 1)$indicator
+  } else {
+    indList <- filter(summaryMaps, allSectors == 1)$indicator
+  }
+  return(indList)   
+}
+
+.firmTypeList <- function(sector){
+  
+  if (sector == "Manufacturing"){
+    firmList <- c("all","age","size","expStatus","forOwner")
+  } else {
+    firmList <- c("all")
+  }
+  return(firmList)   
+}
+
+.indicatorToCode <- function(indicatorDesc){
+  
+  indicatorCode <- filter(summaryMaps,indicator == indicatorDesc)$code
+}
 
 # pre-process data (execute once at start up) -----------------------
 # segment data according to firm types values

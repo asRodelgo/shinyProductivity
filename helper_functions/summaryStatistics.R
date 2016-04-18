@@ -2,27 +2,6 @@
 # Functions to calculate final tables with summary statistics by firm characteristics,
 # regions and income levels
 # -------------------------------------
-.indicatorList <- function(sector){
-  
- if (sector == "Manufacturing"){
-   indList <- filter(summaryMaps, manufacturing == 1)$indicator
- } else if (sector == "Services"){
-   indList <- filter(summaryMaps, services == 1)$indicator
- } else {
-   indList <- filter(summaryMaps, allSectors == 1)$indicator
- }
-  return(indList)   
-}
-
-.firmTypeList <- function(sector){
-  
-  if (sector == "Manufacturing"){
-    firmList <- c("all","age","size","expStatus","forOwner")
-  } else {
-    firmList <- c("all")
-  }
-  return(firmList)   
-}
 
 
 .summaryStatsByCountry <- function(countryYear,groupByVar,sector,indicatorDesc){
@@ -355,8 +334,14 @@
 }
 
 # Calculate summary stats -----------------------------------
-.summaryStats <- function(sector,indicatorDesc,firmType){
+.summaryStats <- function(sector,indicatorDesc,firmType,allocEff,whichTable){
                                    #ageRange,sizeRange,expRange,ownRange,firmType){
+  
+  # sector <- "Manufacturing"
+  # indicatorDesc <- "labor cost (n2a) over sales (d2)"
+  # firmType <- "By exports status"
+  # allocEff <- "Direct Allocation Efficient"
+  # whichTable <- 1
   
   # filter data by sector. Only drill down for manufacturing -------------------
   indicatorCode <- .indicatorToCode(indicatorDesc)
@@ -389,36 +374,43 @@
       lenVar <- length(firmForeignOwnerList)-1
       #dataBlock <- dataBlock_forOwner
     }
-    dataBlock <- dataBlock[[paste(sectCode,groupByVar,indicatorCode,sep="_")]]
-    # calculate age, size, export status, foreign ownership and tech innov status and filter
-#     if (sizeRange == "All firms") {
-#       sizeRange <- firmSizeList
-#     }
-#     if (ageRange == "All firms") {
-#       ageRange <- firmAgeList
-#     }
-#     if (expRange == "All firms") {
-#       expRange <- firmExpStatusList
-#     }
-#     if (ownRange == "All firms") {
-#       ownRange <- firmForeignOwnerList
-#     }
-    
-#     data <- data %>%
-#       group_by(country,idstd) %>%
-#       filter(age %in% ageRange & size %in% sizeRange &
-#                expStatus %in% expRange & 
-#                forOwner %in% ownRange)
-#     
-#     data <- as.data.frame(data)
-  
+    thisDataBlock <- dataBlock[[paste(sectCode,groupByVar,indicatorCode,sep="_")]]
+    # use this DataBlock to filter Manufacturing sector indicators by allocation efficiency 
+    manufDataBlock <- dataBlock[[paste("Manuf","all",indicatorCode,sep="_")]]
+    refDataBlock <- manufDataBlock
+
   } else if (sector == "Services"){
-    dataBlock <- dataBlock[[paste("Serv","all",indicatorCode,sep="_")]]
+    thisDataBlock <- dataBlock[[paste("Serv","all",indicatorCode,sep="_")]]
+    refDataBlock <- thisDataBlock
+  } else {
+    thisDataBlock <- dataBlock[[paste("AllSect","all",indicatorCode,sep="_")]]
+    refDataBlock <- thisDataBlock
   }
-  
+  dataBlock <- as.data.frame(thisDataBlock)
   # Calculate summary statistics for the selected countries ----------
   statsNames <- c("Min", "Max", "Mean", "Median", "Stdev")
   
+  # remove columns generated from NA adCountry to avoid errors
+  dataBlock <- select(dataBlock, everything(), -ends_with("_NA"))
+  
+  # Filter dataBlock according to the desired allocation Efficiency
+  if (allocEff == "Direct and Indirect Allocation Efficient"){
+    refDataBlock <- filter(refDataBlock, (OPcov > 0) & (indAlloc > 1)) 
+  } else if (allocEff == "Direct Allocation Efficient"){
+    refDataBlock <- filter(refDataBlock, OPcov > 0) 
+  } else if (allocEff == "Indirect Allocation Efficient"){
+    refDataBlock <- filter(refDataBlock, indAlloc > 1) 
+  } else if (allocEff == "Allocation Inefficient"){
+    refDataBlock <- filter(refDataBlock, (OPcov < 0) & (indAlloc < 1)) 
+  }
+  # Filter by allocation has to be done from the all firms dataBlock for Manufacturing
+  if (!(firmType == "All firms")){
+    refCountries <- refDataBlock$country
+    dataBlock <- filter(dataBlock, country %in% refCountries)
+  } else {
+    dataBlock <- refDataBlock
+  } 
+    
   # If sector is Manufacturing then group by groupByVar
   if (!(firmType == "All firms")){
     
@@ -457,7 +449,7 @@
   } else {
     
     sumStatsAux <- dataBlock %>%
-      select(N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
+      select(N,mean,median,sd,iqr,OPcov,OPcovNoWeights,indAlloc) %>%
       summarise_each(funs(min,max,mean,median,sd))
     
     sumStats <- data.frame(N_sum = as.numeric(select(sumStatsAux, starts_with("N"))[1,]),
@@ -480,8 +472,7 @@
     #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(incomeLevel) %>%
     summarise_each(funs(median(as.numeric(.))))
-  # reorder columns
-  incomeStats <- incomeStats[,reorder]
+  incomeStats <- as.data.frame(incomeStats)
   
   # Calculate region level medians  ----------
   regionStats <- dataBlock %>%
@@ -491,17 +482,45 @@
     #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(region) %>%
     summarise_each(funs(median(as.numeric(.))))
-  regionStats <- regionStats[,reorder]
+  regionStats <- as.data.frame(regionStats)
   
-  # Group summary stats together
+  if (!(firmType == "All firms")){
+    # reorder columns
+    incomeStats <- incomeStats[,reorder]
+    regionStats <- regionStats[,reorder]
+  }
+  
   incomeStats <- filter(incomeStats, !is.na(incomeLevel))
   row.names(incomeStats) <- as.character(incomeStats$incomeLevel)
   incomeStats <- select(incomeStats, -incomeLevel)
   regionStats <- filter(regionStats, !is.na(region))
   row.names(regionStats) <- as.character(regionStats$region)
   regionStats <- select(regionStats, -region)
-  summaryStats <- rbind(sumStats,incomeStats,regionStats)
   
+  # -------------------------------------------
+  # Prepare the output table
+  # -------------------------
+  # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
+  if (whichTable == 1){
+    summaryStats <- dataBlock
+  }
+  if (whichTable == 2){
+    summaryStats <- sumStats
+  }
+  if (whichTable == 3){
+    summaryStats <- incomeStats
+  }
+  if (whichTable == 4){
+    summaryStats <- regionStats
+  }
+  
+  # Group summary stats together
+#   if (firmType == "All firms"){
+#     names(sumStats) <- names(incomeStats)
+#   }
+#   summaryStats <- rbind(sumStats,incomeStats,regionStats)
+  
+  return(summaryStats)
 }  
 
 #write.csv(summaryStats,"summaryStats.csv")

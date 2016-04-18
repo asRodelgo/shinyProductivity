@@ -79,7 +79,7 @@ source("global_utils.R", local=TRUE)
                
                # Application title
                titlePanel("ES Innovation and Productivity Indicators"),
-               
+               shinyjs::useShinyjs(), # to make hide/show work
                # Sidebar with a slider input for number of bins
                 sidebarLayout(
                   sidebarPanel(
@@ -87,11 +87,18 @@ source("global_utils.R", local=TRUE)
     #                selectInput("inCountry", "Select a country:", countryList, selected="Afghanistan"),
     #                radioButtons("inOutliers","Remove outliers?",choices = list("Yes"=1,"No"=0),selected = 0),
     #                textInput("inIQRfactor","Outlier threshold (Ot): [Q1 - Ot*IQR,Q3 + Ot*IQR]",value=3),
-                    selectInput("inIndicatorSum","Select indicator",indicatorList,selected = "labor cost (n2a) over sales (d2)"),
                     selectInput("inSectorSum", "Select sector:", sectorList, selected="All sectors"),
-                    selectInput("inFirmTypeSum", "Select firm characteristic:", firmTypeList, selected="All firms"),
-    #                selectInput("inIndicatorQuant","Select indicator with which to calculate quantiles",indicatorList,selected = "sales (d2) over labor cost (n2a)"),
-    #                radioButtons("inWeights","Select type of weight",choices = list("Sampling"=1,"Market share"=2,"Employment share"=3),selected = 1),
+                    shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
+                      div(id="firmTypesSum",
+                      selectInput("inFirmTypeSum", "Select firm characteristic:", firmTypeList, selected="All firms")
+                    )),  
+                    selectInput("inIndicatorSum","Select indicator:",indicatorList,selected = "labor cost (n2a) over sales (d2)"),
+                    selectInput("inWhichAllocation","Select Efficiency:",choices=c("All countries", "Direct and Indirect Allocation Efficient",
+                                                                                   "Direct Allocation Efficient","Direct Allocation Efficient",
+                                                                                   "Allocation Inefficient")
+                                ,selected = "All countries"),
+                    radioButtons("inWhichTable","Select table:",choices = list("Countries"=1,"Summary Stats"=2,"Income level medians"=3
+                                                                               ,"Region medians"=4),selected = 1),
                     actionButton("goSummaryButton","View table")
     #                actionButton("goPlotsButton","View table")
                   ),

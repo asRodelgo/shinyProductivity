@@ -30,3 +30,14 @@ observe({
     #shinyjs::show(id="showFiltersButton")
   }
 })
+
+# Summary tab -----------------------
+# If manufacturing then show the firm type panel, else hide it
+observe({
+  if(input$inSectorSum=="Manufacturing"){
+    shinyjs::show(id="firmTypesSum")
+  } else {
+    shinyjs::hide(id="firmTypesSum")
+  }
+})
+

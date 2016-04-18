@@ -1,10 +1,6 @@
 ###
 # 1. Calculate all summary stats as in Nona's excel file
 ###
-.indicatorToCode <- function(indicatorDesc){
-  
-  indicatorCode <- filter(summaryMaps,indicator == indicatorDesc)$code
-}
 
 
 .statsTable <- function(sector,countryYear,removeOutliers,outlierIQRfactor,indicatorDesc,indicatorQuantileDesc,weightType,
