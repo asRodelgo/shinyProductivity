@@ -19,7 +19,7 @@ source("global_utils.R", local=TRUE)
       tabPanel(title = "Data checks",
                
       # Application title
-#        titlePanel("ES Innovation and Productivity Indicators"),
+        titlePanel("ES Innovation and Productivity Indicators"),
         shinyjs::useShinyjs(), # to make hide/show work
       
         # Sidebar with a slider input for number of bins
@@ -75,7 +75,7 @@ source("global_utils.R", local=TRUE)
           )
         )
       ),
-      tabPanel(title = "Data navigation",
+      tabPanel(title = "Summary Statistics",
                
                # Application title
                titlePanel("ES Innovation and Productivity Indicators"),
@@ -110,7 +110,7 @@ source("global_utils.R", local=TRUE)
     #                br(),
     #                h5(textOutput("outliersText")),
     #                br(),
-                    tableOutput("summaryTable")
+                    dataTableOutput("summaryTable")
     #                tableOutput("statsTable"),
     #                plotOutput("statsPlots"),
     #                br()

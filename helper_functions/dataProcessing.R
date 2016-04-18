@@ -8,8 +8,8 @@
 
 # removeOutliers <- FALSE
 # outlierIQRfactor <- 10
-# indicatorCode <- "d2_l1"
-# indicatorQuantileCode <- "d2_l1"
+# indicatorCode <- "n2a_d2"
+# indicatorQuantileCode <- "d2_n2a"
 # removeOutliers <- 0
 # countryYear <- "Afghanistan2014"  
 #   ageB <- 0
@@ -60,6 +60,7 @@
     data_aux <- data %>%
       select(country,N_indicator = one_of(N_indicatorCode)) %>%
       filter(country == countryYear) %>%
+      group_by(country) %>%
       mutate(sampleSizeBefore=sum(N_indicator,na.rm=TRUE))
     sampleSizeBefore = data_aux$sampleSizeBefore[1]
     
@@ -137,7 +138,8 @@
           select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
                  indicatorQuantile = one_of(indicatorQuantileCode),N_indicator = one_of(N_indicatorCode)) %>%
           filter(!is.na(indicator)) # remove NAs
-      }  
+      }
+      data2 <- as.data.frame(data2)
       data2 <- data2 %>%  
         mutate(N = sum(N_indicator,na.rm=TRUE),
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
@@ -149,11 +151,11 @@
                iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
                tot_emp10_50 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
                tot_emp50_90 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
-               emp10 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA),
+               emp10 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA)),
                median_emp10 = weightedMedian(emp10,wt,na.rm=TRUE),
-               emp50 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA),
+               emp50 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA)),
                median_emp50 = weightedMedian(emp50,wt,na.rm=TRUE),
-               emp90 = ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA),
+               emp90 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA)),
                median_emp90 = weightedMedian(emp90,wt,na.rm=TRUE),
                ratio_median_emp10_50 = median_emp10/median_emp50,
                ratio_median_emp90_50 = median_emp90/median_emp50,

@@ -503,6 +503,7 @@
   # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
   if (whichTable == 1){
     summaryStats <- dataBlock
+    summaryStats <- select(summaryStats, -countryOnly, -yearOnly,-countryDes)
   }
   if (whichTable == 2){
     summaryStats <- sumStats
@@ -519,6 +520,8 @@
 #     names(sumStats) <- names(incomeStats)
 #   }
 #   summaryStats <- rbind(sumStats,incomeStats,regionStats)
+  
+  summaryStats[is.na(summaryStats)] <- "---"
   
   return(summaryStats)
 }  

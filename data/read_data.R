@@ -13,6 +13,8 @@ countryList <- sort(unique(data$country))
 #indicators List
 indicatorList <- sort(unique(filter(summaryMaps, allSectors == 1)$indicator))
 #
+#indicatorListOrig <- sort(unique(filter(dataMaps, allSectors == 1)$indicator))
+#
 sectorList <- c("All sectors", "Manufacturing", "Services")
 #
 firmTypeList <- c("All firms","By age","By size","By exports status","By foreign ownership") #,"By tech. innovation"

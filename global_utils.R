@@ -10,6 +10,8 @@ library(readstata13) # read data in version 13 of Stata
 library(matrixStats) # calculate weighted median
 # library(reldist) # calculate weighted quantiles
 library(Hmisc) # calculate weighted quantiles
+library(DT) # customize dataTable javascript library
+
 # --------------------------------------------------------
 # Object: load the raw questionnaire data and perform:
 # 1. Calculate summary statistics with/without weights.Check with Nona's

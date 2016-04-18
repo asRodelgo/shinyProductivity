@@ -12,20 +12,20 @@ summaryTableGo <- eventReactive(input$goSummaryButton,{
   
 })
 
-output$summaryTable <- renderTable({
+output$summaryTable <- renderDataTable({
   
   input$goSummaryButton
   
   isolate({
     
-    .summaryStats(input$inSectorSum,
-                  input$inIndicatorSum,
-                  input$inFirmTypeSum,
-                  input$inWhichAllocation,
-                  input$inWhichTable
-                  )
-    
+    summTable <- .summaryStats(input$inSectorSum,
+                      input$inIndicatorSum,
+                      input$inFirmTypeSum,
+                      input$inWhichAllocation,
+                      input$inWhichTable
+                      )
+    return(summTable)
   })
   
-},include.rownames=TRUE)
+})#,include.rownames=TRUE)
 
