@@ -110,7 +110,12 @@ source("global_utils.R", local=TRUE)
     #                br(),
     #                h5(textOutput("outliersText")),
     #                br(),
-                    dataTableOutput("summaryTable")
+                    dataTableOutput("summaryTable"),
+                    shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
+                      div(id="summPlots",
+                          plotOutput("summPlots")
+                      ))
+                    
     #                tableOutput("statsTable"),
     #                plotOutput("statsPlots"),
     #                br()

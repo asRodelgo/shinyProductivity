@@ -418,7 +418,7 @@
     
     sumStatsAux <- dataBlock %>%
       select(starts_with("N"),starts_with("mean"),starts_with("median"),
-             starts_with("sd"),starts_with("iqr"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
+             starts_with("sd"),starts_with("iqr"),starts_with("OPcov_"),starts_with("OPcovNoWeights"),
              starts_with("indAlloc")) %>%
       summarise_each(funs(min(., na.rm = TRUE),max(., na.rm = TRUE),mean(., na.rm = TRUE),
                           median(., na.rm = TRUE),sd(., na.rm = TRUE)))
@@ -467,7 +467,7 @@
   # Calculate income level medians  ----------
   incomeStats <- dataBlock %>%
     select(incomeLevel,starts_with("N"),starts_with("mean"),starts_with("median"),
-           starts_with("sd"),starts_with("iqr"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
+           starts_with("sd"),starts_with("iqr"),starts_with("OPcov_"),starts_with("OPcovNoWeights"),
            starts_with("indAlloc")) %>%
     #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(incomeLevel) %>%
@@ -477,7 +477,7 @@
   # Calculate region level medians  ----------
   regionStats <- dataBlock %>%
     select(region,starts_with("N"),starts_with("mean"),starts_with("median"),
-           starts_with("sd"),starts_with("iqr"),starts_with("OPcov"),starts_with("OPcovNoWeights"),
+           starts_with("sd"),starts_with("iqr"),starts_with("OPcov_"),starts_with("OPcovNoWeights"),
            starts_with("indAlloc")) %>%
     #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
     group_by(region) %>%
