@@ -174,9 +174,11 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
       }
       
       incomeStats <- filter(incomeStats, !is.na(incomeLevel))
-      row.names(incomeStats) <- as.character(incomeStats$incomeLevel)
+      incomeRowNames <- as.character(incomeStats$incomeLevel)
       incomeStats <- select(incomeStats, -incomeLevel)
-      
+      incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+      row.names(incomeStats) <- incomeRowNames
+      incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
       
       dataPlot1 <- select(incomeStats, starts_with("OPcov_"))
       dataPlot1 <- dataPlot1[,colOrder]
@@ -186,6 +188,10 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
       dataPlot2 <- dataPlot2[,colOrder]
       dataPlot2 <- mutate(dataPlot2, income = row.names(dataPlot2))
       dataPlot2 <- gather(dataPlot2, type, value, -income)
+      
+      # reorder income levels
+      #dataPlot1$income <- factor(dataPlot1$income, levels(dataPlot1$income)[c(2,3,4,1)])
+      #dataPlot2$income <- factor(dataPlot2$income, levels(dataPlot2$income)[c(2,3,4,1)])
       
       p1 <- ggplot(dataPlot1, aes(x=type,y=value,fill=type)) +
         geom_bar(position="dodge",stat="identity") +
@@ -231,9 +237,10 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
       }
       
       regionStats <- filter(regionStats, !is.na(region))
-      row.names(regionStats) <- as.character(regionStats$region)
+      regionRowNames <- as.character(regionStats$region)
       regionStats <- select(regionStats, -region)
-      
+      regionStats <- mutate_each(regionStats, funs(as.numeric))
+      row.names(regionStats) <- regionRowNames
       
       dataPlot1 <- select(regionStats, starts_with("OPcov_"))
       dataPlot1 <- dataPlot1[,colOrder]
