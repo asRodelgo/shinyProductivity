@@ -340,8 +340,8 @@
   # sector <- "Manufacturing"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
   # firmType <- "By exports status"
-  # allocEff <- "Direct Allocation Efficient"
-  # whichTable <- 1
+  # allocEff <- "All countries"
+  # whichTable <- 3
   
   # filter data by sector. Only drill down for manufacturing -------------------
   indicatorCode <- .indicatorToCode(indicatorDesc)
@@ -501,6 +501,8 @@
   # Prepare the output table
   # -------------------------
   # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
+  incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+  regionStats <- mutate_each(regionStats, funs(as.numeric))
   if (whichTable == 1){
     summaryStats <- dataBlock
     summaryStats <- select(summaryStats, -countryOnly, -yearOnly,-countryDes)
