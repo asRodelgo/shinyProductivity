@@ -61,6 +61,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   indicatorCode <- .indicatorToCode(indicatorDesc)
   sectCode <- ifelse(sector=="All sectors","AllSect",ifelse(sector=="Manufacturing","Manuf","Serv"))
   
+  groupByVar <- "all"
   if (sector == "Manufacturing") {
     #data <- filter(data, sector_MS %in% sector)
     if (firmType == "By age") {
@@ -104,9 +105,11 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
     refDataBlock <- manufDataBlock
     
   } else if (sector == "Services"){
+    firmType == "All firms"
     thisDataBlock <- dataBlock[[paste("Serv","all",indicatorCode,sep="_")]]
     refDataBlock <- thisDataBlock
   } else {
+    firmType == "All firms"
     thisDataBlock <- dataBlock[[paste("AllSect","all",indicatorCode,sep="_")]]
     refDataBlock <- thisDataBlock
   }
@@ -128,7 +131,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
     refDataBlock <- filter(refDataBlock, (OPcov < 0) & (indAlloc < 1)) 
   }
   # Filter by allocation has to be done from the all firms dataBlock for Manufacturing
-  if (!(firmType == "All firms")){
+  if (!(firmType == "All firms") & (sector=="Manufacturing")){
     reorder <- .reorderColumns(lenVar) # call the reorder function to arrange columns
     refCountries <- refDataBlock$country
     dataBlock <- filter(dataBlock, country %in% refCountries)
@@ -140,136 +143,138 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   # ----------------------------------------------------
   
   # Plotting part
-  if (whichTable==2){
-      dataPlot1 <- select(dataBlock, starts_with("OPcov_"))
+  if (!(firmType == "All firms") & (sector=="Manufacturing")){ # for now only plot Manufacturing
+    if (whichTable==2){
+        dataPlot1 <- select(dataBlock, starts_with("OPcov_"))
+        dataPlot1 <- dataPlot1[,colOrder]
+        dataPlot2 <- select(dataBlock, starts_with("indAlloc"))
+        dataPlot2 <- dataPlot2[,colOrder]
+        
+        par(mfrow = c(1,2))
+        boxplot(dataPlot1,names=thisList)
+        title("O-P covariance (unweighted)")
+        boxplot(dataPlot2,names=thisList)
+        title("Indirect Allocation")
+        mtext(paste(indicatorDesc,firmType), outer = TRUE, cex = 1.5)
+        
+    } else if (whichTable==3){
+      # Calculate income level medians  ----------
+      incomeStats <- dataBlock %>%
+        select(incomeLevel,starts_with("N"),starts_with("mean"),starts_with("median"),
+               starts_with("sd"),starts_with("iqr"),starts_with("OPcov_"),starts_with("OPcovNoWeights"),
+               starts_with("indAlloc")) %>%
+        #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
+        group_by(incomeLevel) %>%
+        summarise_each(funs(median(as.numeric(.))))
+      incomeStats <- as.data.frame(incomeStats)
+      
+      if (!(firmType == "All firms") & (sector=="Manufacturing")){
+        # reorder columns
+        incomeStats <- incomeStats[,reorder]
+      }
+      
+      incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+      row.names(incomeStats) <- as.character(incomeStats$incomeLevel)
+      incomeStats <- select(incomeStats, -incomeLevel)
+      
+      
+      dataPlot1 <- select(incomeStats, starts_with("OPcov_"))
       dataPlot1 <- dataPlot1[,colOrder]
-      dataPlot2 <- select(dataBlock, starts_with("indAlloc"))
+      dataPlot1 <- mutate(dataPlot1, income = row.names(dataPlot1))
+      dataPlot1 <- gather(dataPlot1, type, value, -income)
+      dataPlot2 <- select(incomeStats, starts_with("indAlloc"))
       dataPlot2 <- dataPlot2[,colOrder]
+      dataPlot2 <- mutate(dataPlot2, income = row.names(dataPlot2))
+      dataPlot2 <- gather(dataPlot2, type, value, -income)
       
-      par(mfrow = c(1,2))
-      boxplot(dataPlot1,names=thisList)
-      title("O-P covariance (unweighted)")
-      boxplot(dataPlot2,names=thisList)
-      title("Indirect Allocation")
-      mtext(paste(indicatorDesc,firmType), outer = TRUE, cex = 1.5)
+      p1 <- ggplot(dataPlot1, aes(x=type,y=value,fill=type)) +
+        geom_bar(position="dodge",stat="identity") +
+        facet_wrap(~income) +
+        theme(legend.key=element_blank(),
+              legend.title=element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),plot.title = element_text(lineheight=.5),
+              axis.ticks.x = element_blank(),
+              axis.text.x = element_blank()) + 
+        labs(x="",y="",title=paste("OP covariances",firmType))+
+        scale_fill_manual(values = rainbow(lenVar),labels = thisList)
       
-  } else if (whichTable==3){
-    # Calculate income level medians  ----------
-    incomeStats <- dataBlock %>%
-      select(incomeLevel,starts_with("N"),starts_with("mean"),starts_with("median"),
-             starts_with("sd"),starts_with("iqr"),starts_with("OPcov_"),starts_with("OPcovNoWeights"),
-             starts_with("indAlloc")) %>%
-      #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
-      group_by(incomeLevel) %>%
-      summarise_each(funs(median(as.numeric(.))))
-    incomeStats <- as.data.frame(incomeStats)
-    
-    if (!(firmType == "All firms")){
-      # reorder columns
-      incomeStats <- incomeStats[,reorder]
+      p2 <- ggplot(dataPlot2, aes(x=type,y=value,fill=type)) +
+        geom_bar(position="dodge",stat="identity") +
+        facet_wrap(~income) +
+        theme(legend.key=element_blank(),
+              legend.title=element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),plot.title = element_text(lineheight=.5),
+              axis.ticks.x = element_blank(),
+              axis.text.x = element_blank()) + 
+        labs(x="",y="",title=paste("Indirect Allocation Ratio",firmType))+
+        scale_fill_manual(values = rainbow(lenVar),labels = thisList)
+      
+      # Plot side by side
+      multiplot(p1,p2,cols=2)
+      
+    } else if (whichTable==4){
+      # Calculate income level medians  ----------
+      regionStats <- dataBlock %>%
+        select(region,starts_with("N"),starts_with("mean"),starts_with("median"),
+               starts_with("sd"),starts_with("iqr"),starts_with("OPcov_"),starts_with("OPcovNoWeights"),
+               starts_with("indAlloc")) %>%
+        #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
+        group_by(region) %>%
+        summarise_each(funs(median(as.numeric(.))))
+      regionStats <- as.data.frame(regionStats)
+      
+      if (!(firmType == "All firms") & (sector=="Manufacturing")){
+        # reorder columns
+        regionStats <- regionStats[,reorder]
+      }
+      
+      regionStats <- filter(regionStats, !is.na(region))
+      row.names(regionStats) <- as.character(regionStats$region)
+      regionStats <- select(regionStats, -region)
+      
+      
+      dataPlot1 <- select(regionStats, starts_with("OPcov_"))
+      dataPlot1 <- dataPlot1[,colOrder]
+      dataPlot1 <- mutate(dataPlot1, region = row.names(dataPlot1))
+      dataPlot1 <- gather(dataPlot1, type, value, -region)
+      dataPlot2 <- select(regionStats, starts_with("indAlloc"))
+      dataPlot2 <- dataPlot2[,colOrder]
+      dataPlot2 <- mutate(dataPlot2, region = row.names(dataPlot2))
+      dataPlot2 <- gather(dataPlot2, type, value, -region)
+      
+      p1 <- ggplot(dataPlot1, aes(x=type,y=value,fill=type)) +
+        geom_bar(position="dodge",stat="identity") +
+        facet_wrap(~region) +
+        theme(legend.key=element_blank(),
+              legend.title=element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),plot.title = element_text(lineheight=.5),
+              axis.ticks.x = element_blank(),
+              axis.text.x = element_blank()) + 
+        labs(x="",y="",title=paste("OP covariances",firmType))+
+        scale_fill_manual(values = rainbow(lenVar),labels = thisList)
+      
+      p2 <- ggplot(dataPlot2, aes(x=type,y=value,fill=type)) +
+        geom_bar(position="dodge",stat="identity") +
+        facet_wrap(~region) +
+        theme(legend.key=element_blank(),
+              legend.title=element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),plot.title = element_text(lineheight=.5),
+              axis.ticks.x = element_blank(),
+              axis.text.x = element_blank()) + 
+        labs(x="",y="",title=paste("Indirect Allocation Ratio",firmType))+
+        scale_fill_manual(values = rainbow(lenVar),labels = thisList)
+      
+      # Plot side by side
+      multiplot(p1,p2,cols=2)
+      
+    } else {
+        plot(c(1,1),type="n", frame.plot = FALSE, axes=FALSE, ann=FALSE)
+        graphics::text(1.5, 1,"Chart not yet available", cex=2)
     }
-    
-    incomeStats <- filter(incomeStats, !is.na(incomeLevel))
-    row.names(incomeStats) <- as.character(incomeStats$incomeLevel)
-    incomeStats <- select(incomeStats, -incomeLevel)
-    
-    
-    dataPlot1 <- select(incomeStats, starts_with("OPcov_"))
-    dataPlot1 <- dataPlot1[,colOrder]
-    dataPlot1 <- mutate(dataPlot1, income = row.names(dataPlot1))
-    dataPlot1 <- gather(dataPlot1, type, value, -income)
-    dataPlot2 <- select(incomeStats, starts_with("indAlloc"))
-    dataPlot2 <- dataPlot2[,colOrder]
-    dataPlot2 <- mutate(dataPlot2, income = row.names(dataPlot2))
-    dataPlot2 <- gather(dataPlot2, type, value, -income)
-    
-    p1 <- ggplot(dataPlot1, aes(x=type,y=value,fill=type)) +
-      geom_bar(position="dodge",stat="identity") +
-      facet_wrap(~income) +
-      theme(legend.key=element_blank(),
-            legend.title=element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),plot.title = element_text(lineheight=.5),
-            axis.ticks.x = element_blank(),
-            axis.text.x = element_blank()) + 
-      labs(x="",y="",title=paste("OP covariances",firmType))+
-      scale_fill_manual(values = rainbow(lenVar),labels = thisList)
-    
-    p2 <- ggplot(dataPlot2, aes(x=type,y=value,fill=type)) +
-      geom_bar(position="dodge",stat="identity") +
-      facet_wrap(~income) +
-      theme(legend.key=element_blank(),
-            legend.title=element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),plot.title = element_text(lineheight=.5),
-            axis.ticks.x = element_blank(),
-            axis.text.x = element_blank()) + 
-      labs(x="",y="",title=paste("Indirect Allocation Ratio",firmType))+
-      scale_fill_manual(values = rainbow(lenVar),labels = thisList)
-    
-    # Plot side by side
-    multiplot(p1,p2,cols=2)
-    
-  } else if (whichTable==4){
-    # Calculate income level medians  ----------
-    regionStats <- dataBlock %>%
-      select(region,starts_with("N"),starts_with("mean"),starts_with("median"),
-             starts_with("sd"),starts_with("iqr"),starts_with("OPcov_"),starts_with("OPcovNoWeights"),
-             starts_with("indAlloc")) %>%
-      #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
-      group_by(region) %>%
-      summarise_each(funs(median(as.numeric(.))))
-    regionStats <- as.data.frame(regionStats)
-    
-    if (!(firmType == "All firms")){
-      # reorder columns
-      regionStats <- regionStats[,reorder]
-    }
-    
-    regionStats <- filter(regionStats, !is.na(region))
-    row.names(regionStats) <- as.character(regionStats$region)
-    regionStats <- select(regionStats, -region)
-    
-    
-    dataPlot1 <- select(regionStats, starts_with("OPcov_"))
-    dataPlot1 <- dataPlot1[,colOrder]
-    dataPlot1 <- mutate(dataPlot1, region = row.names(dataPlot1))
-    dataPlot1 <- gather(dataPlot1, type, value, -region)
-    dataPlot2 <- select(regionStats, starts_with("indAlloc"))
-    dataPlot2 <- dataPlot2[,colOrder]
-    dataPlot2 <- mutate(dataPlot2, region = row.names(dataPlot2))
-    dataPlot2 <- gather(dataPlot2, type, value, -region)
-    
-    p1 <- ggplot(dataPlot1, aes(x=type,y=value,fill=type)) +
-      geom_bar(position="dodge",stat="identity") +
-      facet_wrap(~region) +
-      theme(legend.key=element_blank(),
-            legend.title=element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),plot.title = element_text(lineheight=.5),
-            axis.ticks.x = element_blank(),
-            axis.text.x = element_blank()) + 
-      labs(x="",y="",title=paste("OP covariances",firmType))+
-      scale_fill_manual(values = rainbow(lenVar),labels = thisList)
-    
-    p2 <- ggplot(dataPlot2, aes(x=type,y=value,fill=type)) +
-      geom_bar(position="dodge",stat="identity") +
-      facet_wrap(~region) +
-      theme(legend.key=element_blank(),
-            legend.title=element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),plot.title = element_text(lineheight=.5),
-            axis.ticks.x = element_blank(),
-            axis.text.x = element_blank()) + 
-      labs(x="",y="",title=paste("Indirect Allocation Ratio",firmType))+
-      scale_fill_manual(values = rainbow(lenVar),labels = thisList)
-    
-    # Plot side by side
-    multiplot(p1,p2,cols=2)
-    
-  } else {
-      plot(c(1,1),type="n", frame.plot = FALSE, axes=FALSE, ann=FALSE)
-      graphics::text(1.5, 1,"Chart not yet available", cex=2)
   }
 }  
 

@@ -337,16 +337,17 @@
 .summaryStats <- function(sector,indicatorDesc,firmType,allocEff,whichTable){
                                    #ageRange,sizeRange,expRange,ownRange,firmType){
   
-  # sector <- "Manufacturing"
+  # sector <- "All sectors"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
-  # firmType <- "By exports status"
+  # firmType <- "By age"
   # allocEff <- "All countries"
-  # whichTable <- 3
+  # whichTable <- 2
   
   # filter data by sector. Only drill down for manufacturing -------------------
   indicatorCode <- .indicatorToCode(indicatorDesc)
   sectCode <- ifelse(sector=="All sectors","AllSect",ifelse(sector=="Manufacturing","Manuf","Serv"))
   
+  groupByVar <- "all"
   if (sector == "Manufacturing") {
     #data <- filter(data, sector_MS %in% sector)
     if (firmType == "By age") {
@@ -380,9 +381,11 @@
     refDataBlock <- manufDataBlock
 
   } else if (sector == "Services"){
+    firmType == "All firms"
     thisDataBlock <- dataBlock[[paste("Serv","all",indicatorCode,sep="_")]]
     refDataBlock <- thisDataBlock
   } else {
+    firmType == "All firms"
     thisDataBlock <- dataBlock[[paste("AllSect","all",indicatorCode,sep="_")]]
     refDataBlock <- thisDataBlock
   }
@@ -404,7 +407,7 @@
     refDataBlock <- filter(refDataBlock, (OPcov < 0) & (indAlloc < 1)) 
   }
   # Filter by allocation has to be done from the all firms dataBlock for Manufacturing
-  if (!(firmType == "All firms")){
+  if (!(firmType == "All firms") & (sector=="Manufacturing")){
     refCountries <- refDataBlock$country
     dataBlock <- filter(dataBlock, country %in% refCountries)
   } else {
@@ -412,7 +415,7 @@
   } 
     
   # If sector is Manufacturing then group by groupByVar
-  if (!(firmType == "All firms")){
+  if (!(firmType == "All firms") & (sector=="Manufacturing")){
     
     reorder <- .reorderColumns(lenVar) # call the reorder function to arrange columns
     
@@ -484,7 +487,7 @@
     summarise_each(funs(median(as.numeric(.))))
   regionStats <- as.data.frame(regionStats)
   
-  if (!(firmType == "All firms")){
+  if (!(firmType == "All firms") & (sector=="Manufacturing")){
     # reorder columns
     incomeStats <- incomeStats[,reorder]
     regionStats <- regionStats[,reorder]
