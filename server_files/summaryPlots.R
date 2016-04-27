@@ -1,6 +1,6 @@
 # summary Plots  ----------------------------------------------------
 observe({
-  if(!(input$inFirmTypeSum=="All firms")){
+  if (!(input$inWhichTable==1)){
     shinyjs::show(id="summPlots")
   } else {
     shinyjs::hide(id="summPlots")

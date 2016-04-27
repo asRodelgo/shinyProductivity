@@ -19,11 +19,11 @@ sectorList <- c("All sectors", "Manufacturing", "Services")
 #
 firmTypeList <- c("All firms","By age","By size","By exports status","By foreign ownership") #,"By tech. innovation"
 #
-firmAgeList <- c("All firms","0-5","6-15","16-30","+30")
+firmAgeList <- c("All firms","0-10","11-20","+20")
 firmSizeList <- c("All firms","Small firms","Medium firms","Large firms")
-firmExpStatusList <- c("All firms","0-25%","26-50%","51-75%","+75%")
+firmExpStatusList <- c("All firms","Do not export","Export")
 #firmTechInnovList
-firmForeignOwnerList <- c("All firms","0-50%","50-75%","+75%")
+firmForeignOwnerList <- c("All firms","Local Ownership","Foreign Ownership")
 
 .indicatorList <- function(sector){
   
@@ -61,17 +61,17 @@ firmForeignOwnerList <- c("All firms","0-50%","50-75%","+75%")
 data <- data %>%
   group_by(country,idstd) %>%
   mutate(ageVal = as.numeric(thisYear) - b5,
-         age = as.character(ifelse(ageVal < 6,firmAgeList[2],ifelse(ageVal < 16,firmAgeList[3],ifelse(ageVal < 31,firmAgeList[4],firmAgeList[5])))),
+         age = as.character(ifelse(ageVal < 11,firmAgeList[2],ifelse(ageVal < 21,firmAgeList[3],firmAgeList[4]))),
          size = as.character(ifelse(l1 < 20,firmSizeList[2],ifelse(l1 < 100,firmSizeList[3],firmSizeList[4]))), 
          expVal = d3b + d3c,
-         expStatus = as.character(ifelse(expVal < 26,firmExpStatusList[2],ifelse(expVal < 51,firmExpStatusList[3],ifelse(expVal < 75,firmExpStatusList[4],firmExpStatusList[5])))),
-         forOwner = as.character(ifelse(b2a < 51,firmForeignOwnerList[2],ifelse(b2a < 76,firmForeignOwnerList[3],firmForeignOwnerList[4])))) %>% # filter by age, size, etc...
+         expStatus = as.character(ifelse(expVal > 0,firmExpStatusList[3],firmExpStatusList[2])),
+         forOwner = as.character(ifelse(b2a > 0,firmForeignOwnerList[3],firmForeignOwnerList[2]))) %>% # filter by age, size, etc...
   select(-ageVal,-expVal)
 
 # prepare data for summary statistics. Read dataBlocks --------------------
 
-# Calculate datablocks (for the actual UI, precalculate these and read.csv)
-# takes about 15 min. Creates list with 35 elements and saves it in disk
+#Calculate datablocks (for the actual UI, precalculate these and read.csv)
+#takes about 15 min. Creates list with 35 elements and saves it in disk
 # dataBlock <- list()
 # for (sect in sectorList){
 #   for (type in .firmTypeList(sect)){

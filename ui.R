@@ -93,10 +93,10 @@ source("global_utils.R", local=TRUE)
                       selectInput("inFirmTypeSum", "Select firm characteristic:", firmTypeList, selected="All firms")
                     )),  
                     selectInput("inIndicatorSum","Select indicator:",indicatorList,selected = "labor cost (n2a) over sales (d2)"),
-                    selectInput("inWhichAllocation","Select Efficiency:",choices=c("All countries", "Direct and Indirect Allocation Efficient",
-                                                                                   "Direct Allocation Efficient","Direct Allocation Efficient",
-                                                                                   "Allocation Inefficient")
-                                ,selected = "All countries"),
+                    #selectInput("inWhichAllocation","Select Efficiency:",choices=c("All countries", "Direct and Indirect Allocation Efficient",
+                    #                                                               "Direct Allocation Efficient","Direct Allocation Efficient",
+                    #                                                               "Allocation Inefficient")
+                    #            ,selected = "All countries"),
                     radioButtons("inWhichTable","Select table:",choices = list("Countries"=1,"Summary Stats"=2,"Income level medians"=3
                                                                                ,"Region medians"=4),selected = 1),
                     actionButton("goSummaryButton","View table"),
