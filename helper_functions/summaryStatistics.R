@@ -420,7 +420,7 @@
   # If sector is Manufacturing then group by groupByVar
   if (!(firmType == "All firms") & (sector=="Manufacturing")){
     
-    reorder <- .reorderColumns(lenVar,col_per_block = 7) # call the reorder function to arrange columns
+    reorder <- .reorderColumns(lenVar,col_per_block = 2) # call the reorder function to arrange columns
     
     sumStatsAux <- dataBlock %>%
       # starts_with("N"),starts_with("mean"),starts_with("OPcov_"),
@@ -451,7 +451,7 @@
     }
     sumStats <- sumStats2  
     row.names(sumStats) <- statsNames
-    names(sumStats) <- names(dataBlock)[3:(8*lenVar+2)]# add column names
+    names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]# add column names
     
     # Calculate income level medians  ----------
     incomeStats <- dataBlock %>%
