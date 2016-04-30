@@ -55,9 +55,10 @@
   if (nrow(data[data$country==countryYear,])>=5){ # If sample too small, not worth it
     # Calculate number of outliers left out. Default rule is +-3*IQR  
     data_aux <- data %>%
-      select(country,N_indicator = one_of(N_indicatorCode)) %>%
       filter(country == countryYear) %>%
       group_by(country) %>%
+      select(country,indicatorCode = one_of(indicatorCode)) %>%
+      mutate(N_indicator = ifelse(!(is.na(indicatorCode)),1,NA)) %>%
       mutate(sampleSizeBefore=sum(N_indicator,na.rm=TRUE))
     sampleSizeBefore = data_aux$sampleSizeBefore[1]
     
@@ -67,15 +68,17 @@
     if (indicatorCode == indicatorQuantileCode){ 
       data2 <- data %>%
         filter(country == countryYear) %>%
+        mutate(N_indicator = ifelse(!(is.na(indicatorCode)),1,NA)) %>%
         select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
-               N_indicator = one_of(N_indicatorCode),age,size,expStatus,forOwner) %>%
+               N_indicator,age,size,expStatus,forOwner) %>% #N_indicator = one_of(N_indicatorCode),
         filter(!is.na(indicator)) %>%
         mutate(indicatorQuantile = indicator)
     } else {
       data2 <- data %>%
         filter(country == countryYear) %>%
+        mutate(N_indicator = ifelse(!(is.na(indicatorCode)),1,NA)) %>%
         select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
-               indicatorQuantile = one_of(indicatorQuantileCode),N_indicator = one_of(N_indicatorCode),
+               indicatorQuantile = one_of(indicatorQuantileCode),N_indicator,#N_indicator = one_of(N_indicatorCode),
                age,size,expStatus,forOwner) %>%
         filter(!is.na(indicator)) # remove NAs
     }
@@ -342,7 +345,7 @@
   
   # sector <- "Manufacturing"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
-  # firmType <- "By age"
+  # firmType <- "By exports status"
   # allocEff <- "All countries"
   # whichTable <- 2
   
@@ -399,16 +402,6 @@
   # remove columns generated from NA adCountry to avoid errors
   dataBlock <- select(dataBlock, everything(), -ends_with("_NA"))
   
-#   # Filter dataBlock according to the desired allocation Efficiency
-#   if (allocEff == "Direct and Indirect Allocation Efficient"){
-#     refDataBlock <- filter(refDataBlock, (OPcov > 0) & (indAlloc > 1)) 
-#   } else if (allocEff == "Direct Allocation Efficient"){
-#     refDataBlock <- filter(refDataBlock, OPcov > 0) 
-#   } else if (allocEff == "Indirect Allocation Efficient"){
-#     refDataBlock <- filter(refDataBlock, indAlloc > 1) 
-#   } else if (allocEff == "Allocation Inefficient"){
-#     refDataBlock <- filter(refDataBlock, (OPcov < 0) & (indAlloc < 1)) 
-#   }
   # Filter by allocation has to be done from the all firms dataBlock for Manufacturing
   if (!(firmType == "All firms") & (sector=="Manufacturing")){
     refCountries <- refDataBlock$country
@@ -451,7 +444,11 @@
     }
     sumStats <- sumStats2  
     row.names(sumStats) <- statsNames
-    names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]# add column names
+    if (lenVar == 3) {
+      names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]
+    } else if (lenVar == 2) {
+      names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
+    }
     
     # Calculate income level medians  ----------
     incomeStats <- dataBlock %>%

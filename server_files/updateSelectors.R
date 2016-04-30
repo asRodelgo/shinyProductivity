@@ -71,6 +71,29 @@ observe({
   
 })
 
+# update firm type selector based on sector selected
+firmTypeListSum <- reactive({
+  
+  if (!(input$inSectorSum == "Manufacturing")) {
+    selectedFirmTypeSum <- c("All firms")
+  } else {
+    selectedFirmTypeSum <- input$inFirmTypeSum
+  }
+  
+  firmTypeListSum <- selectedFirmTypeSum
+  
+  return(firmTypeListSum)
+  
+})
+
+observe({
+  
+  updateSelectInput(session, "inFirmTypeSum",
+                    selected = firmTypeListSum())
+  
+})
+
+
 # Firm list selector
 # firmListSum <- reactive({
 #   

@@ -50,9 +50,9 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 # Calculate summary plots -----------------------------------
 .summaryPlots <- function(sector,indicatorDesc,firmType,allocEff,whichTable){
   
-  # sector <- "Services"
+  # sector <- "Manufacturing"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
-  # firmType <- "All firms"
+  # firmType <- "By age"
   # allocEff <- "All countries"
   # whichTable <- 2
   # varPlot <- "indAlloc"
@@ -120,19 +120,9 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
     # remove columns generated from NA adCountry to avoid errors
   dataBlock <- select(dataBlock, everything(), -ends_with("_NA"))
   
-#   # Filter dataBlock according to the desired allocation Efficiency
-#   if (allocEff == "Direct and Indirect Allocation Efficient"){
-#     refDataBlock <- filter(refDataBlock, (OPcov > 0) & (indAlloc > 1)) 
-#   } else if (allocEff == "Direct Allocation Efficient"){
-#     refDataBlock <- filter(refDataBlock, OPcov > 0) 
-#   } else if (allocEff == "Indirect Allocation Efficient"){
-#     refDataBlock <- filter(refDataBlock, indAlloc > 1) 
-#   } else if (allocEff == "Allocation Inefficient"){
-#     refDataBlock <- filter(refDataBlock, (OPcov < 0) & (indAlloc < 1)) 
-#   }
-  # Filter by allocation has to be done from the all firms dataBlock for Manufacturing
+  # call the reorder function to arrange columns
   if (!(firmType == "All firms") & (sector=="Manufacturing")){
-    reorder <- .reorderColumns(lenVar,col_per_block=2) # call the reorder function to arrange columns
+    reorder <- .reorderColumns(lenVar,col_per_block=2)
     refCountries <- refDataBlock$country
     dataBlock <- filter(dataBlock, country %in% refCountries)
   } else {
@@ -146,17 +136,22 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   # Plot faceted charts/histograms by types of firms
   if (!(firmType == "All firms") & (sector=="Manufacturing")){ # for now only plot Manufacturing
     if (whichTable==2){
-        dataPlot1 <- select(dataBlock, starts_with("median"))
-        dataPlot1 <- dataPlot1[,colOrder]
-        dataPlot2 <- select(dataBlock, starts_with("OPcov_"))
-        dataPlot2 <- dataPlot2[,colOrder]
-        
-        par(mfrow = c(1,2))
-        boxplot(dataPlot1,names=thisList)
-        title("Median")
-        boxplot(dataPlot2,names=thisList)
-        title("O-P covariance (unweighted)")
-        #mtext(paste(indicatorDesc,firmType), outer = TRUE, cex = 1.5)
+        dataPlot <- select(dataBlock, starts_with("median"))
+        dataPlot <- dataPlot[,colOrder]
+        names(dataPlot) <- thisList
+        dataPlot <- gather(dataPlot, typeList, median)
+        #         
+        ggplot(dataPlot,aes(median)) + 
+          geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+                         binwidth=.05,
+                         colour="black", fill="white") +
+          geom_density(alpha=.4, fill="green") +  
+          facet_wrap(~typeList) +
+          theme(legend.key=element_blank(),
+                legend.title=element_blank(),
+                panel.border = element_blank(),
+                panel.background = element_blank(),plot.title = element_text(lineheight=.5)
+          ) # Overlay with transparent density plot
         
     } else if (whichTable==3){
       # Calculate income level medians  ----------
@@ -186,15 +181,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
       dataPlot1 <- dataPlot1[,colOrder]
       dataPlot1 <- mutate(dataPlot1, income = row.names(dataPlot1))
       dataPlot1 <- gather(dataPlot1, type, value, -income)
-#       dataPlot2 <- select(incomeStats, starts_with("OPcov_"))
-#       dataPlot2 <- dataPlot2[,colOrder]
-#       dataPlot2 <- mutate(dataPlot2, income = row.names(dataPlot2))
-#       dataPlot2 <- gather(dataPlot2, type, value, -income)
-      
-      # reorder income levels
-      #dataPlot1$income <- factor(dataPlot1$income, levels(dataPlot1$income)[c(2,3,4,1)])
-      #dataPlot2$income <- factor(dataPlot2$income, levels(dataPlot2$income)[c(2,3,4,1)])
-      
+
       ggplot(dataPlot1, aes(x=type,y=value,fill=type)) +
         geom_bar(position="dodge",stat="identity") +
         facet_wrap(~income) +
@@ -207,18 +194,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
         labs(x="",y="",title=paste("Median",firmType))+
         scale_fill_manual(values = rainbow(lenVar),labels = thisList)
       
-#       p2 <- ggplot(dataPlot2, aes(x=type,y=value,fill=type)) +
-#         geom_bar(position="dodge",stat="identity") +
-#         facet_wrap(~income) +
-#         theme(legend.key=element_blank(),
-#               legend.title=element_blank(),
-#               panel.border = element_blank(),
-#               panel.background = element_blank(),plot.title = element_text(lineheight=.5),
-#               axis.ticks.x = element_blank(),
-#               axis.text.x = element_blank()) + 
-#         labs(x="",y="",title=paste("OP covariance",firmType))+
-#         scale_fill_manual(values = rainbow(lenVar),labels = thisList)
-#       
       # Plot side by side
       #multiplot(p1,p2,cols=2)
       
@@ -227,7 +202,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
       regionStats <- dataBlock %>%
         select(region,#starts_with("N"),starts_with("mean"),
                starts_with("median"),starts_with("sd"),starts_with("iqr")
-               #,starts_with("OPcov_"),starts_with("OPcovNoWeights"),starts_with("indAlloc")
                ) %>%
         #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
         group_by(region) %>%
@@ -249,10 +223,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
       dataPlot1 <- dataPlot1[,colOrder]
       dataPlot1 <- mutate(dataPlot1, region = row.names(dataPlot1))
       dataPlot1 <- gather(dataPlot1, type, value, -region)
-#       dataPlot2 <- select(regionStats, starts_with("OPcov_"))
-#       dataPlot2 <- dataPlot2[,colOrder]
-#       dataPlot2 <- mutate(dataPlot2, region = row.names(dataPlot2))
-#       dataPlot2 <- gather(dataPlot2, type, value, -region)
 #       
       ggplot(dataPlot1, aes(x=type,y=value,fill=type)) +
         geom_bar(position="dodge",stat="identity") +
@@ -266,18 +236,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
         labs(x="",y="",title=paste("Median",firmType))+
         scale_fill_manual(values = rainbow(lenVar),labels = thisList)
       
-#       p2 <- ggplot(dataPlot2, aes(x=type,y=value,fill=type)) +
-#         geom_bar(position="dodge",stat="identity") +
-#         facet_wrap(~region) +
-#         theme(legend.key=element_blank(),
-#               legend.title=element_blank(),
-#               panel.border = element_blank(),
-#               panel.background = element_blank(),plot.title = element_text(lineheight=.5),
-#               axis.ticks.x = element_blank(),
-#               axis.text.x = element_blank()) + 
-#         labs(x="",y="",title=paste("OP covariances",firmType))+
-#         scale_fill_manual(values = rainbow(lenVar),labels = thisList)
-#       
       # Plot side by side
       #multiplot(p1,p2,cols=2)
     }
@@ -297,8 +255,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
               legend.title=element_blank(),
               panel.border = element_blank(),
               panel.background = element_blank(),plot.title = element_text(lineheight=.5)
-              #axis.ticks.x = element_blank(),
-              #axis.text.x = element_blank()
               ) # Overlay with transparent density plot
         
         } else if (whichTable==3){ # summary stats
@@ -315,8 +271,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
                   legend.title=element_blank(),
                   panel.border = element_blank(),
                   panel.background = element_blank(),plot.title = element_text(lineheight=.5)
-                  #axis.ticks.x = element_blank(),
-                  #axis.text.x = element_blank()
                   ) # Overlay with transparent density plot
           
         } else if (whichTable==4){ # summary stats
@@ -333,8 +287,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
                   legend.title=element_blank(),
                   panel.border = element_blank(),
                   panel.background = element_blank(),plot.title = element_text(lineheight=.5)
-                  #axis.ticks.x = element_blank(),
-                  #axis.text.x = element_blank()
                   ) # Overlay with transparent density plot
           
         }
