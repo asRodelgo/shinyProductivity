@@ -11,6 +11,8 @@ library(matrixStats) # calculate weighted median
 # library(reldist) # calculate weighted quantiles
 library(Hmisc) # calculate weighted quantiles
 library(DT) # customize dataTable javascript library
+library(knitr)
+library(xtable) # LaTeX tables
 
 # --------------------------------------------------------
 # Object: load the raw questionnaire data and perform:

@@ -47,6 +47,31 @@ firmForeignOwnerList <- c("All firms","Local Ownership","Foreign Ownership")
   return(firmList)   
 }
 
+.firmTypeListDesc <- function(sector){
+  
+  if (sector == "Manufacturing"){
+    firmList <- firmTypeList
+  } else {
+    firmList <- c("All firms")
+  }
+  return(firmList)   
+}
+
+.firmTypeCode <- function(type){
+  if (type=="All firms"){
+    typeCode <- "all"
+  } else if (type=="By age"){
+    typeCode <- "age"
+  } else if (type=="By size"){
+    typeCode <- "size"
+  } else if (type=="By export status"){
+    typeCode <- "expStatus"
+  } else {
+    typeCode <- "forOwner"
+  }
+  return(typeCode)
+}
+
 .indicatorToCode <- function(indicatorDesc){
   
   indicatorCode <- filter(summaryMaps,indicator == indicatorDesc)$code
