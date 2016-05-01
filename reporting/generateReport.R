@@ -4,12 +4,12 @@ setwd('/Users/asanchez3/Desktop/Work/shinyProductivity/')
 source('global_utils.R') # data and functions needed
 # Create the data reports --------------------------------------
 
-for (sect in sectorList){
-#for (sect in c("Manufacturing")){  
-  for (type in .firmTypeListDesc(sect)){
-  #for (type in c("All firms")){  
-    for (ind in .indicatorList(sect)) {
-    #for (ind in c("Total factor productivity YKL: Food")){ 
+#for (sect in sectorList){
+for (sect in c("All sectors")){  
+  #for (type in .firmTypeListDesc(sect)){
+  for (type in c("All firms")){  
+    #for (ind in .indicatorList(sect)) {
+    for (ind in c("sales (d2) over labor (l1) (in 2009 USD)")){ 
       indCode <- .indicatorToCode(ind)
       #
       sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))

@@ -141,9 +141,11 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
         names(dataPlot) <- thisList
         dataPlot <- gather(dataPlot, typeList, median)
         #         
+        # optimal bin widths for ggplot:
+        bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
         ggplot(dataPlot,aes(median)) + 
           geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                         binwidth=.05,
+                         binwidth=bw,
                          colour="black", fill="white") +
           geom_density(alpha=.4, fill="green") +  
           facet_wrap(~typeList) +
@@ -244,9 +246,11 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
       
       if (whichTable==2){ # summary stats
         dataPlot <- select(dataBlock, median)
+        # optimal bin widths for ggplot:
+        bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
         ggplot(dataPlot,aes(median)) + 
           geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                            binwidth=.05,
+                            binwidth=bw,
                             colour="black", fill="white") +
           geom_density(alpha=.4, fill="green") +  
           #geom_vline(aes(xintercept=mean(median, na.rm=T)),   # Ignore NA values for mean
@@ -257,13 +261,14 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
               panel.background = element_blank(),plot.title = element_text(lineheight=.5)
               ) # Overlay with transparent density plot
         
-        } else if (whichTable==3){ # summary stats
+      } else if (whichTable==3){ # summary stats
           dataPlot <- select(dataBlock, median, incomeLevel)
           dataPlot <- filter(dataPlot, !is.na(incomeLevel))
-          
+          # optimal bin widths for ggplot:
+          bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
           ggplot(dataPlot,aes(median)) + 
             geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                           binwidth=.05,
+                           binwidth=bw,
                            colour="black", fill="white") +
             geom_density(alpha=.4, fill="green") +  
             facet_wrap(~incomeLevel) +
@@ -273,13 +278,14 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
                   panel.background = element_blank(),plot.title = element_text(lineheight=.5)
                   ) # Overlay with transparent density plot
           
-        } else if (whichTable==4){ # summary stats
+      } else if (whichTable==4){ # summary stats
           dataPlot <- select(dataBlock, median, region)
           dataPlot <- filter(dataPlot, !is.na(region))
-          
+          # optimal bin widths for ggplot:
+          bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
           ggplot(dataPlot,aes(median)) + 
             geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                           binwidth=.05,
+                           binwidth=bw,
                            colour="black", fill="white") +
             geom_density(alpha=.4, fill="green") +  
             facet_wrap(~region) +
@@ -289,7 +295,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
                   panel.background = element_blank(),plot.title = element_text(lineheight=.5)
                   ) # Overlay with transparent density plot
           
-        }
+      }
       
     } else {
         plot(c(1,1),type="n", frame.plot = FALSE, axes=FALSE, ann=FALSE)
