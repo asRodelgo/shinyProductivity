@@ -791,13 +791,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
       dataPlot <- dataPlot[,colOrder]
       names(dataPlot) <- thisList
       dataPlot <- gather(dataPlot, typeList, median)
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
-      #         
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         facet_wrap(~typeList) +
         theme(legend.key=element_blank(),
               legend.title=element_blank(),
@@ -913,12 +912,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
     } else if (whichTable==3){ # summary stats
       dataPlot <- select(dataBlock, median, incomeLevel)
       dataPlot <- filter(dataPlot, !is.na(incomeLevel))
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         facet_wrap(~incomeLevel) +
         theme(legend.key=element_blank(),
               legend.title=element_blank(),
@@ -929,12 +928,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
     } else if (whichTable==4){ # summary stats
       dataPlot <- select(dataBlock, median, region)
       dataPlot <- filter(dataPlot, !is.na(region))
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         facet_wrap(~region) +
         theme(legend.key=element_blank(),
               legend.title=element_blank(),
@@ -1045,13 +1044,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
       dataPlot <- dataPlot[,colOrder]
       names(dataPlot) <- thisList
       dataPlot <- gather(dataPlot, typeList, median)
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
-      #         
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         facet_wrap(~typeList) +
         theme(legend.key=element_blank(),
               legend.title=element_blank(),
@@ -1150,12 +1148,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
     
     if (whichTable==2){ # summary stats
       dataPlot <- select(dataBlock, median)
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         #geom_vline(aes(xintercept=mean(median, na.rm=T)),   # Ignore NA values for mean
         #           color="red", linetype="dashed", size=1) +
         theme(legend.key=element_blank(),
@@ -1167,12 +1165,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
     } else if (whichTable==3){ # summary stats
       dataPlot <- select(dataBlock, median, incomeLevel)
       dataPlot <- filter(dataPlot, !is.na(incomeLevel))
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         facet_wrap(~incomeLevel) +
         theme(legend.key=element_blank(),
               legend.title=element_blank(),
@@ -1183,12 +1181,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
     } else if (whichTable==4){ # summary stats
       dataPlot <- select(dataBlock, median, region)
       dataPlot <- filter(dataPlot, !is.na(region))
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         facet_wrap(~region) +
         theme(legend.key=element_blank(),
               legend.title=element_blank(),
@@ -1299,13 +1297,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
       dataPlot <- dataPlot[,colOrder]
       names(dataPlot) <- thisList
       dataPlot <- gather(dataPlot, typeList, median)
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
-      #         
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         facet_wrap(~typeList) +
         theme(legend.key=element_blank(),
               legend.title=element_blank(),
@@ -1404,12 +1401,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
     
     if (whichTable==2){ # summary stats
       dataPlot <- select(dataBlock, median)
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         #geom_vline(aes(xintercept=mean(median, na.rm=T)),   # Ignore NA values for mean
         #           color="red", linetype="dashed", size=1) +
         theme(legend.key=element_blank(),
@@ -1421,12 +1418,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
     } else if (whichTable==3){ # summary stats
       dataPlot <- select(dataBlock, median, incomeLevel)
       dataPlot <- filter(dataPlot, !is.na(incomeLevel))
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         facet_wrap(~incomeLevel) +
         theme(legend.key=element_blank(),
               legend.title=element_blank(),
@@ -1437,12 +1434,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
     } else if (whichTable==4){ # summary stats
       dataPlot <- select(dataBlock, median, region)
       dataPlot <- filter(dataPlot, !is.na(region))
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #                  binwidth=bw,
+        #                  colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         facet_wrap(~region) +
         theme(legend.key=element_blank(),
               legend.title=element_blank(),
