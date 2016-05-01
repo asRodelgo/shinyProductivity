@@ -53,7 +53,7 @@ output$summaryDownTable <- downloadHandler(
                             input$inFirmTypeSum,
                             input$inWhichAllocation,
                             input$inWhichTable
-    ), file, row.names = FALSE)
+    ), file, row.names = TRUE)
   }
 )
 

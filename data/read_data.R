@@ -56,6 +56,11 @@ firmForeignOwnerList <- c("All firms","Local Ownership","Foreign Ownership")
   }
   return(firmList)   
 }
+.sectorToCode <- function(sector){
+  
+  sect <- ifelse(sector=="All sectors","AllSect",ifelse(sector=="Manufacturing","Manuf","Serv"))
+  return(sect)
+}
 
 .firmTypeCode <- function(type){
   if (type=="All firms"){
@@ -75,6 +80,7 @@ firmForeignOwnerList <- c("All firms","Local Ownership","Foreign Ownership")
 .indicatorToCode <- function(indicatorDesc){
   
   indicatorCode <- filter(summaryMaps,indicator == indicatorDesc)$code
+  return(indicatorCode)
 }
 .indicatorToCodeOld <- function(indicatorDesc){
   

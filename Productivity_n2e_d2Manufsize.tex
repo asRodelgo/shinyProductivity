@@ -1,0 +1,223 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template productivity report
+% 
+% Alberto Sanchez asanchezrodelgo@ifc.org May 2016
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+%%%%%%%%%%%%%% package declaration %%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{This is my name}
+\rhead{this is page \thepage}
+\cfoot{center of the footer!}
+\usepackage[top=0.3in, bottom=0.1in, left=0.5in, right=0.6in]{geometry}
+\usepackage{graphicx} % to load images
+\usepackage[export]{adjustbox} % add alignment to includegraphics
+\usepackage[font=small]{caption}
+\usepackage{xcolor} % color text
+\usepackage{tabularx} % to adjust table width, etc. 
+\usepackage{titlesec} % format titles and headers
+\usepackage{sectsty} % format sections & subsections
+\usepackage{booktabs} % For \toprule, \midrule and \bottomrule
+\usepackage{longtable} % add pages for long tables
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = blue,
+            anchorcolor = blue]{hyperref} % to include hyperlinks in the doc
+\sectionfont{\fontsize{24}{22}\selectfont\raggedright} % formats title newsletter (section) 
+\subsectionfont{\fontsize{14}{12}\selectfont\raggedright} % formats title newsletter (section)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BEGIN DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+%
+
+%%%%%%%%%%%%%%%% PAGE 1 %%%%%%%%%%%%%%%%%%%
+%World Bank logo and TCMN branding
+\begin{figure}
+  \vspace{-3ex} % move up this figure
+  \hspace{-7ex} % move left this figure
+  \includegraphics[width=5cm]{/Users/asanchez3/shinyTCMN/www/wb_logo_background.png}
+\end{figure}
+%\begin{figure}
+ \begin{minipage}[t]{1.1\textwidth} % top section
+      \vspace{-30ex}
+      \hspace{10ex}
+      \raggedleft{\section*{\color{white!20!black}Productivity Indicators Report}}
+      %\raggedright{\includegraphics[width=5.5cm,right]{/Users/asanchez3/shinyTCMN/www/TC_snapshots_operations.png}}
+  \end{minipage}
+  
+%\end{figure}
+%
+%%%% Macro Indicators
+\begin{minipage}[t]{0.99\textwidth} % top section
+  \vspace{-0.5cm}
+      \subsection*{\color{white!40!black}Sector: \color{blue!40!black}Manufacturing}
+      \subsection*{\color{white!40!black}Firm type: \color{blue!40!black}By size}
+      \subsection*{\color{white!40!black}Indicator: \color{blue!40!black}cost of finished materials (n2e) over sales (d2)}
+  \end{minipage} % end top section
+
+\vspace*{1.5cm}
+  \raggedright{\color{white!30!black} \textbf{\Large Summary Statistics}}
+    \begin{minipage}[c]{0.99\textwidth}  
+      \vspace*{0.2cm}
+      
+% latex table generated in R 3.2.2 by xtable 1.7-4 package
+% Sun May  1 17:36:53 2016
+{\footnotesize
+\begin{tabular}{>{\raggedright}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}l}
+  & median\_Medium.firms & sd\_Medium.firms & iqr\_Medium.firms & median\_Small.firms & sd\_Small.firms & iqr\_Small.firms & mean\_Large.firms & median\_Large.firms & sd\_Large.firms &  \\ 
+  \hline
+Min & 0.00 & 0.01 & 0.01 & 0.00 & 0.03 & 0.01 & 0.00 & 0.00 & 0.01 &  \\ 
+  Max & 0.72 & 0.64 & 0.92 & 0.68 & 0.69 & 0.68 & 0.66 & 0.53 & 0.90 &  \\ 
+  Mean & 0.35 & 0.21 & 0.29 & 0.32 & 0.21 & 0.29 & 0.35 & 0.23 & 0.33 &  \\ 
+  Median & 0.40 & 0.21 & 0.29 & 0.34 & 0.21 & 0.29 & 0.39 & 0.22 & 0.31 &  \\ 
+  Stdev & 0.16 & 0.10 & 0.15 & 0.13 & 0.08 & 0.13 & 0.17 & 0.10 & 0.18 &  \\ 
+  IQR & 0.17 & 0.08 & 0.19 & 0.17 & 0.07 & 0.13 & 0.23 & 0.09 & 0.19 &  \\ 
+  \end{tabular}
+}
+
+      \vspace*{0.5cm}
+    \end{minipage}
+    
+    \begin{minipage}[c]{0.99\textwidth}  
+
+
+{\centering \includegraphics[width=\maxwidth]{figure/plot2-1} 
+
+}
+
+
+
+      \vspace*{0.5cm}
+    \end{minipage}
+%\end{minipage}
+
+\newpage
+
+  \raggedright{\color{white!30!black} \textbf{\Large Income Level Statistics}}
+    \begin{minipage}[c]{0.99\textwidth}  
+      \vspace*{0.4cm}
+      
+% latex table generated in R 3.2.2 by xtable 1.7-4 package
+% Sun May  1 17:36:54 2016
+{\footnotesize
+\begin{tabular}{>{\raggedright}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}l}
+  & median\_Medium.firms & sd\_Medium.firms & iqr\_Medium.firms & median\_Small.firms & sd\_Small.firms & iqr\_Small.firms & median\_Large.firms & sd\_Large.firms & iqr\_Large.firms &  \\ 
+  \hline
+Low income & 0.21 & 0.18 & 0.25 & 0.18 & 0.19 & 0.27 & --- & --- & --- &  \\ 
+  Lower middle income & 0.36 & 0.24 & 0.32 & 0.31 & 0.24 & 0.34 & --- & --- & --- &  \\ 
+  Upper middle income & 0.40 & 0.20 & 0.27 & 0.38 & 0.20 & 0.25 & --- & --- & --- &  \\ 
+  High income & 0.42 & 0.20 & 0.29 & 0.36 & 0.20 & 0.28 & --- & --- & --- &  \\ 
+  \end{tabular}
+}
+
+      \vspace*{1cm}
+    \end{minipage}
+    
+    \begin{minipage}[c]{0.99\textwidth}  
+    
+
+
+{\centering \includegraphics[width=\maxwidth]{figure/plot3-1} 
+
+}
+
+
+
+      \vspace*{0.5cm}
+    \end{minipage}
+%\end{minipage}
+
+\newpage
+
+  \raggedright{\color{white!30!black} \textbf{\Large Region Level Statistics}}
+    \begin{minipage}[c]{0.99\textwidth}  
+      \vspace*{0.4cm}
+      
+% latex table generated in R 3.2.2 by xtable 1.7-4 package
+% Sun May  1 17:36:55 2016
+{\footnotesize
+\begin{tabular}{>{\raggedright}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}l}
+  & median\_Medium.firms & sd\_Medium.firms & iqr\_Medium.firms & median\_Small.firms & sd\_Small.firms & iqr\_Small.firms & median\_Large.firms & sd\_Large.firms & iqr\_Large.firms &  \\ 
+  \hline
+East Asia and Pacific & 0.42 & 0.25 & 0.38 & 0.33 & 0.24 & 0.31 & 0.33 & 0.24 & 0.33 &  \\ 
+  Europe and Central Asia & 0.35 & 0.23 & 0.31 & 0.36 & 0.23 & 0.30 & --- & --- & --- &  \\ 
+  Latin America and Caribbean & 0.41 & 0.18 & 0.25 & 0.40 & 0.18 & 0.25 & --- & --- & --- &  \\ 
+  Middle East and North Africa & 0.40 & 0.22 & 0.31 & 0.33 & 0.21 & 0.28 & --- & --- & --- &  \\ 
+  South Asia & 0.42 & 0.24 & 0.35 & 0.46 & 0.22 & 0.27 & --- & --- & --- &  \\ 
+  Sub-Saharan Africa & 0.18 & 0.20 & 0.28 & 0.20 & 0.20 & 0.31 & 0.25 & 0.21 & 0.3 &  \\ 
+  \end{tabular}
+}
+
+      \vspace*{1cm}
+    \end{minipage}
+    
+    \begin{minipage}[c]{0.99\textwidth}  
+    
+
+
+{\centering \includegraphics[width=\maxwidth]{figure/plot4-1} 
+
+}
+
+
+
+      \vspace*{0.5cm}
+    \end{minipage}
+%\end{minipage}
+
+%%%%%%%%%%%%%%%% END OF DOCUMENT %%%%%%%%%%%%%%%%%%%
+\end{document}

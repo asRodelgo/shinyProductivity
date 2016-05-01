@@ -222,11 +222,29 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   # modify column names
   names(summaryStats) <- c(names(summaryStats)[1:(ncol(summaryStats)-1)],"")
 
-  data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
-  align(data.table) <- c('l',rep('r',ncol(data.table)-1),'l')
-  print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
-        booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
-        )#sanitize.text.function = function(x){x}) # include sanitize to control formats
+  if (!(firmType == "All firms")) {
+    if (lenVar==3){
+      data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
+      align(data.table) <- c('>{\\raggedright}p{0.6in}',rep('>{\\raggedleft}p{0.6in}',ncol(data.table)-1),'l')
+      print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
+            size="\\footnotesize",
+            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+      )#sanitize.text.function = function(x){x}) # include sanitize to control formats
+    } else {
+      data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
+      align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
+      print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
+            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+      )#sanitize.text.function = function(x){x}) # include sanitize to control formats
+    }
+  } else {
+    data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
+    align(data.table) <- c('l',rep('r',ncol(data.table)-1),'l')
+    print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
+          booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+    )#sanitize.text.function = function(x){x}) # include sanitize to control formats  
+  }
+  
   
 }  
 summaryStats(sect,ind,type,2)
@@ -452,11 +470,28 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   # modify column names
   names(summaryStats) <- c(names(summaryStats)[1:(ncol(summaryStats)-1)],"")
   
-  data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
-  align(data.table) <- c('l',rep('r',ncol(data.table)-1),'l')
-  print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
-        booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
-  )#sanitize.text.function = function(x){x}) # include sanitize to control formats
+  if (!(firmType == "All firms")) {
+    if (lenVar==3){
+      data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
+      align(data.table) <- c('>{\\raggedright}p{0.6in}',rep('>{\\raggedleft}p{0.6in}',ncol(data.table)-1),'l')
+      print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
+            size="\\footnotesize",
+            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+      )#sanitize.text.function = function(x){x}) # include sanitize to control formats
+    } else {
+      data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
+      align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
+      print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
+            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+      )#sanitize.text.function = function(x){x}) # include sanitize to control formats
+    }
+  } else {
+    data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
+    align(data.table) <- c('l',rep('r',ncol(data.table)-1),'l')
+    print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
+          booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+    )#sanitize.text.function = function(x){x}) # include sanitize to control formats  
+  }
   
 }  
 summaryStats(sect,ind,type,3)
@@ -682,11 +717,28 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   # modify column names
   names(summaryStats) <- c(names(summaryStats)[1:(ncol(summaryStats)-1)],"")
   
-  data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
-  align(data.table) <- c('l',rep('r',ncol(data.table)-1),'l')
-  print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
-        booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
-  )#sanitize.text.function = function(x){x}) # include sanitize to control formats
+  if (!(firmType == "All firms")) {
+    if (lenVar==3){
+      data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
+      align(data.table) <- c('>{\\raggedright}p{0.6in}',rep('>{\\raggedleft}p{0.6in}',ncol(data.table)-1),'l')
+      print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
+            size="\\footnotesize",
+            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+      )#sanitize.text.function = function(x){x}) # include sanitize to control formats
+    } else {
+      data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
+      align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
+      print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
+            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+      )#sanitize.text.function = function(x){x}) # include sanitize to control formats
+    }
+  } else {
+    data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
+    align(data.table) <- c('l',rep('r',ncol(data.table)-1),'l')
+    print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
+          booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+    )#sanitize.text.function = function(x){x}) # include sanitize to control formats  
+  }
   
 }  
 summaryStats(sect,ind,type,4)
@@ -895,12 +947,12 @@ summaryPlots <- function(sector,indicatorDesc,firmType,whichTable){
     
     if (whichTable==2){ # summary stats
       dataPlot <- select(dataBlock, median)
-      bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
+      #bw <- diff(range(dataPlot$median)) / (2 * IQR(dataPlot$median) / length(dataPlot$median)^(1/3))
       ggplot(dataPlot,aes(median)) + 
-        geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
-                       binwidth=bw,
-                       colour="black", fill="white") +
-        geom_density(alpha=.4, fill="green") +  
+        #geom_histogram(aes(y=..density..), # Histogram with density instead of count on y-axis
+        #               binwidth=bw,
+        #               colour="black", fill="white") +
+        geom_density(aes(y=..density..),alpha=.4, fill="green") +  
         #geom_vline(aes(xintercept=mean(median, na.rm=T)),   # Ignore NA values for mean
         #           color="red", linetype="dashed", size=1) +
         theme(legend.key=element_blank(),

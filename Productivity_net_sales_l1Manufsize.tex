@@ -1,0 +1,223 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template productivity report
+% 
+% Alberto Sanchez asanchezrodelgo@ifc.org May 2016
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+%%%%%%%%%%%%%% package declaration %%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{This is my name}
+\rhead{this is page \thepage}
+\cfoot{center of the footer!}
+\usepackage[top=0.3in, bottom=0.1in, left=0.5in, right=0.6in]{geometry}
+\usepackage{graphicx} % to load images
+\usepackage[export]{adjustbox} % add alignment to includegraphics
+\usepackage[font=small]{caption}
+\usepackage{xcolor} % color text
+\usepackage{tabularx} % to adjust table width, etc. 
+\usepackage{titlesec} % format titles and headers
+\usepackage{sectsty} % format sections & subsections
+\usepackage{booktabs} % For \toprule, \midrule and \bottomrule
+\usepackage{longtable} % add pages for long tables
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = blue,
+            anchorcolor = blue]{hyperref} % to include hyperlinks in the doc
+\sectionfont{\fontsize{24}{22}\selectfont\raggedright} % formats title newsletter (section) 
+\subsectionfont{\fontsize{14}{12}\selectfont\raggedright} % formats title newsletter (section)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BEGIN DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+%
+
+%%%%%%%%%%%%%%%% PAGE 1 %%%%%%%%%%%%%%%%%%%
+%World Bank logo and TCMN branding
+\begin{figure}
+  \vspace{-3ex} % move up this figure
+  \hspace{-7ex} % move left this figure
+  \includegraphics[width=5cm]{/Users/asanchez3/shinyTCMN/www/wb_logo_background.png}
+\end{figure}
+%\begin{figure}
+ \begin{minipage}[t]{1.1\textwidth} % top section
+      \vspace{-30ex}
+      \hspace{10ex}
+      \raggedleft{\section*{\color{white!20!black}Productivity Indicators Report}}
+      %\raggedright{\includegraphics[width=5.5cm,right]{/Users/asanchez3/shinyTCMN/www/TC_snapshots_operations.png}}
+  \end{minipage}
+  
+%\end{figure}
+%
+%%%% Macro Indicators
+\begin{minipage}[t]{0.99\textwidth} % top section
+  \vspace{-0.5cm}
+      \subsection*{\color{white!40!black}Sector: \color{blue!40!black}Manufacturing}
+      \subsection*{\color{white!40!black}Firm type: \color{blue!40!black}By size}
+      \subsection*{\color{white!40!black}Indicator: \color{blue!40!black}net sales over labor (l1) (in 2009 USD)}
+  \end{minipage} % end top section
+
+\vspace*{1.5cm}
+  \raggedright{\color{white!30!black} \textbf{\Large Summary Statistics}}
+    \begin{minipage}[c]{0.99\textwidth}  
+      \vspace*{0.2cm}
+      
+% latex table generated in R 3.2.2 by xtable 1.7-4 package
+% Sun May  1 17:37:04 2016
+{\footnotesize
+\begin{tabular}{>{\raggedright}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}l}
+  & median\_Medium.firms & sd\_Medium.firms & iqr\_Medium.firms & median\_Small.firms & sd\_Small.firms & iqr\_Small.firms & mean\_Large.firms & median\_Large.firms & sd\_Large.firms &  \\ 
+  \hline
+Min & 480.87 & 304.50 & 322.08 & 278.84 & 241.03 & 178.43 & -50.65 & 1171.88 & 583.20 &  \\ 
+  Max & 8539193.29 & 15220060.25 & 19431048.41 & 4079944.06 & 6372280.09 & 6870739.21 & 12306752.24 & 13957599.05 & 20048378.97 &  \\ 
+  Mean & 94672.76 & 161671.93 & 203582.77 & 51072.68 & 81515.55 & 86070.44 & 146430.97 & 178013.93 & 238439.47 &  \\ 
+  Median & 11539.54 & 12150.65 & 12886.35 & 9223.86 & 10560.64 & 13001.59 & 16697.97 & 16296.00 & 20432.60 &  \\ 
+  Stdev & 820397.01 & 1462809.65 & 1867915.55 & 391642.35 & 614006.62 & 660054.13 & 1228674.15 & 1394517.32 & 2001691.06 &  \\ 
+  IQR & 13168.90 & 19619.75 & 19494.88 & 12909.40 & 16536.97 & 16067.86 & 19601.11 & 28982.23 & 35410.91 &  \\ 
+  \end{tabular}
+}
+
+      \vspace*{0.5cm}
+    \end{minipage}
+    
+    \begin{minipage}[c]{0.99\textwidth}  
+
+
+{\centering \includegraphics[width=\maxwidth]{figure/plot2-1} 
+
+}
+
+
+
+      \vspace*{0.5cm}
+    \end{minipage}
+%\end{minipage}
+
+\newpage
+
+  \raggedright{\color{white!30!black} \textbf{\Large Income Level Statistics}}
+    \begin{minipage}[c]{0.99\textwidth}  
+      \vspace*{0.4cm}
+      
+% latex table generated in R 3.2.2 by xtable 1.7-4 package
+% Sun May  1 17:37:05 2016
+{\footnotesize
+\begin{tabular}{>{\raggedright}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}l}
+  & median\_Medium.firms & sd\_Medium.firms & iqr\_Medium.firms & median\_Small.firms & sd\_Small.firms & iqr\_Small.firms & median\_Large.firms & sd\_Large.firms & iqr\_Large.firms &  \\ 
+  \hline
+Low income & 3146.75 & 5781.77 & 6697.89 & 3422.86 & 5548.30 & 7444.52 & --- & --- & --- &  \\ 
+  Lower middle income & 5664.66 & 8937.75 & 8942.03 & 4399.76 & 5678.07 & 6098.45 & --- & --- & --- &  \\ 
+  Upper middle income & 14140.07 & 14540.14 & 15619.91 & 12297.26 & 11928.54 & 14085.42 & --- & --- & --- &  \\ 
+  High income & 23293.02 & 25205.93 & 22143.43 & 21233.96 & 22998.54 & 25450.00 & --- & --- & --- &  \\ 
+  \end{tabular}
+}
+
+      \vspace*{1cm}
+    \end{minipage}
+    
+    \begin{minipage}[c]{0.99\textwidth}  
+    
+
+
+{\centering \includegraphics[width=\maxwidth]{figure/plot3-1} 
+
+}
+
+
+
+      \vspace*{0.5cm}
+    \end{minipage}
+%\end{minipage}
+
+\newpage
+
+  \raggedright{\color{white!30!black} \textbf{\Large Region Level Statistics}}
+    \begin{minipage}[c]{0.99\textwidth}  
+      \vspace*{0.4cm}
+      
+% latex table generated in R 3.2.2 by xtable 1.7-4 package
+% Sun May  1 17:37:05 2016
+{\footnotesize
+\begin{tabular}{>{\raggedright}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}>{\raggedleft}p{0.6in}l}
+  & median\_Medium.firms & sd\_Medium.firms & iqr\_Medium.firms & median\_Small.firms & sd\_Small.firms & iqr\_Small.firms & median\_Large.firms & sd\_Large.firms & iqr\_Large.firms &  \\ 
+  \hline
+East Asia and Pacific & 5136.59 & 8164.78 & 8901.91 & 5109.05 & 5289.93 & 5708.24 & 5386.21 & 11570.06 & 8226.53 &  \\ 
+  Europe and Central Asia & 13009.26 & 10008.35 & 13038.69 & 13065.46 & 20029.71 & 19292.77 & --- & --- & --- &  \\ 
+  Latin America and Caribbean & 14613.71 & 14540.14 & 16595.00 & 10624.73 & 9378.66 & 11266.08 & --- & --- & --- &  \\ 
+  Middle East and North Africa & 12648.38 & 24161.94 & 20608.67 & 14830.77 & 19134.66 & 16775.48 & --- & --- & --- &  \\ 
+  South Asia & 2744.71 & 9659.50 & 9115.85 & 2133.97 & 3354.69 & 7373.13 & --- & --- & --- &  \\ 
+  Sub-Saharan Africa & 6515.96 & 13641.13 & 12449.69 & 4399.76 & 7717.52 & 9937.42 & --- & --- & --- &  \\ 
+  \end{tabular}
+}
+
+      \vspace*{1cm}
+    \end{minipage}
+    
+    \begin{minipage}[c]{0.99\textwidth}  
+    
+
+
+{\centering \includegraphics[width=\maxwidth]{figure/plot4-1} 
+
+}
+
+
+
+      \vspace*{0.5cm}
+    \end{minipage}
+%\end{minipage}
+
+%%%%%%%%%%%%%%%% END OF DOCUMENT %%%%%%%%%%%%%%%%%%%
+\end{document}
