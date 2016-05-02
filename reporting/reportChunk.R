@@ -7,7 +7,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   
   # sector <- "Manufacturing"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
-  # firmType <- "By age"
+  # firmType <- "By exports status"
   # allocEff <- "All countries"
   # whichTable <- 2
   
@@ -114,16 +114,16 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     if (lenVar == 3) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]
       # reorder columns
-      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
-                         contains(paste0("_",substr(thisList[2],1,3))),
-                         contains(paste0("_",substr(thisList[3],1,3))))
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,1))),
+                         contains(paste0("_",substr(thisList[2],1,1))),
+                         contains(paste0("_",substr(thisList[3],1,1))))
       # rename columns
       names(sumStats) <- rep(c("median","sd","IQR"),3)
     } else if (lenVar == 2) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
       # reorder columns
-      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
-                         contains(paste0("_",substr(thisList[2],1,3))))
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,1))),
+                         contains(paste0("_",substr(thisList[2],1,1))))
       # rename columns
       names(sumStats) <- rep(c("median","sd","IQR"),2)
     }
@@ -169,24 +169,24 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     # final reordering of columns
     if (lenVar == 3) {
       # reorder columns
-      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))),
-                            contains(paste0("_",substr(thisList[3],1,3))))
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))),
+                            contains(paste0("_",substr(thisList[3],1,1))))
       # rename columns
       names(incomeStats) <- rep(c("median","sd","IQR"),3)
-      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))),
-                            contains(paste0("_",substr(thisList[3],1,3))))
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))),
+                            contains(paste0("_",substr(thisList[3],1,1))))
       # rename columns
       names(regionStats) <- rep(c("median","sd","IQR"),3)
     } else if (lenVar == 2) {
       # reorder columns
-      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))))
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))))
       # rename columns
       names(incomeStats) <- rep(c("median","sd","IQR"),2)
-      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))))
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))))
       # rename columns
       names(regionStats) <- rep(c("median","sd","IQR"),2)
     }
@@ -427,16 +427,16 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     if (lenVar == 3) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]
       # reorder columns
-      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
-                         contains(paste0("_",substr(thisList[2],1,3))),
-                         contains(paste0("_",substr(thisList[3],1,3))))
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,1))),
+                         contains(paste0("_",substr(thisList[2],1,1))),
+                         contains(paste0("_",substr(thisList[3],1,1))))
       # rename columns
       names(sumStats) <- rep(c("median","sd","IQR"),3)
     } else if (lenVar == 2) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
       # reorder columns
-      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
-                         contains(paste0("_",substr(thisList[2],1,3))))
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,1))),
+                         contains(paste0("_",substr(thisList[2],1,1))))
       # rename columns
       names(sumStats) <- rep(c("median","sd","IQR"),2)
     }
@@ -482,24 +482,24 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     # final reordering of columns
     if (lenVar == 3) {
       # reorder columns
-      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))),
-                            contains(paste0("_",substr(thisList[3],1,3))))
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))),
+                            contains(paste0("_",substr(thisList[3],1,1))))
       # rename columns
       names(incomeStats) <- rep(c("median","sd","IQR"),3)
-      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))),
-                            contains(paste0("_",substr(thisList[3],1,3))))
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))),
+                            contains(paste0("_",substr(thisList[3],1,1))))
       # rename columns
       names(regionStats) <- rep(c("median","sd","IQR"),3)
     } else if (lenVar == 2) {
       # reorder columns
-      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))))
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))))
       # rename columns
       names(incomeStats) <- rep(c("median","sd","IQR"),2)
-      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))))
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))))
       # rename columns
       names(regionStats) <- rep(c("median","sd","IQR"),2)
     }
@@ -741,16 +741,16 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     if (lenVar == 3) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]
       # reorder columns
-      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
-                         contains(paste0("_",substr(thisList[2],1,3))),
-                         contains(paste0("_",substr(thisList[3],1,3))))
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,1))),
+                         contains(paste0("_",substr(thisList[2],1,1))),
+                         contains(paste0("_",substr(thisList[3],1,1))))
       # rename columns
       names(sumStats) <- rep(c("median","sd","IQR"),3)
     } else if (lenVar == 2) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
       # reorder columns
-      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
-                         contains(paste0("_",substr(thisList[2],1,3))))
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,1))),
+                         contains(paste0("_",substr(thisList[2],1,1))))
       # rename columns
       names(sumStats) <- rep(c("median","sd","IQR"),2)
     }
@@ -796,24 +796,24 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     # final reordering of columns
     if (lenVar == 3) {
       # reorder columns
-      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))),
-                            contains(paste0("_",substr(thisList[3],1,3))))
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))),
+                            contains(paste0("_",substr(thisList[3],1,1))))
       # rename columns
       names(incomeStats) <- rep(c("median","sd","IQR"),3)
-      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))),
-                            contains(paste0("_",substr(thisList[3],1,3))))
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))),
+                            contains(paste0("_",substr(thisList[3],1,1))))
       # rename columns
       names(regionStats) <- rep(c("median","sd","IQR"),3)
     } else if (lenVar == 2) {
       # reorder columns
-      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))))
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))))
       # rename columns
       names(incomeStats) <- rep(c("median","sd","IQR"),2)
-      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                            contains(paste0("_",substr(thisList[2],1,3))))
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,1))),
+                            contains(paste0("_",substr(thisList[2],1,1))))
       # rename columns
       names(regionStats) <- rep(c("median","sd","IQR"),2)
     }

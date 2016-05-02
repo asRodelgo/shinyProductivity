@@ -69,7 +69,7 @@ firmForeignOwnerList <- c("All firms","Local Ownership","Foreign Ownership")
     typeCode <- "age"
   } else if (type=="By size"){
     typeCode <- "size"
-  } else if (type=="By export status"){
+  } else if (type=="By exports status"){
     typeCode <- "expStatus"
   } else {
     typeCode <- "forOwner"

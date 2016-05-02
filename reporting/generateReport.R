@@ -7,7 +7,7 @@ source('global_utils.R') # data and functions needed
 #for (sect in sectorList){
 for (sect in c("Manufacturing")){  
   #for (type in .firmTypeListDesc(sect)){
-  for (type in c("By age")){  
+  for (type in c("By exports status")){  
     #for (ind in .indicatorList(sect)) {
     for (ind in c("labor cost (n2a) over sales (d2)")){ 
       indCode <- .indicatorToCode(ind)
