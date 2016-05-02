@@ -7,7 +7,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   
   # sector <- "Manufacturing"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
-  # firmType <- "By size"
+  # firmType <- "By age"
   # allocEff <- "All countries"
   # whichTable <- 2
   
@@ -118,14 +118,14 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
                          contains(paste0("_",substr(thisList[2],1,3))),
                          contains(paste0("_",substr(thisList[3],1,3))))
       # rename columns
-      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
+      names(sumStats) <- rep(c("median","sd","IQR"),3)
     } else if (lenVar == 2) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
       # reorder columns
       sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
                          contains(paste0("_",substr(thisList[2],1,3))))
       # rename columns
-      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
+      names(sumStats) <- rep(c("median","sd","IQR"),2)
     }
     
     # Calculate income level medians  ----------
@@ -153,6 +153,44 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     # reorder columns
     incomeStats <- incomeStats[,reorder]
     regionStats <- regionStats[,reorder]
+    
+    incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+    incomeRowNames <- as.character(incomeStats$incomeLevel)
+    incomeStats <- select(incomeStats, -incomeLevel)
+    incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+    row.names(incomeStats) <- incomeRowNames
+    incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
+    
+    regionStats <- filter(regionStats, !is.na(region))
+    regionRowNames <- as.character(regionStats$region)
+    regionStats <- select(regionStats, -region)
+    regionStats <- mutate_each(regionStats, funs(as.numeric))
+    row.names(regionStats) <- regionRowNames
+    # final reordering of columns
+    if (lenVar == 3) {
+      # reorder columns
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))),
+                            contains(paste0("_",substr(thisList[3],1,3))))
+      # rename columns
+      names(incomeStats) <- rep(c("median","sd","IQR"),3)
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))),
+                            contains(paste0("_",substr(thisList[3],1,3))))
+      # rename columns
+      names(regionStats) <- rep(c("median","sd","IQR"),3)
+    } else if (lenVar == 2) {
+      # reorder columns
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))))
+      # rename columns
+      names(incomeStats) <- rep(c("median","sd","IQR"),2)
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))))
+      # rename columns
+      names(regionStats) <- rep(c("median","sd","IQR"),2)
+    }
+    
     
   } else {
     
@@ -195,49 +233,23 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
       summarise_each(funs(median(as.numeric(.))))
     regionStats <- as.data.frame(regionStats)  
     
+    incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+    incomeRowNames <- as.character(incomeStats$incomeLevel)
+    incomeStats <- select(incomeStats, -incomeLevel)
+    incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+    row.names(incomeStats) <- incomeRowNames
+    incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
+    
+    regionStats <- filter(regionStats, !is.na(region))
+    regionRowNames <- as.character(regionStats$region)
+    regionStats <- select(regionStats, -region)
+    regionStats <- mutate_each(regionStats, funs(as.numeric))
+    row.names(regionStats) <- regionRowNames
   }
   
   # -------------------------------------------
   # Prepare the output tables
   # -------------------------
-  
-  incomeStats <- filter(incomeStats, !is.na(incomeLevel))
-  incomeRowNames <- as.character(incomeStats$incomeLevel)
-  incomeStats <- select(incomeStats, -incomeLevel)
-  incomeStats <- mutate_each(incomeStats, funs(as.numeric))
-  row.names(incomeStats) <- incomeRowNames
-  incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
-  
-  regionStats <- filter(regionStats, !is.na(region))
-  regionRowNames <- as.character(regionStats$region)
-  regionStats <- select(regionStats, -region)
-  regionStats <- mutate_each(regionStats, funs(as.numeric))
-  row.names(regionStats) <- regionRowNames
-  
-  # final reordering of columns
-  if (lenVar == 3) {
-    # reorder columns
-    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                       contains(paste0("_",substr(thisList[2],1,3))),
-                       contains(paste0("_",substr(thisList[3],1,3))))
-    # rename columns
-    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
-    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))),
-                          contains(paste0("_",substr(thisList[3],1,3))))
-    # rename columns
-    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
-  } else if (lenVar == 2) {
-    # reorder columns
-    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                       contains(paste0("_",substr(thisList[2],1,3))))
-    # rename columns
-    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
-    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))))
-    # rename columns
-    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
-  }
   
   # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
   
@@ -274,7 +286,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     summaryStats <- data_aux
     
     if (lenVar==3){
-      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2),thisList[3]," ")
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2),thisList[3],rep(" ",2))
       
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('>{\\raggedright}p{0.6in}',rep('>{\\raggedleft}p{0.6in}',ncol(data.table)-1),'l')
@@ -283,7 +295,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
             booktabs = FALSE, table.placement="", hline.after = c(1) ,latex.environments = "center"
       )#sanitize.text.function = function(x){x}) # include sanitize to control formats
     } else {
-      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2]," ")
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2))
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
@@ -419,14 +431,14 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
                          contains(paste0("_",substr(thisList[2],1,3))),
                          contains(paste0("_",substr(thisList[3],1,3))))
       # rename columns
-      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
+      names(sumStats) <- rep(c("median","sd","IQR"),3)
     } else if (lenVar == 2) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
       # reorder columns
       sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
                          contains(paste0("_",substr(thisList[2],1,3))))
       # rename columns
-      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
+      names(sumStats) <- rep(c("median","sd","IQR"),2)
     }
     
     # Calculate income level medians  ----------
@@ -454,6 +466,44 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     # reorder columns
     incomeStats <- incomeStats[,reorder]
     regionStats <- regionStats[,reorder]
+    
+    incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+    incomeRowNames <- as.character(incomeStats$incomeLevel)
+    incomeStats <- select(incomeStats, -incomeLevel)
+    incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+    row.names(incomeStats) <- incomeRowNames
+    incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
+    
+    regionStats <- filter(regionStats, !is.na(region))
+    regionRowNames <- as.character(regionStats$region)
+    regionStats <- select(regionStats, -region)
+    regionStats <- mutate_each(regionStats, funs(as.numeric))
+    row.names(regionStats) <- regionRowNames
+    # final reordering of columns
+    if (lenVar == 3) {
+      # reorder columns
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))),
+                            contains(paste0("_",substr(thisList[3],1,3))))
+      # rename columns
+      names(incomeStats) <- rep(c("median","sd","IQR"),3)
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))),
+                            contains(paste0("_",substr(thisList[3],1,3))))
+      # rename columns
+      names(regionStats) <- rep(c("median","sd","IQR"),3)
+    } else if (lenVar == 2) {
+      # reorder columns
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))))
+      # rename columns
+      names(incomeStats) <- rep(c("median","sd","IQR"),2)
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))))
+      # rename columns
+      names(regionStats) <- rep(c("median","sd","IQR"),2)
+    }
+    
     
   } else {
     
@@ -496,49 +546,23 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
       summarise_each(funs(median(as.numeric(.))))
     regionStats <- as.data.frame(regionStats)  
     
+    incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+    incomeRowNames <- as.character(incomeStats$incomeLevel)
+    incomeStats <- select(incomeStats, -incomeLevel)
+    incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+    row.names(incomeStats) <- incomeRowNames
+    incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
+    
+    regionStats <- filter(regionStats, !is.na(region))
+    regionRowNames <- as.character(regionStats$region)
+    regionStats <- select(regionStats, -region)
+    regionStats <- mutate_each(regionStats, funs(as.numeric))
+    row.names(regionStats) <- regionRowNames
   }
   
   # -------------------------------------------
   # Prepare the output tables
   # -------------------------
-  
-  incomeStats <- filter(incomeStats, !is.na(incomeLevel))
-  incomeRowNames <- as.character(incomeStats$incomeLevel)
-  incomeStats <- select(incomeStats, -incomeLevel)
-  incomeStats <- mutate_each(incomeStats, funs(as.numeric))
-  row.names(incomeStats) <- incomeRowNames
-  incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
-  
-  regionStats <- filter(regionStats, !is.na(region))
-  regionRowNames <- as.character(regionStats$region)
-  regionStats <- select(regionStats, -region)
-  regionStats <- mutate_each(regionStats, funs(as.numeric))
-  row.names(regionStats) <- regionRowNames
-  
-  # final reordering of columns
-  if (lenVar == 3) {
-    # reorder columns
-    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))),
-                          contains(paste0("_",substr(thisList[3],1,3))))
-    # rename columns
-    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
-    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))),
-                          contains(paste0("_",substr(thisList[3],1,3))))
-    # rename columns
-    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
-  } else if (lenVar == 2) {
-    # reorder columns
-    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))))
-    # rename columns
-    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
-    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))))
-    # rename columns
-    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
-  }
   
   # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
   
@@ -575,7 +599,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     summaryStats <- data_aux
     
     if (lenVar==3){
-      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2),thisList[3]," ")
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2),thisList[3],rep(" ",2))
       
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('>{\\raggedright}p{0.6in}',rep('>{\\raggedleft}p{0.6in}',ncol(data.table)-1),'l')
@@ -584,7 +608,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
             booktabs = FALSE, table.placement="", hline.after = c(1) ,latex.environments = "center"
       )#sanitize.text.function = function(x){x}) # include sanitize to control formats
     } else {
-      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2]," ")
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2))
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
@@ -721,14 +745,14 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
                          contains(paste0("_",substr(thisList[2],1,3))),
                          contains(paste0("_",substr(thisList[3],1,3))))
       # rename columns
-      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
+      names(sumStats) <- rep(c("median","sd","IQR"),3)
     } else if (lenVar == 2) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
       # reorder columns
       sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
                          contains(paste0("_",substr(thisList[2],1,3))))
       # rename columns
-      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
+      names(sumStats) <- rep(c("median","sd","IQR"),2)
     }
     
     # Calculate income level medians  ----------
@@ -756,6 +780,44 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     # reorder columns
     incomeStats <- incomeStats[,reorder]
     regionStats <- regionStats[,reorder]
+    
+    incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+    incomeRowNames <- as.character(incomeStats$incomeLevel)
+    incomeStats <- select(incomeStats, -incomeLevel)
+    incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+    row.names(incomeStats) <- incomeRowNames
+    incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
+    
+    regionStats <- filter(regionStats, !is.na(region))
+    regionRowNames <- as.character(regionStats$region)
+    regionStats <- select(regionStats, -region)
+    regionStats <- mutate_each(regionStats, funs(as.numeric))
+    row.names(regionStats) <- regionRowNames
+    # final reordering of columns
+    if (lenVar == 3) {
+      # reorder columns
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))),
+                            contains(paste0("_",substr(thisList[3],1,3))))
+      # rename columns
+      names(incomeStats) <- rep(c("median","sd","IQR"),3)
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))),
+                            contains(paste0("_",substr(thisList[3],1,3))))
+      # rename columns
+      names(regionStats) <- rep(c("median","sd","IQR"),3)
+    } else if (lenVar == 2) {
+      # reorder columns
+      incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))))
+      # rename columns
+      names(incomeStats) <- rep(c("median","sd","IQR"),2)
+      regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                            contains(paste0("_",substr(thisList[2],1,3))))
+      # rename columns
+      names(regionStats) <- rep(c("median","sd","IQR"),2)
+    }
+    
     
   } else {
     
@@ -798,49 +860,23 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
       summarise_each(funs(median(as.numeric(.))))
     regionStats <- as.data.frame(regionStats)  
     
+    incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+    incomeRowNames <- as.character(incomeStats$incomeLevel)
+    incomeStats <- select(incomeStats, -incomeLevel)
+    incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+    row.names(incomeStats) <- incomeRowNames
+    incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
+    
+    regionStats <- filter(regionStats, !is.na(region))
+    regionRowNames <- as.character(regionStats$region)
+    regionStats <- select(regionStats, -region)
+    regionStats <- mutate_each(regionStats, funs(as.numeric))
+    row.names(regionStats) <- regionRowNames
   }
   
   # -------------------------------------------
   # Prepare the output tables
   # -------------------------
-  
-  incomeStats <- filter(incomeStats, !is.na(incomeLevel))
-  incomeRowNames <- as.character(incomeStats$incomeLevel)
-  incomeStats <- select(incomeStats, -incomeLevel)
-  incomeStats <- mutate_each(incomeStats, funs(as.numeric))
-  row.names(incomeStats) <- incomeRowNames
-  incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
-  
-  regionStats <- filter(regionStats, !is.na(region))
-  regionRowNames <- as.character(regionStats$region)
-  regionStats <- select(regionStats, -region)
-  regionStats <- mutate_each(regionStats, funs(as.numeric))
-  row.names(regionStats) <- regionRowNames
-  
-  # final reordering of columns
-  if (lenVar == 3) {
-    # reorder columns
-    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))),
-                          contains(paste0("_",substr(thisList[3],1,3))))
-    # rename columns
-    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
-    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))),
-                          contains(paste0("_",substr(thisList[3],1,3))))
-    # rename columns
-    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
-  } else if (lenVar == 2) {
-    # reorder columns
-    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))))
-    # rename columns
-    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
-    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
-                          contains(paste0("_",substr(thisList[2],1,3))))
-    # rename columns
-    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
-  }
   
   # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
   
@@ -877,7 +913,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     summaryStats <- data_aux
     
     if (lenVar==3){
-      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2),thisList[3]," ")
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2),thisList[3],rep(" ",2))
       
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('>{\\raggedright}p{0.6in}',rep('>{\\raggedleft}p{0.6in}',ncol(data.table)-1),'l')
@@ -886,7 +922,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
             booktabs = FALSE, table.placement="", hline.after = c(1) ,latex.environments = "center"
       )#sanitize.text.function = function(x){x}) # include sanitize to control formats
     } else {
-      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2]," ")
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2))
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 

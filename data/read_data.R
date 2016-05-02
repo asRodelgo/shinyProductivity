@@ -19,7 +19,7 @@ sectorList <- c("All sectors", "Manufacturing", "Services")
 #
 firmTypeList <- c("All firms","By age","By size","By exports status","By foreign ownership") #,"By tech. innovation"
 #
-firmAgeList <- c("All firms","0-10","11-20","+20")
+firmAgeList <- c("All firms","0 to 10","11 to 20","more than 20")
 firmSizeList <- c("All firms","Small firms","Medium firms","Large firms")
 firmExpStatusList <- c("All firms","Do not export","Export")
 #firmTechInnovList
