@@ -7,7 +7,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   
   # sector <- "Manufacturing"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
-  # firmType <- "By exports status"
+  # firmType <- "By size"
   # allocEff <- "All countries"
   # whichTable <- 2
   
@@ -19,26 +19,31 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   if (sector == "Manufacturing") {
     #data <- filter(data, sector_MS %in% sector)
     if (firmType == "By age") {
+      thisList <- firmAgeList[-1]
       groupByVar <- "age"
       lenVar <- length(firmAgeList)-1
       #dataBlock <- dataBlock_age
     }
     if (firmType == "By size") {
+      thisList <- firmSizeList[-1]
       groupByVar <- "size"
       lenVar <- length(firmSizeList)-1
       #dataBlock <- dataBlock_size
     }
     if (firmType == "By exports status") {
+      thisList <- firmExpStatusList[-1]
       groupByVar <- "expStatus"
       lenVar <- length(firmExpStatusList)-1
       #dataBlock <- dataBlock_expStatus
     }
     if (firmType == "By foreign ownership") {
+      thisList <- firmForeignOwnerList[-1]
       groupByVar <- "forOwner"
       lenVar <- length(firmForeignOwnerList)-1
       #dataBlock <- dataBlock_forOwner
     }
     if (firmType == "By tech. innovation") {
+      thisList <- firmForeignOwnerList[-1]
       groupByVar <- "forOwner"
       lenVar <- length(firmForeignOwnerList)-1
       #dataBlock <- dataBlock_forOwner
@@ -108,8 +113,19 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     row.names(sumStats) <- statsNames
     if (lenVar == 3) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]
+      # reorder columns
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
+                         contains(paste0("_",substr(thisList[2],1,3))),
+                         contains(paste0("_",substr(thisList[3],1,3))))
+      # rename columns
+      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
     } else if (lenVar == 2) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
+      # reorder columns
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
+                         contains(paste0("_",substr(thisList[2],1,3))))
+      # rename columns
+      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
     }
     
     # Calculate income level medians  ----------
@@ -198,6 +214,31 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   regionStats <- mutate_each(regionStats, funs(as.numeric))
   row.names(regionStats) <- regionRowNames
   
+  # final reordering of columns
+  if (lenVar == 3) {
+    # reorder columns
+    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                       contains(paste0("_",substr(thisList[2],1,3))),
+                       contains(paste0("_",substr(thisList[3],1,3))))
+    # rename columns
+    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
+    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))),
+                          contains(paste0("_",substr(thisList[3],1,3))))
+    # rename columns
+    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
+  } else if (lenVar == 2) {
+    # reorder columns
+    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                       contains(paste0("_",substr(thisList[2],1,3))))
+    # rename columns
+    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
+    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))))
+    # rename columns
+    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
+  }
+  
   # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
   
   if (whichTable == 1){
@@ -223,14 +264,26 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   names(summaryStats) <- c(names(summaryStats)[1:(ncol(summaryStats)-1)],"")
 
   if (!(firmType == "All firms")) {
+    # add an extra header. Push current header to row1
+    data_aux <- summaryStats
+    data_aux[1,] <- names(summaryStats)
+    for (i in 1:nrow(summaryStats)){
+      data_aux[i+1,] <- summaryStats[i,]
+    }
+    row.names(data_aux) <- c(" ",row.names(summaryStats))
+    summaryStats <- data_aux
+    
     if (lenVar==3){
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2),thisList[3]," ")
+      
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('>{\\raggedright}p{0.6in}',rep('>{\\raggedleft}p{0.6in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
             size="\\footnotesize",
-            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+            booktabs = FALSE, table.placement="", hline.after = c(1) ,latex.environments = "center"
       )#sanitize.text.function = function(x){x}) # include sanitize to control formats
     } else {
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2]," ")
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
@@ -255,7 +308,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   
   # sector <- "Manufacturing"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
-  # firmType <- "By exports status"
+  # firmType <- "By size"
   # allocEff <- "All countries"
   # whichTable <- 2
   
@@ -267,26 +320,31 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   if (sector == "Manufacturing") {
     #data <- filter(data, sector_MS %in% sector)
     if (firmType == "By age") {
+      thisList <- firmAgeList[-1]
       groupByVar <- "age"
       lenVar <- length(firmAgeList)-1
       #dataBlock <- dataBlock_age
     }
     if (firmType == "By size") {
+      thisList <- firmSizeList[-1]
       groupByVar <- "size"
       lenVar <- length(firmSizeList)-1
       #dataBlock <- dataBlock_size
     }
     if (firmType == "By exports status") {
+      thisList <- firmExpStatusList[-1]
       groupByVar <- "expStatus"
       lenVar <- length(firmExpStatusList)-1
       #dataBlock <- dataBlock_expStatus
     }
     if (firmType == "By foreign ownership") {
+      thisList <- firmForeignOwnerList[-1]
       groupByVar <- "forOwner"
       lenVar <- length(firmForeignOwnerList)-1
       #dataBlock <- dataBlock_forOwner
     }
     if (firmType == "By tech. innovation") {
+      thisList <- firmForeignOwnerList[-1]
       groupByVar <- "forOwner"
       lenVar <- length(firmForeignOwnerList)-1
       #dataBlock <- dataBlock_forOwner
@@ -356,8 +414,19 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     row.names(sumStats) <- statsNames
     if (lenVar == 3) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]
+      # reorder columns
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
+                         contains(paste0("_",substr(thisList[2],1,3))),
+                         contains(paste0("_",substr(thisList[3],1,3))))
+      # rename columns
+      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
     } else if (lenVar == 2) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
+      # reorder columns
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
+                         contains(paste0("_",substr(thisList[2],1,3))))
+      # rename columns
+      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
     }
     
     # Calculate income level medians  ----------
@@ -446,6 +515,31 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   regionStats <- mutate_each(regionStats, funs(as.numeric))
   row.names(regionStats) <- regionRowNames
   
+  # final reordering of columns
+  if (lenVar == 3) {
+    # reorder columns
+    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))),
+                          contains(paste0("_",substr(thisList[3],1,3))))
+    # rename columns
+    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
+    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))),
+                          contains(paste0("_",substr(thisList[3],1,3))))
+    # rename columns
+    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
+  } else if (lenVar == 2) {
+    # reorder columns
+    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))))
+    # rename columns
+    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
+    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))))
+    # rename columns
+    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
+  }
+  
   # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
   
   if (whichTable == 1){
@@ -471,14 +565,26 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   names(summaryStats) <- c(names(summaryStats)[1:(ncol(summaryStats)-1)],"")
   
   if (!(firmType == "All firms")) {
+    # add an extra header. Push current header to row1
+    data_aux <- summaryStats
+    data_aux[1,] <- names(summaryStats)
+    for (i in 1:nrow(summaryStats)){
+      data_aux[i+1,] <- summaryStats[i,]
+    }
+    row.names(data_aux) <- c(" ",row.names(summaryStats))
+    summaryStats <- data_aux
+    
     if (lenVar==3){
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2),thisList[3]," ")
+      
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('>{\\raggedright}p{0.6in}',rep('>{\\raggedleft}p{0.6in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
             size="\\footnotesize",
-            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+            booktabs = FALSE, table.placement="", hline.after = c(1) ,latex.environments = "center"
       )#sanitize.text.function = function(x){x}) # include sanitize to control formats
     } else {
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2]," ")
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
@@ -493,7 +599,9 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     )#sanitize.text.function = function(x){x}) # include sanitize to control formats  
   }
   
+  
 }  
+
 summaryStats(sect,ind,type,3)
 
 ## ---- table4 ----
@@ -502,7 +610,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   
   # sector <- "Manufacturing"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
-  # firmType <- "By exports status"
+  # firmType <- "By size"
   # allocEff <- "All countries"
   # whichTable <- 2
   
@@ -514,26 +622,31 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   if (sector == "Manufacturing") {
     #data <- filter(data, sector_MS %in% sector)
     if (firmType == "By age") {
+      thisList <- firmAgeList[-1]
       groupByVar <- "age"
       lenVar <- length(firmAgeList)-1
       #dataBlock <- dataBlock_age
     }
     if (firmType == "By size") {
+      thisList <- firmSizeList[-1]
       groupByVar <- "size"
       lenVar <- length(firmSizeList)-1
       #dataBlock <- dataBlock_size
     }
     if (firmType == "By exports status") {
+      thisList <- firmExpStatusList[-1]
       groupByVar <- "expStatus"
       lenVar <- length(firmExpStatusList)-1
       #dataBlock <- dataBlock_expStatus
     }
     if (firmType == "By foreign ownership") {
+      thisList <- firmForeignOwnerList[-1]
       groupByVar <- "forOwner"
       lenVar <- length(firmForeignOwnerList)-1
       #dataBlock <- dataBlock_forOwner
     }
     if (firmType == "By tech. innovation") {
+      thisList <- firmForeignOwnerList[-1]
       groupByVar <- "forOwner"
       lenVar <- length(firmForeignOwnerList)-1
       #dataBlock <- dataBlock_forOwner
@@ -603,8 +716,19 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     row.names(sumStats) <- statsNames
     if (lenVar == 3) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]
+      # reorder columns
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
+                         contains(paste0("_",substr(thisList[2],1,3))),
+                         contains(paste0("_",substr(thisList[3],1,3))))
+      # rename columns
+      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
     } else if (lenVar == 2) {
       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
+      # reorder columns
+      sumStats <- select(sumStats, contains(paste0("_",substr(thisList[1],1,3))),
+                         contains(paste0("_",substr(thisList[2],1,3))))
+      # rename columns
+      names(sumStats) <- rep(c("median","sd","IQR"),lenVar)
     }
     
     # Calculate income level medians  ----------
@@ -693,6 +817,31 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   regionStats <- mutate_each(regionStats, funs(as.numeric))
   row.names(regionStats) <- regionRowNames
   
+  # final reordering of columns
+  if (lenVar == 3) {
+    # reorder columns
+    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))),
+                          contains(paste0("_",substr(thisList[3],1,3))))
+    # rename columns
+    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
+    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))),
+                          contains(paste0("_",substr(thisList[3],1,3))))
+    # rename columns
+    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
+  } else if (lenVar == 2) {
+    # reorder columns
+    incomeStats <- select(incomeStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))))
+    # rename columns
+    names(incomeStats) <- rep(c("median","sd","IQR"),lenVar)
+    regionStats <- select(regionStats, contains(paste0("_",substr(thisList[1],1,3))),
+                          contains(paste0("_",substr(thisList[2],1,3))))
+    # rename columns
+    names(regionStats) <- rep(c("median","sd","IQR"),lenVar)
+  }
+  
   # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
   
   if (whichTable == 1){
@@ -718,14 +867,26 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
   names(summaryStats) <- c(names(summaryStats)[1:(ncol(summaryStats)-1)],"")
   
   if (!(firmType == "All firms")) {
+    # add an extra header. Push current header to row1
+    data_aux <- summaryStats
+    data_aux[1,] <- names(summaryStats)
+    for (i in 1:nrow(summaryStats)){
+      data_aux[i+1,] <- summaryStats[i,]
+    }
+    row.names(data_aux) <- c(" ",row.names(summaryStats))
+    summaryStats <- data_aux
+    
     if (lenVar==3){
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2],rep(" ",2),thisList[3]," ")
+      
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('>{\\raggedright}p{0.6in}',rep('>{\\raggedleft}p{0.6in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
             size="\\footnotesize",
-            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+            booktabs = FALSE, table.placement="", hline.after = c(1) ,latex.environments = "center"
       )#sanitize.text.function = function(x){x}) # include sanitize to control formats
     } else {
+      names(summaryStats) <- c(" ",thisList[1],rep(" ",2),thisList[2]," ")
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
@@ -740,7 +901,9 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
     )#sanitize.text.function = function(x){x}) # include sanitize to control formats  
   }
   
+  
 }  
+
 summaryStats(sect,ind,type,4)
 
 ######################################################################################
