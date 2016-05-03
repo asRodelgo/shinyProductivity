@@ -299,7 +299,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
-            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+            booktabs = FALSE, table.placement="", hline.after = c(1) ,latex.environments = "center"
       )#sanitize.text.function = function(x){x}) # include sanitize to control formats
     }
   } else {
@@ -612,7 +612,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
-            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+            booktabs = FALSE, table.placement="", hline.after = c(1) ,latex.environments = "center"
       )#sanitize.text.function = function(x){x}) # include sanitize to control formats
     }
   } else {
@@ -926,7 +926,7 @@ summaryStats <- function(sector,indicatorDesc,firmType,whichTable){
       data.table <- xtable(summaryStats, digits=rep(2,ncol(summaryStats)+1)) #control decimals
       align(data.table) <- c('l',rep('>{\\raggedleft}p{0.8in}',ncol(data.table)-1),'l')
       print(data.table, include.rownames=TRUE,include.colnames=TRUE, floating=FALSE, 
-            booktabs = FALSE, table.placement="", hline.after = c(0) ,latex.environments = "center"
+            booktabs = FALSE, table.placement="", hline.after = c(1) ,latex.environments = "center"
       )#sanitize.text.function = function(x){x}) # include sanitize to control formats
     }
   } else {

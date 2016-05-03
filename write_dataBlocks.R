@@ -3,8 +3,10 @@
 # Calculate datablocks (for the actual UI, precalculate these and read.csv)
 #takes about 1/2 min per dataBlock. Creates list with all dataBlocks and saves it in disk
 dataBlock <- list()
-for (sect in sectorList){
-  for (type in .firmTypeList(sect)){
+#for (sect in sectorList){
+for (sect in c("Manufacturing")){  
+  #for (type in .firmTypeList(sect)){
+  for (type in c("age")){
     for (ind in .indicatorList(sect)) {
       indCode <- .indicatorToCode(ind)
       sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))

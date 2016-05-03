@@ -1,0 +1,220 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template productivity report
+% 
+% Alberto Sanchez asanchezrodelgo@ifc.org May 2016
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+%%%%%%%%%%%%%% package declaration %%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{This is my name}
+\rhead{this is page \thepage}
+\cfoot{center of the footer!}
+\usepackage[top=0.3in, bottom=0.1in, left=0.5in, right=0.6in]{geometry}
+\usepackage{graphicx} % to load images
+\usepackage[export]{adjustbox} % add alignment to includegraphics
+\usepackage[font=small]{caption}
+\usepackage{xcolor} % color text
+\usepackage{tabularx} % to adjust table width, etc. 
+\usepackage{titlesec} % format titles and headers
+\usepackage{sectsty} % format sections & subsections
+\usepackage{booktabs} % For \toprule, \midrule and \bottomrule
+\usepackage{longtable} % add pages for long tables
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = blue,
+            anchorcolor = blue]{hyperref} % to include hyperlinks in the doc
+\sectionfont{\fontsize{24}{22}\selectfont\raggedright} % formats title newsletter (section) 
+\subsectionfont{\fontsize{14}{12}\selectfont\raggedright} % formats title newsletter (section)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BEGIN DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+%
+
+%%%%%%%%%%%%%%%% PAGE 1 %%%%%%%%%%%%%%%%%%%
+%World Bank logo and TCMN branding
+\begin{figure}
+  \vspace{-3ex} % move up this figure
+  \hspace{-7ex} % move left this figure
+  \includegraphics[width=5cm]{/Users/asanchez3/shinyTCMN/www/wb_logo_background.png}
+\end{figure}
+%\begin{figure}
+ \begin{minipage}[t]{1.1\textwidth} % top section
+      \vspace{-30ex}
+      \hspace{10ex}
+      \raggedleft{\section*{\color{white!20!black}Productivity Indicators Report}}
+      %\raggedright{\includegraphics[width=5.5cm,right]{/Users/asanchez3/shinyTCMN/www/TC_snapshots_operations.png}}
+  \end{minipage}
+  
+%\end{figure}
+%
+%%%% Macro Indicators
+\begin{minipage}[t]{0.99\textwidth} % top section
+  \vspace{-0.5cm}
+      \subsection*{\color{white!40!black}Sector: \color{blue!40!black}Manufacturing}
+      \subsection*{\color{white!40!black}Firm type: \color{blue!40!black}By exports status}
+      \subsection*{\color{white!40!black}Indicator: \color{blue!40!black}net sales over labor (l1) (in 2009 USD)}
+  \end{minipage} % end top section
+
+\vspace*{1.5cm}
+  \raggedright{\color{white!30!black} \textbf{\Large Summary Statistics}}
+    \begin{minipage}[c]{0.99\textwidth}  
+      \vspace*{0.2cm}
+      
+% latex table generated in R 3.2.2 by xtable 1.7-4 package
+% Mon May  2 21:00:47 2016
+\begin{tabular}{l>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}l}
+  &   & Do not export &   &   & Export &   &   \\ 
+   & median & sd & IQR & median & sd & IQR &  \\ 
+   \hline
+Min & 276.36 & 1072.85 & 991.14 & -2662.87 & 518.1 & 358.63 &  \\ 
+  Max & 4627689.28 & 7687607.53 & 8165235.81 & 15376554.21 & 12390048.69 & 21267519.88 &  \\ 
+  Mean & 55562.57 & 89307.39 & 94083.53 & 168798.71 & 150054.01 & 240616.56 &  \\ 
+  Median & 9509 & 9789.31 & 10354.78 & 13500.81 & 17383.11 & 19008.45 &  \\ 
+  Stdev & 446471.95 & 741953.66 & 788047.19 & 1492035.27 & 1202327.97 & 2064971.5 &  \\ 
+  IQR & 11515.14 & 13713.96 & 13123.28 & 20594.48 & 21905.1 & 25497.51 &  \\ 
+  \end{tabular}
+
+      \vspace*{0.5cm}
+    \end{minipage}
+    
+    \begin{minipage}[c]{0.99\textwidth}  
+
+
+{\centering \includegraphics[width=\maxwidth]{figure/plot2-1} 
+
+}
+
+
+
+      \vspace*{0.5cm}
+    \end{minipage}
+%\end{minipage}
+
+\newpage
+
+  \raggedright{\color{white!30!black} \textbf{\Large Income Level Statistics}}
+    \begin{minipage}[c]{0.99\textwidth}  
+      \vspace*{0.4cm}
+      
+% latex table generated in R 3.2.2 by xtable 1.7-4 package
+% Mon May  2 21:00:47 2016
+\begin{tabular}{l>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}l}
+  &   & Do not export &   &   & Export &   &   \\ 
+   & median & sd & IQR & median & sd & IQR &  \\ 
+   \hline
+Low income & 2932.5 & 6842.62 & 5788.16 & 4893.61 & 7005.39 & 8859.46 &  \\ 
+  Lower middle income & 4306.02 & 7043.64 & 7002.16 & --- & --- & --- &  \\ 
+  Upper middle income & 11107.67 & 11288.16 & 13954.18 & 16297.33 & 20524.38 & 20431.68 &  \\ 
+  High income & 17749.99 & 16316.09 & 22953.82 & 32498.29 & 30305.58 & 32972.79 &  \\ 
+  \end{tabular}
+
+      \vspace*{1cm}
+    \end{minipage}
+    
+    \begin{minipage}[c]{0.99\textwidth}  
+    
+
+
+{\centering \includegraphics[width=\maxwidth]{figure/plot3-1} 
+
+}
+
+
+
+      \vspace*{0.5cm}
+    \end{minipage}
+%\end{minipage}
+
+\newpage
+
+  \raggedright{\color{white!30!black} \textbf{\Large Region Level Statistics}}
+    \begin{minipage}[c]{0.99\textwidth}  
+      \vspace*{0.4cm}
+      
+% latex table generated in R 3.2.2 by xtable 1.7-4 package
+% Mon May  2 21:00:48 2016
+\begin{tabular}{l>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}>{\raggedleft}p{0.8in}l}
+  &   & Do not export &   &   & Export &   &   \\ 
+   & median & sd & IQR & median & sd & IQR &  \\ 
+   \hline
+East Asia and Pacific & 5098.7 & 5744.92 & 5770.48 & 6064.93 & 10893.34 & 7542.83 &  \\ 
+  Europe and Central Asia & 11266.38 & 14933.76 & 13761.07 & 15469.06 & 20866.71 & 20242.27 &  \\ 
+  Latin America and Caribbean & 12016.81 & 9498.82 & 10565.01 & 19701.24 & 18630.06 & 21628.77 &  \\ 
+  Middle East and North Africa & 11962.34 & 19687.34 & 18458.12 & --- & --- & --- &  \\ 
+  South Asia & 2158.34 & 5893.8 & 6301.67 & 2841.52 & 5261.88 & 5422.94 &  \\ 
+  Sub-Saharan Africa & 4306.02 & 9621.98 & 8673.9 & 11017.13 & 27915.02 & 24260.91 &  \\ 
+  \end{tabular}
+
+      \vspace*{1cm}
+    \end{minipage}
+    
+    \begin{minipage}[c]{0.99\textwidth}  
+    
+
+
+{\centering \includegraphics[width=\maxwidth]{figure/plot4-1} 
+
+}
+
+
+
+      \vspace*{0.5cm}
+    \end{minipage}
+%\end{minipage}
+
+%%%%%%%%%%%%%%%% END OF DOCUMENT %%%%%%%%%%%%%%%%%%%
+\end{document}
