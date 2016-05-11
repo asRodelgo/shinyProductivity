@@ -87,19 +87,19 @@ source("global_utils.R", local=TRUE)
     #                selectInput("inCountry", "Select a country:", countryList, selected="Afghanistan"),
     #                radioButtons("inOutliers","Remove outliers?",choices = list("Yes"=1,"No"=0),selected = 0),
     #                textInput("inIQRfactor","Outlier threshold (Ot): [Q1 - Ot*IQR,Q3 + Ot*IQR]",value=3),
-                    selectInput("inSectorSum", "Select sector:", sectorList, selected="All sectors"),
+                    selectInput("inSectorSum", "Sector:", sectorList, selected="All sectors"),
                     shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
                       div(id="firmTypesSum",
-                      selectInput("inFirmTypeSum", "Select firm characteristic:", firmTypeList, selected="All firms")
+                      selectInput("inFirmTypeSum", "Firm characteristic:", firmTypeList, selected="All firms")
                     )),  
-                    selectInput("inIndicatorSum","Select indicator:",indicatorList,selected = "labor cost (n2a) over sales (d2)"),
+                    selectInput("inIndicatorSum","Indicator:",indicatorList,selected = "labor cost (n2a) over sales (d2)"),
                     #selectInput("inWhichAllocation","Select Efficiency:",choices=c("All countries", "Direct and Indirect Allocation Efficient",
                     #                                                               "Direct Allocation Efficient","Direct Allocation Efficient",
                     #                                                               "Allocation Inefficient")
                     #            ,selected = "All countries"),
-                    radioButtons("inWhichTable","Select table:",choices = list("Countries"=1,"Summary Stats"=2,"Income level medians"=3
-                                                                               ,"Region medians"=4),selected = 1),
-                    actionButton("goSummaryButton","View table"),
+                    radioButtons("inWhichTable","Tables:",choices = list("Countries"=1,#"Summary Stats"=2,
+                                                                         "Income groups"=3,"Region groups"=4),selected = 1),
+                    actionButton("goSummaryButton","Show results"),
                     downloadButton("downloadReport", "Download PDF report"),
                     h6("Download: ",downloadLink("summaryDownTable","data"))
     #                actionButton("goPlotsButton","View table")

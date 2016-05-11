@@ -529,28 +529,34 @@
   incomeStats <- mutate_each(incomeStats, funs(as.numeric))
   row.names(incomeStats) <- incomeRowNames
   incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
+  incomeStats <- mutate(incomeStats, Group = row.names(incomeStats))
+  incomeStats <- select(incomeStats, Group,everything())
   
   regionStats <- filter(regionStats, !is.na(region))
   regionRowNames <- as.character(regionStats$region)
   regionStats <- select(regionStats, -region)
   regionStats <- mutate_each(regionStats, funs(as.numeric))
   row.names(regionStats) <- regionRowNames
-  
+  regionStats <- mutate(regionStats, Group = row.names(regionStats))
+  regionStats <- select(regionStats, Group,everything())
   # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
   
   if (whichTable == 1){
     summaryStats <- dataBlock
-    summaryStats <- select(summaryStats, -countryOnly, -yearOnly,-countryDes)
-    summaryStats[,2:(ncol(summaryStats)-2)] <- round(summaryStats[,2:(ncol(summaryStats)-2)],2)
+    summaryStats <- select(summaryStats, country=countryOnly,year=yearOnly,N,mean,
+                           median,sd,iqr,OPcov,indAlloc,outliersOut)
+    summaryStats[,3:ncol(summaryStats)] <- round(summaryStats[,3:ncol(summaryStats)],2)
   }
   if (whichTable == 2){
     summaryStats <- round(sumStats,2)
   }
   if (whichTable == 3){
-    summaryStats <- round(incomeStats,2)
+    summaryStats <- incomeStats
+    summaryStats[,2:ncol(summaryStats)] <- round(summaryStats[,2:ncol(summaryStats)],2)
   }
   if (whichTable == 4){
-    summaryStats <- round(regionStats,2)
+    summaryStats <- regionStats
+    summaryStats[,2:ncol(summaryStats)] <- round(summaryStats[,2:ncol(summaryStats)],2)
   }
   # NAs to "---"
   summaryStats[is.na(summaryStats)] <- "---"
