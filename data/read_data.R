@@ -1,7 +1,7 @@
 # Read data
 #data <- read.dta13("data/TFPR_and_ratios.dta")
 # Read data complete
-data <- read.dta13("data/TFPR_and_ratios_Complete.dta")
+data <- read.dta13("data/TFPR_and_ratios.dta")
 # Read country regions and income levels
 countryRegions <- read.csv("data/countryMappingProductivity.csv")
 # Read data mappings
