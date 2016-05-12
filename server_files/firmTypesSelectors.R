@@ -32,6 +32,7 @@ observe({
 })
 
 # Summary tab -----------------------
+
 # If manufacturing then show the firm type panel, else hide it
 observe({
   if(input$inSectorSum=="Manufacturing"){
@@ -40,6 +41,15 @@ observe({
     shinyjs::hide(id="firmTypesSum")
   }
 })
+# If tfp indicator then show the industry type panel, else hide it
+observe({
+  if(substr(input$inIndicatorSum,1,5) == "Total"){
+    shinyjs::show(id="tfpSectors")
+  } else {
+    shinyjs::hide(id="tfpSectors")
+  }
+})
+
 
 # download data ----------------------------
 output$summaryDownTable <- downloadHandler(
@@ -51,7 +61,7 @@ output$summaryDownTable <- downloadHandler(
     write.csv(.summaryStats(input$inSectorSum,
                             input$inIndicatorSum,
                             input$inFirmTypeSum,
-                            input$inWhichAllocation,
+                            input$inTfpSector,
                             input$inWhichTable
     ), file, row.names = TRUE)
   }

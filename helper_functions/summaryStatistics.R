@@ -36,7 +36,7 @@
 #   forOwnerU <- forOwner[2]
   
   # Initial parameters ---------------------------
-  indicatorCode <- .indicatorToCode(indicatorDesc)
+  indicatorCode <- .indicatorToCodeAllIndustries(indicatorDesc)
   #indicatorCode <- "n2a_d2"
   indicatorQuantileCode <- summaryMaps[summaryMaps$code==indicatorCode,]$indicatorQuant
   N_indicatorCode <- paste0("N_",indicatorCode)
@@ -340,17 +340,17 @@
 }
 
 # Calculate summary stats -----------------------------------
-.summaryStats <- function(sector,indicatorDesc,firmType,allocEff,whichTable){
+.summaryStats <- function(sector,indicatorDesc,firmType,industry,whichTable){
                                    #ageRange,sizeRange,expRange,ownRange,firmType){
   
   # sector <- "Manufacturing"
-  # indicatorDesc <- "labor cost (n2a) over sales (d2)"
-  # firmType <- "By exports status"
-  # allocEff <- "All countries"
-  # whichTable <- 2
+  # indicatorDesc <- "Labor share"
+  # firmType <- "By age"
+  # industry <- "All industries"
+  # whichTable <- 1
   
   # filter data by sector. Only drill down for manufacturing -------------------
-  indicatorCode <- .indicatorToCode(indicatorDesc)
+  indicatorCode <- .indicatorToCode(indicatorDesc,industry)
   sectCode <- ifelse(sector=="All sectors","AllSect",ifelse(sector=="Manufacturing","Manuf","Serv"))
   
   groupByVar <- "all"
@@ -359,26 +359,31 @@
     if (firmType == "By age") {
       groupByVar <- "age"
       lenVar <- length(firmAgeList)-1
+      thisList <- firmAgeList
       #dataBlock <- dataBlock_age
     }
     if (firmType == "By size") {
       groupByVar <- "size"
       lenVar <- length(firmSizeList)-1
+      thisList <- firmSizeList
       #dataBlock <- dataBlock_size
     }
     if (firmType == "By exports status") {
       groupByVar <- "expStatus"
       lenVar <- length(firmExpStatusList)-1
+      thisList <- firmExpStatusList
       #dataBlock <- dataBlock_expStatus
     }
     if (firmType == "By foreign ownership") {
       groupByVar <- "forOwner"
       lenVar <- length(firmForeignOwnerList)-1
+      thisList <- firmForeignOwnerList
       #dataBlock <- dataBlock_forOwner
     }
-    if (firmType == "By tech. innovation") {
-      groupByVar <- "forOwner"
-      lenVar <- length(firmForeignOwnerList)-1
+    if (firmType == "By imports status") {
+      groupByVar <- "impStatus"
+      lenVar <- length(firmImpStatusList)-1
+      thisList <- firmImpStatusList
       #dataBlock <- dataBlock_forOwner
     }
     thisDataBlock <- dataBlock[[paste(sectCode,groupByVar,indicatorCode,sep="_")]]
@@ -413,109 +418,247 @@
   # If sector is Manufacturing then group by groupByVar
   if (!(firmType == "All firms") & (sector=="Manufacturing")){
     
-    reorder <- .reorderColumns(lenVar,col_per_block = 2) # call the reorder function to arrange columns
-    
-    sumStatsAux <- dataBlock %>%
-      # starts_with("N"),starts_with("mean"),starts_with("OPcov_"),
-      # starts_with("OPcovNoWeights"), starts_with("indAlloc")
-      select(starts_with("median"),
-             starts_with("sd"),starts_with("iqr")) %>%
-      summarise_each(funs(min(., na.rm = TRUE),max(., na.rm = TRUE),mean(., na.rm = TRUE),
-                          median(., na.rm = TRUE),sd(., na.rm = TRUE),iqr(., na.rm = TRUE)))
-    
-    sumStats <- data.frame(#N_sum = as.numeric(select(sumStatsAux, starts_with("N"))[1,]),
-                           #mean_sum = as.numeric(select(sumStatsAux, starts_with("mean"))[1,]),
-                           median_sum = as.numeric(select(sumStatsAux, starts_with("median"))[1,]),
-                           sd_sum = as.numeric(select(sumStatsAux, starts_with("sd"))[1,]),
-                           iqr_sum = as.numeric(select(sumStatsAux, starts_with("iqr"))[1,]),
-                           #OPcov_sum = as.numeric(select(sumStatsAux, starts_with("OPcov"))[1,]),
-                           #OPcovNoW_sum = as.numeric(select(sumStatsAux, starts_with("OPcovNo"))[1,]),
-                           #indAlloc_sum = as.numeric(select(sumStatsAux, starts_with("indA"))[1,]),
-                           stringsAsFactors = FALSE)
-    #ncolsumStats <- ncol(sumStats)
-    # transpose every lenVar number of rows into columns
-    sumStats2 <- data.frame()
-    for (i in 1:length(statsNames)){
-      for (j in 1:lenVar){
-        for (k in 1:ncol(sumStats)){
-          sumStats2[i,k+(j-1)*ncol(sumStats)] <- sumStats[(i-1)*lenVar + j,k] 
-        }
-      }
-    }
-    sumStats <- sumStats2  
-    row.names(sumStats) <- statsNames
-    if (lenVar == 3) {
-      names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]
-    } else if (lenVar == 2) {
-      names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
-    }
-    
-    # Calculate income level medians  ----------
-    incomeStats <- dataBlock %>%
-      select(incomeLevel,#starts_with("N"),starts_with("mean"),
+#     sumStatsAux <- dataBlock %>%
+#       # starts_with("N"),starts_with("mean"),starts_with("OPcov_"),
+#       # starts_with("OPcovNoWeights"), starts_with("indAlloc")
+#       select(starts_with("median"),
+#              starts_with("sd"),starts_with("iqr")) %>%
+#       summarise_each(funs(min(., na.rm = TRUE),max(., na.rm = TRUE),mean(., na.rm = TRUE),
+#                           median(., na.rm = TRUE),sd(., na.rm = TRUE),iqr(., na.rm = TRUE)))
+#     
+#     sumStats <- data.frame(#N_sum = as.numeric(select(sumStatsAux, starts_with("N"))[1,]),
+#                            #mean_sum = as.numeric(select(sumStatsAux, starts_with("mean"))[1,]),
+#                            median_sum = as.numeric(select(sumStatsAux, starts_with("median"))[1,]),
+#                            sd_sum = as.numeric(select(sumStatsAux, starts_with("sd"))[1,]),
+#                            iqr_sum = as.numeric(select(sumStatsAux, starts_with("iqr"))[1,]),
+#                            #OPcov_sum = as.numeric(select(sumStatsAux, starts_with("OPcov"))[1,]),
+#                            #OPcovNoW_sum = as.numeric(select(sumStatsAux, starts_with("OPcovNo"))[1,]),
+#                            #indAlloc_sum = as.numeric(select(sumStatsAux, starts_with("indA"))[1,]),
+#                            stringsAsFactors = FALSE)
+#     #ncolsumStats <- ncol(sumStats)
+#     # transpose every lenVar number of rows into columns
+#     sumStats2 <- data.frame()
+#     for (i in 1:length(statsNames)){
+#       for (j in 1:lenVar){
+#         for (k in 1:ncol(sumStats)){
+#           sumStats2[i,k+(j-1)*ncol(sumStats)] <- sumStats[(i-1)*lenVar + j,k] 
+#         }
+#       }
+#     }
+#     sumStats <- sumStats2  
+#     row.names(sumStats) <- statsNames
+#     if (lenVar == 3) {
+#       names(sumStats) <- names(dataBlock)[c(5:7,13:15,21:23)]
+#     } else if (lenVar == 2) {
+#       names(sumStats) <- names(dataBlock)[c(5:7,13:15)]
+#     }
+#   
+    # -------------------
+    # Calculate country statistics
+    # -------------------
+    countryStats <- dataBlock %>%
+      select(countryOnly,yearOnly,outliersOut,starts_with("N"),#starts_with("mean"),
              starts_with("median"),starts_with("sd"),starts_with("iqr")
-             #,starts_with("OPcov_"),starts_with("OPcovNoWeights"),starts_with("indAlloc")
+             ,starts_with("OPcov_") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
+      )
+    countryStats <- as.data.frame(countryStats)
+    # final table formatting
+    countryStats <- filter(countryStats, !is.na(countryOnly))
+    if (lenVar==3){
+      countryStats <- select(countryStats, countryOnly,yearOnly,outliersOut,ends_with(thisList[2]),ends_with(thisList[3]),ends_with(thisList[4]))
+      countryStats[,4:ncol(countryStats)] <- round(countryStats[,4:ncol(countryStats)],2)
+      names(countryStats) <- gsub(paste0("_",thisList[2]),"",names(countryStats))
+      names(countryStats) <- gsub(paste0("_",thisList[3]),"",names(countryStats))
+      names(countryStats) <- gsub(paste0("_",thisList[4]),"",names(countryStats))
+    } else {
+      countryStats <- select(countryStats, countryOnly,yearOnly,outliersOut,ends_with(thisList[2]),ends_with(thisList[3]))
+      countryStats[,4:ncol(countryStats)] <- round(countryStats[,4:ncol(countryStats)],2)
+      names(countryStats) <- gsub(paste0("_",thisList[2]),"",names(countryStats))
+      names(countryStats) <- gsub(paste0("_",thisList[3]),"",names(countryStats))
+    }
+    # ouliers go at the end
+    countryStats <- countryStats[,c(1:2,4:(ncol(countryStats)-1),3)]
+    
+    # -------------------
+    # Calculate income level medians
+    # -------------------
+    incomeStats <- dataBlock %>%
+      select(incomeLevel,starts_with("N"),#starts_with("mean"),
+             starts_with("median"),starts_with("sd"),starts_with("iqr")
+             ,starts_with("OPcov_") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
              ) %>%
       #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
       group_by(incomeLevel) %>%
+      mutate(num_countries = n()) %>%
       summarise_each(funs(median(as.numeric(.))))
     incomeStats <- as.data.frame(incomeStats)
     
-    # Calculate region level medians  ----------
+    # final table formatting
+    incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+    incomeRowNames <- as.character(incomeStats$incomeLevel)
+    incomeStats <- select(incomeStats, -incomeLevel)
+    incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+    row.names(incomeStats) <- incomeRowNames
+    incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
+    incomeStats <- mutate(incomeStats, Group = row.names(incomeStats))
+    if (lenVar==3){
+      incomeStats <- select(incomeStats, Group,num_countries,ends_with(thisList[2]),ends_with(thisList[3]),ends_with(thisList[4]))
+      incomeStats[,3:ncol(incomeStats)] <- round(incomeStats[,3:ncol(incomeStats)],2)
+      names(incomeStats) <- gsub(paste0("_",thisList[2]),"",names(incomeStats))
+      names(incomeStats) <- gsub(paste0("_",thisList[3]),"",names(incomeStats))
+      names(incomeStats) <- gsub(paste0("_",thisList[4]),"",names(incomeStats))
+      #incomeStats <- rbind(names(incomeStats),incomeStats)
+      #       incomeStats[1,] <- gsub(paste0("_",thisList[2]),"",incomeStats[1,])
+      #       incomeStats[1,] <- gsub(paste0("_",thisList[3]),"",incomeStats[1,])
+      #       incomeStats[1,] <- gsub(paste0("_",thisList[4]),"",incomeStats[1,])
+      #       names(incomeStats) <- c(rep("",4),thisList[2],rep("",4),thisList[3],rep("",4),thisList[4],rep("",2))
+    } else {
+      incomeStats <- select(incomeStats, Group,num_countries,ends_with(thisList[2]),ends_with(thisList[3]))
+      incomeStats[,3:ncol(incomeStats)] <- round(incomeStats[,3:ncol(incomeStats)],2)
+      names(incomeStats) <- gsub(paste0("_",thisList[2]),"",names(incomeStats))
+      names(incomeStats) <- gsub(paste0("_",thisList[3]),"",names(incomeStats))
+      #incomeStats <- rbind(names(incomeStats),incomeStats)
+      #       incomeStats[1,] <- gsub(paste0("_",thisList[2]),"",incomeStats[1,])
+      #       incomeStats[1,] <- gsub(paste0("_",thisList[3]),"",incomeStats[1,])
+      #       names(incomeStats) <- c(rep("",4),thisList[2],rep("",4),thisList[3],rep("",2))
+    }
+    
+    
+    # -------------------
+    # Calculate region level medians
+    # -------------------
     regionStats <- dataBlock %>%
-      select(region,#starts_with("N"),starts_with("mean"),
+      select(region,starts_with("N"),#starts_with("mean"),
              starts_with("median"),starts_with("sd"),starts_with("iqr")
-             #,starts_with("OPcov_"),starts_with("OPcovNoWeights"),starts_with("indAlloc")
+             ,starts_with("OPcov_") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
              ) %>%
       #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
       group_by(region) %>%
+      mutate(num_countries = n()) %>%
       summarise_each(funs(median(as.numeric(.))))
     regionStats <- as.data.frame(regionStats)
     
     # reorder columns
+    # call the reorder function to arrange columns. 
+    # col_per_block indicates number of categories - 1. Ex: N,median,sd,iqr,OPcov = 5 categories
+    reorder <- .reorderColumns(lenVar,col_per_block = 4) 
+    reorder <- c(1,ncol(incomeStats),reorder[-1])# added number of countries. Place it in second column
     incomeStats <- incomeStats[,reorder]
     regionStats <- regionStats[,reorder]
     
+    regionStats <- filter(regionStats, !is.na(region))
+    regionRowNames <- as.character(regionStats$region)
+    regionStats <- select(regionStats, -region)
+    regionStats <- mutate_each(regionStats, funs(as.numeric))
+    row.names(regionStats) <- regionRowNames
+    regionStats <- mutate(regionStats, Group = row.names(regionStats))
+    if (lenVar==3){
+      regionStats <- select(regionStats, Group,num_countries,ends_with(thisList[2]),ends_with(thisList[3]),ends_with(thisList[4]))
+      regionStats[,3:ncol(regionStats)] <- round(regionStats[,3:ncol(regionStats)],2)
+      names(regionStats) <- gsub(paste0("_",thisList[2]),"",names(regionStats))
+      names(regionStats) <- gsub(paste0("_",thisList[3]),"",names(regionStats))
+      names(regionStats) <- gsub(paste0("_",thisList[4]),"",names(regionStats))
+#       regionStats <- rbind(names(regionStats),regionStats)
+#       regionStats[1,] <- gsub(paste0("_",thisList[2]),"",regionStats[1,])
+#       regionStats[1,] <- gsub(paste0("_",thisList[3]),"",regionStats[1,])
+#       regionStats[1,] <- gsub(paste0("_",thisList[4]),"",regionStats[1,])
+#       names(regionStats) <- c(rep("",4),thisList[2],rep("",4),thisList[3],rep("",4),thisList[4],rep("",2))
+    } else {
+      regionStats <- select(regionStats, Group,num_countries,ends_with(thisList[2]),ends_with(thisList[3]))
+      regionStats[,3:ncol(regionStats)] <- round(regionStats[,3:ncol(regionStats)],2)
+      names(regionStats) <- gsub(paste0("_",thisList[2]),"",names(regionStats))
+      names(regionStats) <- gsub(paste0("_",thisList[3]),"",names(regionStats))
+#       regionStats <- rbind(names(regionStats),regionStats)
+#       regionStats[1,] <- gsub(paste0("_",thisList[2]),"",regionStats[1,])
+#       regionStats[1,] <- gsub(paste0("_",thisList[3]),"",regionStats[1,])
+#       names(regionStats) <- c(rep("",4),thisList[2],rep("",4),thisList[3],rep("",2))
+    }
+    
   } else {
     
-    sumStatsAux <- dataBlock %>%
-      select(#N,mean,
-        median,sd,iqr#,OPcov,OPcovNoWeights,indAlloc
-        ) %>%
-      summarise_each(funs(min,max,mean,median,sd,iqr))
-    
-    sumStats <- data.frame(#N_sum = as.numeric(select(sumStatsAux, starts_with("N"))[1,]),
-                            #mean_sum = as.numeric(select(sumStatsAux, starts_with("mean"))[1,]),
-                            median_sum = as.numeric(select(sumStatsAux, starts_with("median"))[1,]),
-                            sd_sum = as.numeric(select(sumStatsAux, starts_with("sd"))[1,]),
-                            iqr_sum = as.numeric(select(sumStatsAux, starts_with("iqr"))[1,]),
-                            #OPcov_sum = as.numeric(select(sumStatsAux, starts_with("OPcov_"))[1,]),
-                            #OPcovNoW_sum = as.numeric(select(sumStatsAux, starts_with("OPcovNo"))[1,]),
-                            #indAlloc_sum = as.numeric(select(sumStatsAux, starts_with("indA"))[1,]),
-            stringsAsFactors = FALSE)
-    row.names(sumStats) <- statsNames
+#     sumStatsAux <- dataBlock %>%
+#       select(#N,mean,
+#         median,sd,iqr#,OPcov,OPcovNoWeights,indAlloc
+#         ) %>%
+#       summarise_each(funs(min,max,mean,median,sd,iqr))
+#     
+#     sumStats <- data.frame(#N_sum = as.numeric(select(sumStatsAux, starts_with("N"))[1,]),
+#                             #mean_sum = as.numeric(select(sumStatsAux, starts_with("mean"))[1,]),
+#                             median_sum = as.numeric(select(sumStatsAux, starts_with("median"))[1,]),
+#                             sd_sum = as.numeric(select(sumStatsAux, starts_with("sd"))[1,]),
+#                             iqr_sum = as.numeric(select(sumStatsAux, starts_with("iqr"))[1,]),
+#                             #OPcov_sum = as.numeric(select(sumStatsAux, starts_with("OPcov_"))[1,]),
+#                             #OPcovNoW_sum = as.numeric(select(sumStatsAux, starts_with("OPcovNo"))[1,]),
+#                             #indAlloc_sum = as.numeric(select(sumStatsAux, starts_with("indA"))[1,]),
+#             stringsAsFactors = FALSE)
+#     row.names(sumStats) <- statsNames
   
-    # Calculate income level medians  ----------
-    incomeStats <- dataBlock %>%
-      select(incomeLevel,#starts_with("N"),starts_with("mean"),
+    # -------------------
+    # Calculate country statistics
+    # -------------------
+    countryStats <- dataBlock %>%
+      select(countryOnly,yearOnly,outliersOut,starts_with("N"),#starts_with("mean"),
              starts_with("median"),starts_with("sd"),starts_with("iqr")
-             #,OPcov,starts_with("OPcovNoWeights"),starts_with("indAlloc")
+             ,starts_with("OPcov_") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
+      )
+    countryStats <- as.data.frame(countryStats)
+    # final table formatting
+    countryStats <- filter(countryStats, !is.na(countryOnly))
+    # ouliers go at the end
+    countryStats <- countryStats[,c(1:2,4:(ncol(countryStats)-1),3)]
+    
+    # -------------------
+    # Calculate income level medians
+    # -------------------
+    incomeStats <- dataBlock %>%
+      select(incomeLevel,starts_with("N"),#,starts_with("mean"),
+             starts_with("median"),starts_with("sd"),starts_with("iqr")
+             ,OPcov #starts_with("OPcovNoWeights"),starts_with("indAlloc")
              ) %>%
       #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
       group_by(incomeLevel) %>%
+      mutate(num_countries = n()) %>%
       summarise_each(funs(median(as.numeric(.))))
+      
     incomeStats <- as.data.frame(incomeStats)
+    incomeStats <- incomeStats[!is.na(incomeStats$incomeLevel),]
     
-    # Calculate region level medians  ----------
+    incomeStats <- filter(incomeStats, !is.na(incomeLevel))
+    incomeRowNames <- as.character(incomeStats$incomeLevel)
+    incomeStats <- select(incomeStats, -incomeLevel)
+    incomeStats <- mutate_each(incomeStats, funs(as.numeric))
+    row.names(incomeStats) <- incomeRowNames
+    incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
+    incomeStats <- mutate(incomeStats, Group = row.names(incomeStats))
+    incomeStats <- select(incomeStats, Group, num_firms = N, num_countries, everything())
+    
+    incomeStats[,4:ncol(incomeStats)] <- round(incomeStats[,4:ncol(incomeStats)],2)
+    
+    # -------------------
+    # Calculate region level medians
+    # -------------------
     regionStats <- dataBlock %>%
-      select(region,#starts_with("N"),starts_with("mean"),
+      select(region, starts_with("N"),#starts_with("mean"),
              starts_with("median"),starts_with("sd"),starts_with("iqr")
-             #,OPcov,starts_with("OPcovNoWeights"),starts_with("indAlloc")
+             ,OPcov #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
              ) %>%
       #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
       group_by(region) %>%
+      mutate(num_countries = n()) %>%
       summarise_each(funs(median(as.numeric(.))))
+    
     regionStats <- as.data.frame(regionStats)  
+    regionStats <- regionStats[!is.na(regionStats$region),]
+    
+    regionStats <- filter(regionStats, !is.na(region))
+    regionRowNames <- as.character(regionStats$region)
+    regionStats <- select(regionStats, -region)
+    regionStats <- mutate_each(regionStats, funs(as.numeric))
+    row.names(regionStats) <- regionRowNames
+    regionStats <- mutate(regionStats, Group = row.names(regionStats))
+    regionStats <- select(regionStats, Group,num_firms = N, num_countries, everything())
+    
+    regionStats[,4:ncol(regionStats)] <- round(regionStats[,4:ncol(regionStats)],2)
   
   }
   
@@ -523,40 +666,21 @@
   # Prepare the output tables
   # -------------------------
   
-  incomeStats <- filter(incomeStats, !is.na(incomeLevel))
-  incomeRowNames <- as.character(incomeStats$incomeLevel)
-  incomeStats <- select(incomeStats, -incomeLevel)
-  incomeStats <- mutate_each(incomeStats, funs(as.numeric))
-  row.names(incomeStats) <- incomeRowNames
-  incomeStats <- incomeStats[c(2,3,4,1),]# order income rows
-  incomeStats <- mutate(incomeStats, Group = row.names(incomeStats))
-  incomeStats <- select(incomeStats, Group,everything())
-  
-  regionStats <- filter(regionStats, !is.na(region))
-  regionRowNames <- as.character(regionStats$region)
-  regionStats <- select(regionStats, -region)
-  regionStats <- mutate_each(regionStats, funs(as.numeric))
-  row.names(regionStats) <- regionRowNames
-  regionStats <- mutate(regionStats, Group = row.names(regionStats))
-  regionStats <- select(regionStats, Group,everything())
-  # whichTable: "Countries"=1,"Summary Stats"=2,"Income level medians"=3,"Region medians"=4
-  
   if (whichTable == 1){
-    summaryStats <- dataBlock
-    summaryStats <- select(summaryStats, country=countryOnly,year=yearOnly,N,mean,
-                           median,sd,iqr,OPcov,indAlloc,outliersOut)
-    summaryStats[,3:ncol(summaryStats)] <- round(summaryStats[,3:ncol(summaryStats)],2)
+    summaryStats <- countryStats
   }
   if (whichTable == 2){
     summaryStats <- round(sumStats,2)
   }
   if (whichTable == 3){
     summaryStats <- incomeStats
-    summaryStats[,2:ncol(summaryStats)] <- round(summaryStats[,2:ncol(summaryStats)],2)
+    #summaryStats[,4:ncol(summaryStats)] <- round(summaryStats[,4:ncol(summaryStats)],2)
+    #summaryStats[,2:3] <- round(summaryStats[,2:3],0)
   }
   if (whichTable == 4){
     summaryStats <- regionStats
-    summaryStats[,2:ncol(summaryStats)] <- round(summaryStats[,2:ncol(summaryStats)],2)
+    #summaryStats[,4:ncol(summaryStats)] <- round(summaryStats[,4:ncol(summaryStats)],2)
+    #summaryStats[,2:3] <- round(summaryStats[,2:3],0)
   }
   # NAs to "---"
   summaryStats[is.na(summaryStats)] <- "---"

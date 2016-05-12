@@ -7,8 +7,9 @@ dataBlock <- list()
 for (sect in c("Manufacturing")){  
   #for (type in .firmTypeList(sect)){
   for (type in c("age")){
-    for (ind in .indicatorList(sect)) {
-      indCode <- .indicatorToCode(ind)
+    #for (ind in .indicatorList(sect)) {
+    for (ind in c("Labor share")){
+      indCode <- .indicatorToCodeAllIndustries(ind)
       sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))
       dataBlock[[paste(sectCode,type,indCode,sep="_")]] <- .calculateDataBlock(type,sect,ind)
       write.csv(dataBlock[[paste(sectCode,type,indCode,sep="_")]],paste0("data/dataBlock_",paste(sectCode,type,indCode,sep="_"),".csv"),row.names = FALSE)

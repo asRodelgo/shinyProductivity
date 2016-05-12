@@ -19,11 +19,35 @@ sectorList <- c("All sectors", "Manufacturing", "Services")
 #
 firmTypeList <- c("All firms","By age","By size","By exports status","By foreign ownership") #,"By tech. innovation"
 #
-firmAgeList <- c("All firms","0 to 10","11 to 20","more than 20")
-firmSizeList <- c("All firms","Small firms","Medium firms","Large firms")
-firmExpStatusList <- c("All firms","Do not export","Export")
+firmAgeList <- c("All firms","Young","Mature","Old")
+firmSizeList <- c("All firms","Small","Medium","Large")
+firmExpStatusList <- c("All firms","Non_exporter","Exporter")
+firmImpStatusList <- c("All firms","Non_importer","Importer")
 #firmTechInnovList
-firmForeignOwnerList <- c("All firms","Local Ownership","Foreign Ownership")
+firmForeignOwnerList <- c("All firms","Domestic","Foreign")
+industryMaps <- read.csv("data/industryMapping.csv",stringsAsFactors = FALSE)
+industryList <- c("All industries",industryMaps$industry)
+#                   "Food",
+#                   "Textiles",
+#                   "Garments",
+#                   "Leather",
+#                   "Wood",
+#                   "Paper",
+#                   "Publishing, printing, and Recorded media",
+#                   "Chemicals",
+#                   "Plastics and rubber",
+#                   "Non metallic mineral products",
+#                   "Basic metals",
+#                   "Fabricated metal products",
+#                   "Machinery and equipment (29 and 30)",
+#                   "Electronics (31 and 32)",
+#                   "Transport machines (34 and 35)",
+#                   "Furniture")
+.industryList <- function(indicatorDesc){
+  if (substr(indicatorDesc,1,5)=="Total"){
+    
+  }
+}
 
 .indicatorList <- function(sector){
   
@@ -77,11 +101,20 @@ firmForeignOwnerList <- c("All firms","Local Ownership","Foreign Ownership")
   return(typeCode)
 }
 
-.indicatorToCode <- function(indicatorDesc){
+.indicatorToCode <- function(indicatorDesc,industry){
   
+  indicatorCode <- filter(summaryMaps,indicator == indicatorDesc)$code
+  if (substr(indicatorCode,1,4)=="tfpr" & !(industry=="All industries")){
+    indicatorCode <- paste(indicatorCode,industryMaps[industryMaps$industry==industry,]$industryCode,sep="_")
+  }
+  return(indicatorCode)
+}
+# This one is used when pre-computing the dataBlocks
+.indicatorToCodeAllIndustries <- function(indicatorDesc){
   indicatorCode <- filter(summaryMaps,indicator == indicatorDesc)$code
   return(indicatorCode)
 }
+
 .indicatorToCodeOld <- function(indicatorDesc){
   
   indicatorCode <- filter(dataMaps,indicator == indicatorDesc)$code
@@ -119,7 +152,7 @@ dataBlock <- list()
 for (sect in sectorList){
   for (type in .firmTypeList(sect)){
     for (ind in .indicatorList(sect)) {
-      indCode <- .indicatorToCode(ind)
+      indCode <- .indicatorToCodeAllIndustries(ind)
       sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))
       dataBlock[[paste(sectCode,type,indCode,sep="_")]] <- read.csv(paste0("data/dataBlock_",paste(sectCode,type,indCode,sep="_"),".csv"),stringsAsFactors = FALSE)
     }

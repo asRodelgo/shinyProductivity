@@ -167,6 +167,15 @@ shinyServer(function(input, output,session) {
     })
     
   })
-
+  output$showInputs <- renderText({
+    
+    c(input$inSectorSum,
+    input$inFirmTypeSum,
+    input$inIndicatorSum,
+    input$inTfpSector,
+    input$inWhichTable,
+    input$goSummaryButton)
+    
+    })
   
 })

@@ -51,11 +51,11 @@ observe({
 indicatorListSum <- reactive({
   
   if (input$inSectorSum == "All sectors") {
-    selectedSectorSum <- filter(summaryMaps, allSectors == 1)
+    selectedSectorSum <- filter(summaryMaps, allSectors == 1 & sectorLevel==1)
   } else if (input$inSectorSum == "Manufacturing") {
-    selectedSectorSum <- filter(summaryMaps, manufacturing == 1)
+    selectedSectorSum <- filter(summaryMaps, manufacturing == 1 & sectorLevel==1)
   } else {
-    selectedSectorSum <- filter(summaryMaps, services == 1)
+    selectedSectorSum <- filter(summaryMaps, services == 1 & sectorLevel==1)
   }
   
   indListSum <- sort(unique(selectedSectorSum$indicator))

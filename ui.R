@@ -92,15 +92,15 @@ source("global_utils.R", local=TRUE)
                       div(id="firmTypesSum",
                       selectInput("inFirmTypeSum", "Firm characteristic:", firmTypeList, selected="All firms")
                     )),  
-                    selectInput("inIndicatorSum","Indicator:",indicatorList,selected = "labor cost (n2a) over sales (d2)"),
-                    #selectInput("inWhichAllocation","Select Efficiency:",choices=c("All countries", "Direct and Indirect Allocation Efficient",
-                    #                                                               "Direct Allocation Efficient","Direct Allocation Efficient",
-                    #                                                               "Allocation Inefficient")
-                    #            ,selected = "All countries"),
+                    selectInput("inIndicatorSum","Indicator:",indicatorList,selected = "Labor share"),
+                    shinyjs::hidden( 
+                      div(id="tfpSectors",
+                          selectInput("inTfpSector", "Industry:", industryList, selected="All industries")
+                    )),
                     radioButtons("inWhichTable","Tables:",choices = list("Countries"=1,#"Summary Stats"=2,
                                                                          "Income groups"=3,"Region groups"=4),selected = 1),
                     actionButton("goSummaryButton","Show results"),
-                    downloadButton("downloadReport", "Download PDF report"),
+                    #downloadButton("downloadReport", "Download PDF report"),
                     h6("Download: ",downloadLink("summaryDownTable","data"))
     #                actionButton("goPlotsButton","View table")
                   ),
@@ -111,11 +111,12 @@ source("global_utils.R", local=TRUE)
     #                br(),
     #                h5(textOutput("outliersText")),
     #                br(),
-                    dataTableOutput("summaryTable"),
-                    shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
-                      div(id="summPlots",
-                          plotOutput("summPlots")
-                      ))
+                    #textOutput("showInputs"),
+                    uiOutput("summaryTable")
+                    #shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
+                    #  div(id="summPlots",
+                    #      plotOutput("summPlots")
+                    #))
                     
     #                tableOutput("statsTable"),
     #                plotOutput("statsPlots"),

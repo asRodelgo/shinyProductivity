@@ -48,7 +48,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 
 # Calculate summary plots -----------------------------------
-.summaryPlots <- function(sector,indicatorDesc,firmType,allocEff,whichTable){
+.summaryPlots <- function(sector,indicatorDesc,firmType,industry,whichTable){
   
   # sector <- "Manufacturing"
   # indicatorDesc <- "labor cost (n2a) over sales (d2)"
@@ -58,7 +58,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   # varPlot <- "indAlloc"
   
   # filter data by sector. Only drill down for manufacturing -------------------
-  indicatorCode <- .indicatorToCode(indicatorDesc)
+  indicatorCode <- .indicatorToCode(indicatorDesc,industry)
   sectCode <- ifelse(sector=="All sectors","AllSect",ifelse(sector=="Manufacturing","Manuf","Serv"))
   
   groupByVar <- "all"
