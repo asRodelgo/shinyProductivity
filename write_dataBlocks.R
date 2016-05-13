@@ -6,9 +6,9 @@ dataBlock <- list()
 #for (sect in sectorList){
 for (sect in c("Manufacturing")){  
   #for (type in .firmTypeList(sect)){
-  for (type in c("age")){
+  for (type in c("size")){
     #for (ind in .indicatorList(sect)) {
-    for (ind in c("Labor share")){
+    for (ind in c("Labor share","Labor productivity")){
       indCode <- .indicatorToCodeAllIndustries(ind)
       sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))
       dataBlock[[paste(sectCode,type,indCode,sep="_")]] <- .calculateDataBlock(type,sect,ind)

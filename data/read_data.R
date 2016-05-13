@@ -17,12 +17,12 @@ indicatorList <- sort(unique(filter(summaryMaps, allSectors == 1)$indicator))
 #
 sectorList <- c("All sectors", "Manufacturing", "Services")
 #
-firmTypeList <- c("All firms","By age","By size","By exports status","By foreign ownership") #,"By tech. innovation"
+firmTypeList <- c("All firms","By age","By size","By exports status","By imports status","By foreign ownership") #,"By tech. innovation"
 #
 firmAgeList <- c("All firms","Young","Mature","Old")
 firmSizeList <- c("All firms","Small","Medium","Large")
-firmExpStatusList <- c("All firms","Non_exporter","Exporter")
-firmImpStatusList <- c("All firms","Non_importer","Importer")
+firmExpStatusList <- c("All firms","NonExporter","Exporter")
+firmImpStatusList <- c("All firms","NonImporter","Importer")
 #firmTechInnovList
 firmForeignOwnerList <- c("All firms","Domestic","Foreign")
 industryMaps <- read.csv("data/industryMapping.csv",stringsAsFactors = FALSE)
@@ -64,7 +64,7 @@ industryList <- c("All industries",industryMaps$industry)
 .firmTypeList <- function(sector){
   
   if (sector == "Manufacturing"){
-    firmList <- c("all","age","size","expStatus","forOwner")
+    firmList <- c("all","age","size","expStatus","impStatus","forOwner")
   } else {
     firmList <- c("all")
   }
@@ -95,6 +95,8 @@ industryList <- c("All industries",industryMaps$industry)
     typeCode <- "size"
   } else if (type=="By exports status"){
     typeCode <- "expStatus"
+  } else if (type=="By imports status"){
+    typeCode <- "impStatus"
   } else {
     typeCode <- "forOwner"
   }
@@ -129,6 +131,7 @@ data <- data %>%
          size = as.character(ifelse(l1 < 20,firmSizeList[2],ifelse(l1 < 100,firmSizeList[3],firmSizeList[4]))), 
          expVal = d3b + d3c,
          expStatus = as.character(ifelse(expVal > 0,firmExpStatusList[3],firmExpStatusList[2])),
+         impStatus = as.character(ifelse(d13 == 1,firmImpStatusList[3],ifelse(d13 == 2,firmImpStatusList[2],NA))),
          forOwner = as.character(ifelse(b2a > 0,firmForeignOwnerList[3],firmForeignOwnerList[2]))) %>% # filter by age, size, etc...
   select(-ageVal,-expVal)
 

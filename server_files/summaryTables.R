@@ -12,6 +12,28 @@
 #   
 # })
 
+v <- reactiveValues(showTable = TRUE)
+
+observeEvent(input$goSummaryButton, {
+  v$showTable <- input$goSummaryButton
+})
+
+observeEvent(input$inSectorSum, {
+  v$showTable <- FALSE
+})
+observeEvent(input$inIndicatorSum, {
+  v$showTable <- FALSE
+})
+observeEvent(input$inFirmTypeSum, {
+  v$showTable <- FALSE
+})
+observeEvent(input$inTfpSector, {
+  v$showTable <- FALSE
+})
+observeEvent(input$inWhichTable, {
+  v$showTable <- FALSE
+})
+
 tableAllFirms <- eventReactive(input$goSummaryButton,{
   
   do.call(".summaryStats", args = list(
@@ -120,7 +142,7 @@ tableByForeignOwner <- eventReactive(input$goSummaryButton,{
           th(colspan = 5, 'Exporter')
         ),
         tr(
-          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 3), th)
+          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 2), th)
         )
       )
     ))
@@ -134,7 +156,7 @@ tableByForeignOwner <- eventReactive(input$goSummaryButton,{
           th(colspan = 5, 'Importer')
         ),
         tr(
-          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 3), th)
+          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 2), th)
         )
       )
     ))
@@ -148,7 +170,7 @@ tableByForeignOwner <- eventReactive(input$goSummaryButton,{
           th(colspan = 5, 'Foreign')
         ),
         tr(
-          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 3), th)
+          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 2), th)
         )
       )
     ))
@@ -197,7 +219,7 @@ tableByForeignOwner <- eventReactive(input$goSummaryButton,{
           th(rowspan = 2, 'Outliers removed')
         ),
         tr(
-          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 3), th)
+          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 2), th)
         )
       )
     ))
@@ -212,7 +234,7 @@ tableByForeignOwner <- eventReactive(input$goSummaryButton,{
           th(rowspan = 2, 'Outliers removed')
         ),
         tr(
-          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 3), th)
+          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 2), th)
         )
       )
     ))
@@ -227,7 +249,7 @@ tableByForeignOwner <- eventReactive(input$goSummaryButton,{
           th(rowspan = 2, 'Outliers removed')
         ),
         tr(
-          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 3), th)
+          lapply(rep(c('N','median', 'sd','IQR','OPcov'), 2), th)
         )
       )
     ))
@@ -255,7 +277,8 @@ output$summaryTable <- renderUI({
   #if (is.null(input$inFirmTypeSum))
   #  return()
   
-  input$goSummaryButton
+  if (v$showTable == FALSE) return(div(br(),br(),br(),
+    h3("Make your selection and click on 'Show Results'")))
     
   isolate({
     
@@ -318,6 +341,7 @@ output$summaryTable <- renderUI({
       
       )  
     } else {
+      
       switch(input$inFirmTypeSum,
              "All firms" = {output$tableAllFirms <- DT::renderDataTable({
                .summaryStats(input$inSectorSum,
@@ -376,6 +400,8 @@ output$summaryTable <- renderUI({
              
       )
     }
+  })
+        
     
-  }) #,container = headTable)
+  #}) #,container = headTable)
 })

@@ -70,7 +70,7 @@
         filter(country == countryYear) %>%
         mutate(N_indicator = ifelse(!(is.na(indicatorCode)),1,NA)) %>%
         select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
-               N_indicator,age,size,expStatus,forOwner) %>% #N_indicator = one_of(N_indicatorCode),
+               N_indicator,age,size,expStatus,impStatus,forOwner) %>% #N_indicator = one_of(N_indicatorCode),
         filter(!is.na(indicator)) %>%
         mutate(indicatorQuantile = indicator)
     } else {
@@ -79,7 +79,7 @@
         mutate(N_indicator = ifelse(!(is.na(indicatorCode)),1,NA)) %>%
         select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
                indicatorQuantile = one_of(indicatorQuantileCode),N_indicator,#N_indicator = one_of(N_indicatorCode),
-               age,size,expStatus,forOwner) %>%
+               age,size,expStatus,impStatus,forOwner) %>%
         filter(!is.na(indicator)) # remove NAs
     }
     # remove NAs on l1 indicator
@@ -155,6 +155,38 @@
     } else if (groupByVar == "expStatus") {
       data2 <- data2 %>%
         group_by(expStatus) %>%
+        filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+               & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+        ) %>% # remove outliers
+        mutate(N = sum(N_indicator,na.rm=TRUE),
+               #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
+               mean = weighted.mean(indicator,wt,na.rm=TRUE),
+               median = weightedMedian(indicator,wt,na.rm=TRUE),
+               sd = sqrt(sum(wt*(indicator-mean)^2,na.rm=TRUE)*(sum(wt)/(sum(wt)^2-sum(wt^2)))),
+               se = sd/sqrt(sum(wt)),
+               iqr = wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE),
+               iqratio = wtd.quantile(indicator,100*round(wt,1),0.75)/wtd.quantile(indicator,100*round(wt,1),0.25),
+               tot_emp10_50 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
+               tot_emp50_90 = sum(ifelse((indicatorQuantile>=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE)) & (indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE)),wt*l1,0),na.rm=TRUE),
+               emp10 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.1,na.rm=TRUE),l1,NA)),
+               median_emp10 = weightedMedian(emp10,wt,na.rm=TRUE),
+               emp50 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.5,na.rm=TRUE),l1,NA)),
+               median_emp50 = weightedMedian(emp50,wt,na.rm=TRUE),
+               emp90 = as.numeric(ifelse(indicatorQuantile<=wtd.quantile(indicatorQuantile,100*round(wt,1),0.9,na.rm=TRUE),l1,NA)),
+               median_emp90 = weightedMedian(emp90,wt,na.rm=TRUE),
+               ratio_median_emp10_50 = median_emp10/median_emp50,
+               ratio_median_emp90_50 = median_emp90/median_emp50,
+               emp_weighted = l1/sum(wt*l1,na.rm=TRUE),
+               emp_unweighted = l1/sum(l1,na.rm=TRUE),
+               OPcov = sum(wt*(indicator-mean)*(emp_weighted-(1/sum(wt,na.rm=TRUE))),na.rm=TRUE),
+               OPcovNoWeights = sum((indicator-mean(indicator,na.rm=TRUE))*(emp_unweighted-mean(emp_unweighted,na.rm=TRUE)),na.rm=TRUE),
+               indAlloc = ratio_median_emp90_50/ratio_median_emp10_50
+        ) %>%
+        select(country,N, mean, median, sd, iqr, OPcov, OPcovNoWeights, indAlloc)
+      
+    } else if (groupByVar == "impStatus") {
+      data2 <- data2 %>%
+        group_by(impStatus) %>%
         filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
                & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
         ) %>% # remove outliers
@@ -467,17 +499,18 @@
     if (lenVar==3){
       countryStats <- select(countryStats, countryOnly,yearOnly,outliersOut,ends_with(thisList[2]),ends_with(thisList[3]),ends_with(thisList[4]))
       countryStats[,4:ncol(countryStats)] <- round(countryStats[,4:ncol(countryStats)],2)
+      countryStats <- countryStats[,c(1:2,4:ncol(countryStats),3)] # ouliers go at the end
       names(countryStats) <- gsub(paste0("_",thisList[2]),"",names(countryStats))
       names(countryStats) <- gsub(paste0("_",thisList[3]),"",names(countryStats))
       names(countryStats) <- gsub(paste0("_",thisList[4]),"",names(countryStats))
     } else {
       countryStats <- select(countryStats, countryOnly,yearOnly,outliersOut,ends_with(thisList[2]),ends_with(thisList[3]))
       countryStats[,4:ncol(countryStats)] <- round(countryStats[,4:ncol(countryStats)],2)
+      countryStats <- countryStats[,c(1:2,4:ncol(countryStats),3)] # ouliers go at the end
       names(countryStats) <- gsub(paste0("_",thisList[2]),"",names(countryStats))
       names(countryStats) <- gsub(paste0("_",thisList[3]),"",names(countryStats))
     }
-    # ouliers go at the end
-    countryStats <- countryStats[,c(1:2,4:(ncol(countryStats)-1),3)]
+    
     
     # -------------------
     # Calculate income level medians
@@ -492,7 +525,13 @@
       mutate(num_countries = n()) %>%
       summarise_each(funs(median(as.numeric(.))))
     incomeStats <- as.data.frame(incomeStats)
-    
+    # reorder columns
+    # call the reorder function to arrange columns. 
+    # col_per_block indicates number of categories - 1. Ex: N,median,sd,iqr,OPcov = 5 categories
+#     reorder <- .reorderColumns(lenVar,col_per_block = 4) 
+#     reorder <- c(1,ncol(incomeStats),reorder[-1])# added number of countries. Place it in second column
+#     incomeStats <- incomeStats[,reorder]
+#     
     # final table formatting
     incomeStats <- filter(incomeStats, !is.na(incomeLevel))
     incomeRowNames <- as.character(incomeStats$incomeLevel)
@@ -541,11 +580,10 @@
     # reorder columns
     # call the reorder function to arrange columns. 
     # col_per_block indicates number of categories - 1. Ex: N,median,sd,iqr,OPcov = 5 categories
-    reorder <- .reorderColumns(lenVar,col_per_block = 4) 
-    reorder <- c(1,ncol(incomeStats),reorder[-1])# added number of countries. Place it in second column
-    incomeStats <- incomeStats[,reorder]
-    regionStats <- regionStats[,reorder]
-    
+#     reorder <- .reorderColumns(lenVar,col_per_block = 4) 
+#     reorder <- c(1,ncol(incomeStats),reorder[-1])# added number of countries. Place it in second column
+#     regionStats <- regionStats[,reorder]
+#     
     regionStats <- filter(regionStats, !is.na(region))
     regionRowNames <- as.character(regionStats$region)
     regionStats <- select(regionStats, -region)
