@@ -31,11 +31,13 @@ for (type in .firmTypeList("Manufacturing")){
 
 cou <- "Argentina"
 ind <- "tfprYKL"
-type <- "age"
+ind2 <- ifelse(substr(ind,8,8)=="M","tfp2",ifelse(substr(ind,8,8)=="L","tfp3","tfp1"))
+type <- "size"
 
 thisCountry <- tfpBlock %>%
   select(country = one_of(cou),indicator,firmType,var) %>%
-  filter(substr(indicator,1,7) == ind,firmType == type) #indicator == ind & 
+  mutate(indicator2 = ifelse(substr(indicator,8,8)=="M","tfp2",ifelse(substr(indicator,8,8)=="L","tfp3","tfp1"))) %>%
+  filter(indicator2 == ind2,firmType == type) #indicator == ind & 
 
 thisCountry2 <- spread(thisCountry, var, country)
   
