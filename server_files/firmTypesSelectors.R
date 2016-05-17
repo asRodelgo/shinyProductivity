@@ -49,21 +49,3 @@ observe({
     shinyjs::hide(id="tfpSectors")
   }
 })
-
-
-# download data ----------------------------
-output$summaryDownTable <- downloadHandler(
-  filename = function() { 
-    paste0("ProductivityTable.csv")
-  },
-  content = function(file) {
-    #write.csv(.GVA_Table(input$inCouSel), file)
-    write.csv(.summaryStats(input$inSectorSum,
-                            input$inIndicatorSum,
-                            input$inFirmTypeSum,
-                            input$inTfpSector,
-                            input$inWhichTable
-    ), file, row.names = TRUE)
-  }
-)
-
