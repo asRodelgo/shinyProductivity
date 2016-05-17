@@ -644,6 +644,7 @@
     countryStats <- filter(countryStats, !is.na(countryOnly))
     # ouliers go at the end
     countryStats <- countryStats[,c(1:2,4:(ncol(countryStats)-1),3)]
+    countryStats[,4:ncol(countryStats)] <- round(countryStats[,4:ncol(countryStats)],2)
     
     # -------------------
     # Calculate income level medians

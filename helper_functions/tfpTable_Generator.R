@@ -80,6 +80,8 @@ for (type in .firmTypeList("Manufacturing")){
     mutate(indicator2 = ifelse(substr(indicator,8,8)=="M","tfp2",ifelse(substr(indicator,8,8)=="L","tfp3","tfp1"))) %>%
     filter(indicator2 == ind2,firmType == groupByVar) #indicator == ind & 
   
+  thisCountry$country <- round(thisCountry$country,2)
+  
   thisCountry2 <- spread(thisCountry, var, country)
   subString <- substr(thisCountry2$indicator,nchar(thisCountry2$indicator)-1,nchar(thisCountry2$indicator))
   thisCountry2$indicator <- ifelse(subString %in% c("KL","LM"),0,subString)

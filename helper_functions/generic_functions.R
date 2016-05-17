@@ -1,8 +1,8 @@
-.industryList <- function(indicatorDesc){
-  if (substr(indicatorDesc,1,5)=="Total"){
-    
-  }
-}
+# .industryList <- function(){
+#   if (substr(indicatorDesc,1,5)=="Total"){
+#     
+#   }
+# }
 
 .indicatorList <- function(sector){
   

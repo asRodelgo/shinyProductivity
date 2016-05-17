@@ -178,4 +178,22 @@ shinyServer(function(input, output,session) {
     
     })
   
+  output$countryName <- renderText({
+    
+    input$goTFPButton
+    
+    isolate({
+      countryRegions[countryRegions$country==input$inCountryTFP,]$countryDes
+    })
+  })
+  
+  output$indicatorName <- renderText({
+    
+    input$goTFPButton
+    
+    isolate({
+      input$inIndicatorTFP
+    })
+  })
+  
 })

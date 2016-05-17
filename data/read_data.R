@@ -17,6 +17,7 @@ countryOnlyList <- sort(unique(countryRegions$country))
 #indicators List
 indicatorList <- sort(unique(filter(summaryMaps, allSectors == 1)$indicator))
 indicatorTFPList <- .indicatorList("Manufacturing")[which(substr(.indicatorList("Manufacturing"),1,5)=="Total")]
+indicatorOnlyTFP <- sort(unique(filter(summaryMaps, substr(code,1,4)=="tfpr" & sectorLevel == 1)$indicator))
 #
 #indicatorListOrig <- sort(unique(filter(dataMaps, allSectors == 1)$indicator))
 #

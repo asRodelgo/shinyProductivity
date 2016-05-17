@@ -163,42 +163,42 @@ output$tfpTable <- renderUI({
                          input$inIndicatorTFP,
                          input$inFirmTypeTFP
                )
-             },rownames = FALSE)
+             },rownames = FALSE,options = list(dom = 't'))
              dataTableOutput("tfpAllFirms")},
              "By age" = {output$tfpByAge <- DT::renderDataTable({
                .tfpTable(input$inCountryTFP,
                          input$inIndicatorTFP,
                          input$inFirmTypeTFP
                )
-             },rownames = FALSE,container = headTFPAge)
+             },rownames = FALSE,container = headTFPAge,options = list(dom = 't'))
              dataTableOutput("tfpByAge")},
              "By size" = {output$tfpBySize <- DT::renderDataTable({
                .tfpTable(input$inCountryTFP,
                          input$inIndicatorTFP,
                          input$inFirmTypeTFP
                )
-             },rownames = FALSE,container = headTFPSize)
+             },rownames = FALSE,container = headTFPSize,options = list(dom = 't'))
              dataTableOutput("tfpBySize")},
              "By exports status" = {output$tfpByExpStatus <- DT::renderDataTable({
                .tfpTable(input$inCountryTFP,
                          input$inIndicatorTFP,
                          input$inFirmTypeTFP
                )
-             },rownames = FALSE,container = headTFPExpStatus)
+             },rownames = FALSE,container = headTFPExpStatus,options = list(dom = 't'))
              dataTableOutput("tfpByExpStatus")},
              "By imports status" = {output$tfpByImpStatus <- DT::renderDataTable({
                .tfpTable(input$inCountryTFP,
                          input$inIndicatorTFP,
                          input$inFirmTypeTFP
                )
-             },rownames = FALSE,container = headTFPImpStatus)
+             },rownames = FALSE,container = headTFPImpStatus,options = list(dom = 't'))
              dataTableOutput("tfpByImpStatus")},
              "By foreign ownership" = {output$tfpByForeignOwner <- DT::renderDataTable({
                .tfpTable(input$inCountryTFP,
                          input$inIndicatorTFP,
                          input$inFirmTypeTFP
                )
-             },rownames = FALSE,container = headTFPForeignOwner)
+             },rownames = FALSE,container = headTFPForeignOwner,options = list(dom = 't'))
              dataTableOutput("tfpByForeignOwner")}
              
       )

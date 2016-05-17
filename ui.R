@@ -16,56 +16,6 @@ source("global_utils.R", local=TRUE)
       inverse = FALSE, position = "fixed-top",
       theme = shinythemes::shinytheme("flatly"),
       
-      
-      tabPanel(title = "Summary Statistics",
-               
-               # Application title
-               titlePanel("ES Innovation and Productivity Indicators"),
-               shinyjs::useShinyjs(), # to make hide/show work
-               # Sidebar with a slider input for number of bins
-                sidebarLayout(
-                  sidebarPanel(
-    #                # input variables
-    #                selectInput("inCountry", "Select a country:", countryList, selected="Afghanistan"),
-    #                radioButtons("inOutliers","Remove outliers?",choices = list("Yes"=1,"No"=0),selected = 0),
-    #                textInput("inIQRfactor","Outlier threshold (Ot): [Q1 - Ot*IQR,Q3 + Ot*IQR]",value=3),
-                    selectInput("inSectorSum", "Sector:", sectorList, selected="All sectors"),
-                    shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
-                      div(id="firmTypesSum",
-                      selectInput("inFirmTypeSum", "Firm characteristic:", firmTypeList, selected="All firms")
-                    )),  
-                    selectInput("inIndicatorSum","Indicator:",indicatorList,selected = "Labor share"),
-                    shinyjs::hidden( 
-                      div(id="tfpSectors",
-                          selectInput("inTfpSector", "Industry:", industryList, selected="All industries")
-                    )),
-                    radioButtons("inWhichTable","Tables:",choices = list("Countries"=1,#"Summary Stats"=2,
-                                                                         "Income groups"=3,"Region groups"=4),selected = 1),
-                    actionButton("goSummaryButton","Show results"),
-                    #downloadButton("downloadReport", "Download PDF report"),
-                    h6("Download: ",downloadLink("summaryDownTable","data"))
-    #                actionButton("goPlotsButton","View table")
-                  ),
-    #              
-                  mainPanel(
-    #                # output objects
-    #                h4(textOutput("efficiency")),
-    #                br(),
-    #                h5(textOutput("outliersText")),
-    #                br(),
-                    #textOutput("showInputs"),
-                    uiOutput("summaryTable")
-                    #shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
-                    #  div(id="summPlots",
-                    #      plotOutput("summPlots")
-                    #))
-                    
-    #                tableOutput("statsTable"),
-    #                plotOutput("statsPlots"),
-    #                br()
-                 )
-                )
-              ),
       tabPanel(title = "TFP By Country",
                # Application title
                titlePanel("ES Innovation and Productivity Indicators"),
@@ -74,16 +24,67 @@ source("global_utils.R", local=TRUE)
                sidebarLayout(
                  sidebarPanel(
                    selectInput("inCountryTFP", "Country:", countryOnlyList, selected="Afghanistan"),
-                   selectInput("inIndicatorTFP","Indicator:",indicatorTFPList,selected = "Total factor productivity YKL"),
+                   selectInput("inIndicatorTFP","Indicator:",indicatorOnlyTFP,selected = "Total factor productivity YKL"),
                    selectInput("inFirmTypeTFP", "Firm characteristic:", firmTypeList, selected="All firms"),
                    actionButton("goTFPButton","Show results"),
                    h6("Download: ",downloadLink("tfpDownTable","data"))
                  ),
                  #              
                  mainPanel(
+                   div(h3(textOutput("countryName")),
+                   h4(textOutput("indicatorName")),br()),
                    uiOutput("tfpTable")
                  )
                )   
+      ),
+      tabPanel(title = "All sectors across countries",
+               
+               # Application title
+               titlePanel("ES Innovation and Productivity Indicators"),
+               shinyjs::useShinyjs(), # to make hide/show work
+               # Sidebar with a slider input for number of bins
+               sidebarLayout(
+                 sidebarPanel(
+                   #                # input variables
+                   #                selectInput("inCountry", "Select a country:", countryList, selected="Afghanistan"),
+                   #                radioButtons("inOutliers","Remove outliers?",choices = list("Yes"=1,"No"=0),selected = 0),
+                   #                textInput("inIQRfactor","Outlier threshold (Ot): [Q1 - Ot*IQR,Q3 + Ot*IQR]",value=3),
+                   selectInput("inSectorSum", "Sector:", sectorList, selected="All sectors"),
+                   shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
+                     div(id="firmTypesSum",
+                         selectInput("inFirmTypeSum", "Firm characteristic:", firmTypeList, selected="All firms")
+                     )),  
+                   selectInput("inIndicatorSum","Indicator:",indicatorList,selected = "Labor share"),
+                   shinyjs::hidden( 
+                     div(id="tfpSectors",
+                         selectInput("inTfpSector", "Industry:", industryList, selected="All industries")
+                     )),
+                   radioButtons("inWhichTable","Tables:",choices = list("Countries"=1,#"Summary Stats"=2,
+                                                                        "Income groups"=3,"Region groups"=4),selected = 1),
+                   actionButton("goSummaryButton","Show results"),
+                   #downloadButton("downloadReport", "Download PDF report"),
+                   h6("Download: ",downloadLink("summaryDownTable","data"))
+                   #                actionButton("goPlotsButton","View table")
+                 ),
+                 #              
+                 mainPanel(
+                   #                # output objects
+                   #                h4(textOutput("efficiency")),
+                   #                br(),
+                   #                h5(textOutput("outliersText")),
+                   #                br(),
+                   #textOutput("showInputs"),
+                   uiOutput("summaryTable")
+                   #shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
+                   #  div(id="summPlots",
+                   #      plotOutput("summPlots")
+                   #))
+                   
+                   #                tableOutput("statsTable"),
+                   #                plotOutput("statsPlots"),
+                   #                br()
+                 )
+               )
       ),
       tabPanel(title = "Data checks",
                
