@@ -1,0 +1,6 @@
+Characteristic,Variables,Description
+Age,b5 (Year of establishment),Young (less than 10 years old); Mature (between 11 and 20 years old); Old (Older than 20 years)
+Size,l1 (number of full time employees),Small (less than 20 employees); Medium (between 21 and 100); Large (More than 100 employees)
+Exports status,d3b + d3c (percentage of production exported),Exporter (percentage of exports > 0); Non exporter (percentage = 0)
+Imports status,d13 (firm does import raw or intermediate materials),Importer; Non importer
+Foreign ownership,b2a (percentage of foreign ownership),Foreign (percentage of foreign ownership > 0); Domestic (percentage = 0)

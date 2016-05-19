@@ -1,0 +1,14 @@
+Item,Description
+Outliers,"Observations removed from a country's enterprise sample for the given selection. Analytically, those observations falling outside the interval: [Q1 - 3*IQR,Q3 + 3*IQR] were removed"
+Sampling Weights,"Sampling weights are the inverse of the probability of being selected. One way to think about them is to imagine them as the number of copies this particular firm would show up in our data if it was a census data, or on other words, a count of firms that each firm represents in the entire private sector. By design, it cannot go below 1."
+sd , standard deviation of the corresponding series
+75 to 25 pct range , range of the corresponding series from its 75th percentile to its 25th percentile
+75 to 25 pct ratio , ratio of 75th percentile of the corresponding series with its 25th percentile
+tot_emp10_50," total employment of firms falling between the 10th and the 50th percentiles of the corresponding series (where applicable the title of the column has the name of the series, e.g. d2/n2a, to show which series is used to calculate the percentiles)"
+tot_emp50_90 , total employment of firms falling between the 50th and the 90th percentiles of the corresponding series (also comes with names of the series if it differs from the common name of the column)
+alloc ratio , ratio of “tot empl 50pct-90pct” and “tot empl 10pct-50pct”
+median_emp10, weighted mean of employment of firms falling below the  10th percentile of the corresponding series (with series name separately indicated where applicable)
+median_emp50, weighted mean of employment of firms falling below the  50th percentile of the corresponding series (with series name separately indicated where applicable)
+median_emp90, weighted mean of employment of firms falling below the  90th percentile of the corresponding series (with series name separately indicated where applicable)
+OP_cov, OP covariance calculated as given in “OP decomposition.docx”
+OP_covNoWeights , OP covariance calculated without sampling weights

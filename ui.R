@@ -11,7 +11,7 @@ source("global_utils.R", local=TRUE)
 #    column(12, h3("ES Innovation and Productivity Indicators Exploratory Analysis", style="color:#696969")),
     
     navbarPage(
-      title = "ES Innovation and Productivity Indicators Exploratory Analysis",
+      title = "ES Productivity Indicators Exploratory Tool",
       windowTitle = "Productivity", collapsible = TRUE, 
       inverse = FALSE, position = "fixed-top",
       theme = shinythemes::shinytheme("flatly"),
@@ -144,6 +144,20 @@ source("global_utils.R", local=TRUE)
                    br()
                  )
                )
+      ),
+      tabPanel(title = "Metadata and methodology",
+               titlePanel("ES Innovation and Productivity Indicators"),
+               shinyjs::useShinyjs(), # to make hide/show work
+               tabsetPanel(
+                          tabPanel("General items",
+                                   dataTableOutput("metaGeneral")
+                          ),
+                          tabPanel("Indicators",
+                                   dataTableOutput("metaIndicators")
+                          ),
+                          tabPanel("Firm characteristics",
+                                   dataTableOutput("metaFirms")
+                          )
+              )
       )
-    
     )

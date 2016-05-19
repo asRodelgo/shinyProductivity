@@ -10,6 +10,9 @@ countryRegions <- read.csv("data/countryMappingProductivity.csv",stringsAsFactor
 dataMaps <- read.csv("data/codeMappings.csv",stringsAsFactors = FALSE)
 # Read data mappings for the summary tables
 summaryMaps <- read.csv("data/codeMappings_summaryStats.csv",stringsAsFactors = FALSE)
+# Read metadata files
+metadata_generalNotes <- read.csv("data/metadata_generalNotes.csv",stringsAsFactors = FALSE)
+firmCharacteristicsNotes <- read.csv("data/firmCharacteristicsNotes.csv",stringsAsFactors = FALSE)
 # country List
 countryList <- sort(unique(data$country))
 countryOnlyList <- sort(unique(countryRegions$country))
