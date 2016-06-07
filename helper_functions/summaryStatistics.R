@@ -4,7 +4,7 @@
 # -------------------------------------
 
 
-.summaryStatsByCountry <- function(countryYear,groupByVar,sector,indicatorDesc,outlierIQRfactor){
+.summaryStatsByCountry <- function(countryYear,groupByVar,sector,indicatorDesc,outlierIQRfactor,industryDesc){
   
   # indicatorCode <- "n2a_d2"
   # indicatorQuantileCode <- "d2_n2a"
@@ -50,14 +50,24 @@
   if (sector == "Services") {
     data <- filter(data, sector_MS %in% sector)
   }
+  # Filter original data by industry
+  if (!(industryDesc == "All industries")){
+    #data <- filter(data, isic == .industryToCode(industryDesc))
+    data <- data[data$isic == .industryToCode(industryDesc),]
+  }
   
   # Start calculations ------------------------------------
-  if (nrow(data[data$country==countryYear,])>=5){ # If sample too small, not worth it
+  data_aux <- data %>%
+    filter(country == countryYear) %>%
+    select(country,indicatorCode = one_of(indicatorCode),
+           indicatorQuantileCode = one_of(indicatorQuantileCode))
+  # If sample too small, not worth making the calculations
+  if ((nrow(filter(data_aux,!is.na(indicatorCode)))>=5) & 
+      (nrow(filter(data_aux,!is.na(indicatorQuantileCode)))>=5) ){ 
+    
     # Calculate number of outliers left out. Default rule is +-3*IQR  
-    data_aux <- data %>%
-      filter(country == countryYear) %>%
+    data_aux <- data_aux %>%
       group_by(country) %>%
-      select(country,indicatorCode = one_of(indicatorCode)) %>%
       mutate(N_indicator = ifelse(!(is.na(indicatorCode)),1,NA)) %>%
       mutate(sampleSizeBefore=sum(N_indicator,na.rm=TRUE))
     sampleSizeBefore = data_aux$sampleSizeBefore[1]
@@ -80,19 +90,18 @@
         select(idstd,country,wt,sector_MS,income, l1, indicator = one_of(indicatorCode),
                indicatorQuantile = one_of(indicatorQuantileCode),N_indicator,#N_indicator = one_of(N_indicatorCode),
                age,size,expStatus,impStatus,forOwner) %>%
-        filter(!is.na(indicator)) # remove NAs
+        filter(!is.na(indicator) & !is.na(indicatorQuantile)) # remove NAs
     }
     # remove NAs on l1 indicator
     data2 <- filter(data2, !is.na(l1))
     data2 <- as.data.frame(data2)
     
-    
     # The actual calculations (Improve this in the future)
     if (groupByVar=="age") {
       data2 <- data2 %>%
         group_by(age) %>%
-        filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
-               & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+        filter((indicator <= wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+0.0001+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+               & (indicator >= wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-0.0001-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
         ) %>% # remove outliers
         mutate(N = sum(N_indicator,na.rm=TRUE),
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
@@ -123,8 +132,8 @@
     } else if (groupByVar == "size") {
       data2 <- data2 %>%
         group_by(size) %>%
-        filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
-               & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+        filter((indicator <= wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+0.0001+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+               & (indicator >= wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-0.0001-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
         ) %>% # remove outliers
         mutate(N = sum(N_indicator,na.rm=TRUE),
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
@@ -155,8 +164,8 @@
     } else if (groupByVar == "expStatus") {
       data2 <- data2 %>%
         group_by(expStatus) %>%
-        filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
-               & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+        filter((indicator <= wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+0.0001+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+               & (indicator >= wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-0.0001-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
         ) %>% # remove outliers
         mutate(N = sum(N_indicator,na.rm=TRUE),
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
@@ -187,8 +196,8 @@
     } else if (groupByVar == "impStatus") {
       data2 <- data2 %>%
         group_by(impStatus) %>%
-        filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
-               & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+        filter((indicator <= wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+0.0001+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+               & (indicator >= wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-0.0001-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
         ) %>% # remove outliers
         mutate(N = sum(N_indicator,na.rm=TRUE),
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
@@ -219,8 +228,8 @@
     } else if (groupByVar == "forOwner") {
       data2 <- data2 %>%
         group_by(forOwner) %>%
-        filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
-               & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+        filter((indicator <= wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+0.0001+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+               & (indicator >= wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-0.0001-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
         ) %>% # remove outliers
         mutate(N = sum(N_indicator,na.rm=TRUE),
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
@@ -250,8 +259,8 @@
       
     } else { # no specific filter selection
       data2 <- data2 %>%
-        filter((indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
-               & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+        filter((indicator <= wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+0.0001+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+               & (indicator >= wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-0.0001-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
         ) %>% # remove outliers
         mutate(N = sum(N_indicator,na.rm=TRUE),
                #N_effective = sum(ifelse(!(is.na(indicator)),1,0),na.rm=TRUE),
@@ -316,13 +325,13 @@
 
 
 # calculate indicators by country according to the filters ----------------
-.calculateDataBlock <- function(groupByVar,sector,indicatorDesc) {
+.calculateDataBlock <- function(groupByVar,sector,indicatorDesc,industryDesc) {
   
   dataBlock <- data.frame()
   
   for (cou in countryList) {
   #for (cou in c("Afghanistan2014","Albania2013","Angola2010")) {  
-    addCountry <- .summaryStatsByCountry(cou,groupByVar,sector,indicatorDesc,outlierIQRfactor = 3)
+    addCountry <- .summaryStatsByCountry(cou,groupByVar,sector,indicatorDesc,outlierIQRfactor = 3,industryDesc)
     # rbind only if returned data is not empty to avoid errors
     if (nrow(dataBlock)>0){ 
       if (!is.na(addCountry[1,ncol(addCountry)])) {
@@ -331,6 +340,7 @@
     } else if (!is.na(addCountry[1,ncol(addCountry)])){
       dataBlock <- bind_rows(dataBlock,addCountry)
     }
+    #print(cou)
   }
   
   # Add country regions

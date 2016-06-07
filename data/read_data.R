@@ -4,6 +4,14 @@
 source("helper_functions/generic_functions.R", local = TRUE)
 # Read data complete
 data <- read.dta13("data/TFPR_and_ratios.dta")
+# stratified survey for non-tfp indicators (id=~1 as this is stratified sampling with no clusters)
+# dataForSampling <- select(data, idstd,country,wt,strata,sector_MS,isic,n2a_d2,n2e_d2,d2_l1,
+#                           n2i_d2,n2a_net_sales,n2e_net_sales,net_sales_l1,d2_n2a,d2_n2e,d2_n2i,
+#                           net_sales_n2a)
+# myDesign <- svydesign(id=~1,data=dataForSampling,weights=~wt,strata=~strata)
+# options(survey.lonely.psu = "certainty")
+# mean_n2a_d2 <- svymean(~n2a_d2,myDesign)
+
 # Read country regions and income levels
 countryRegions <- read.csv("data/countryMappingProductivity.csv",stringsAsFactors = FALSE)
 # Read data mappings

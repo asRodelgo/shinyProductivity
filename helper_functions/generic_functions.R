@@ -35,6 +35,23 @@
   }
   return(firmList)   
 }
+
+.industryList <- function(sector){
+  
+  if (sector == "Manufacturing"){
+    insdustryList <- industryList
+  } else {
+    industryList <- c("All industries")
+  }
+  return(industryList)   
+}
+
+.industryToCode <- function(industryDesc){
+  
+  isic_code <- filter(industryMaps, industry == industryDesc)$industryCode
+  return(isic_code)
+}
+
 .sectorToCode <- function(sector){
   
   sect <- ifelse(sector=="All sectors","AllSect",ifelse(sector=="Manufacturing","Manuf","Serv"))

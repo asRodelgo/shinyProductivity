@@ -13,6 +13,7 @@ library(Hmisc) # calculate weighted quantiles
 library(DT) # customize dataTable javascript library
 library(knitr)
 library(xtable) # LaTeX tables
+library(survey)
 
 # --------------------------------------------------------
 # Object: load the raw questionnaire data and perform:
