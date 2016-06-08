@@ -1,10 +1,10 @@
 # ---------------------
-# Generate tables to display country indicators by Manufacturing sector/industry
-tfpList <- indicatorTFPList
+# Generate tables to display indicators by Country
+tfpList <- indicatorList
 sectCode <- "Manuf"
 
-tfpBlock <- data.frame(t(rep(NA,111)))
-names(tfpBlock) <- c(as.character(countryRegions$country),"indicator","firmType","var")
+COUBlock <- data.frame(t(rep(NA,111)))
+names(COUBlock) <- c(as.character(countryRegions$country),"indicator","firmType","var")
 for (type in .firmTypeList("Manufacturing")){
 #for (type in c("age")){
   for (ind in tfpList) {
@@ -25,13 +25,13 @@ for (type in .firmTypeList("Manufacturing")){
     
     #thisBlock <- thisBlock[-1,]
     # bind to tfpBlock
-    tfpBlock <- bind_rows(tfpBlock,thisBlock)
+    COUBlock <- bind_rows(COUBlock,thisBlock)
   }
 }
 
 # filter data ----------------------
 
-.tfpTable <- function(cou,indicatorDesc,firmType){
+.COUTable <- function(cou,indicatorDesc,firmType){
   
   #cou <- "Argentina"
   #indicatorDesc <- "Total factor productivity YKL"
@@ -75,7 +75,7 @@ for (type in .firmTypeList("Manufacturing")){
   }
   
   
-  thisCountry <- tfpBlock %>%
+  thisCountry <- COUBlock %>%
     select(country = one_of(cou),indicator,firmType,var) %>%
     mutate(indicator2 = ifelse(substr(indicator,8,8)=="M","tfp2",ifelse(substr(indicator,8,8)=="L","tfp3","tfp1"))) %>%
     filter(indicator2 == ind2,firmType == groupByVar) #indicator == ind & 
@@ -91,26 +91,26 @@ for (type in .firmTypeList("Manufacturing")){
   
   # table formatting
   if (lenVar==3){
-    tfpTable <- thisCountry2 %>%
+    COUTable <- thisCountry2 %>%
       select(industry,starts_with("N"),starts_with("median"),starts_with("sd"),starts_with("iqr")
              ,starts_with("OPcov_"),outliersOut) %>%
       select(industry,ends_with(thisList[2]),ends_with(thisList[3]),ends_with(thisList[4]),outliersOut)
   } else if (lenVar==2){
-    tfpTable <- thisCountry2 %>%
+    COUTable <- thisCountry2 %>%
       select(industry,starts_with("N"),starts_with("median"),starts_with("sd"),starts_with("iqr")
              ,starts_with("OPcov_"),outliersOut) %>%
       select(industry,ends_with(thisList[2]),ends_with(thisList[3]),outliersOut)
   } else{
-    tfpTable <- thisCountry2 %>%
+    COUTable <- thisCountry2 %>%
       select(industry,starts_with("N"),starts_with("median"),starts_with("sd"),starts_with("iqr")
              ,starts_with("OPcov_"),outliersOut)
   }
   
   # remove NAs
-  tfpTable <- tfpTable[complete.cases(tfpTable),]
-  tfpTable[is.na(tfpTable)] <- "---"
+  COUTable <- COUTable[complete.cases(COUTable),]
+  COUTable[is.na(COUTable)] <- "---"
   
-  return(tfpTable)
+  return(COUTable)
 
 }
 

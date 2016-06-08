@@ -1,0 +1,4 @@
+"countryOnly","country","N","mean","median","sd","iqr","OPcov","OPcovNoWeights","indAlloc","outliersOut","yearOnly","region","countryDes","incomeLevel"
+"Brazil","Brazil2009",39,29.833580274647,37.139593482179,24.8188789271427,34.9333333333333,-6.65464638614388,2.63680073035781,1,43,"2009","Latin America and Caribbean","Brazil","Upper middle income"
+"India","India2014",59,0.473101416955676,0.52166162545741,0.205893622040198,0.393487394957983,-0.00225405849075867,-0.0266328561411509,1.22906747431534,5,"2014","South Asia","India","Lower middle income"
+"Paraguay","Paraguay2010",8,0.00120826752675879,0.000600874385609479,0.00216763961609875,0.0017,-0.00033129214070416,-0.000279078757253803,3.8207302491507,3,"2010","Latin America and Caribbean","Paraguay","Upper middle income"

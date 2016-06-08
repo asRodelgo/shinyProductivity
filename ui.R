@@ -16,28 +16,30 @@ source("global_utils.R", local=TRUE)
       inverse = FALSE, position = "fixed-top",
       theme = shinythemes::shinytheme("flatly"),
       
-      tabPanel(title = "TFP By Country",
+      tabPanel(title = "Country level",
                # Application title
                titlePanel("ES Innovation and Productivity Indicators"),
                shinyjs::useShinyjs(), # to make hide/show work
                # Sidebar with a slider input for number of bins
                sidebarLayout(
                  sidebarPanel(
-                   selectInput("inCountryTFP", "Country:", countryOnlyList, selected="Afghanistan"),
-                   selectInput("inIndicatorTFP","Indicator:",indicatorOnlyTFP,selected = "Total factor productivity YKL"),
-                   selectInput("inFirmTypeTFP", "Firm characteristic:", firmTypeList, selected="All firms"),
-                   actionButton("goTFPButton","Show results"),
-                   h6("Download: ",downloadLink("tfpDownTable","data"))
+                   selectInput("inCountryCOU", "Country:", countryOnlyList, selected="Afghanistan"),
+                   selectInput("inSectorCOU", "Sector:", sectorList, selected="All sectors"),
+                   selectInput("inIndicatorCOU","Indicator:",indicatorList,selected = "Labor productivity"),
+                   selectInput("inFirmTypeCOU", "Firm characteristic:", firmTypeList, selected="All firms"),
+                   selectInput("inIndustryCOU", "Industry:", industryList, selected="All industries"),
+                   actionButton("goButtonCOU","Show results"),
+                   h6("Download: ",downloadLink("DownTableCOU","data"))
                  ),
                  #              
                  mainPanel(
                    div(h3(textOutput("countryName")),
                    h4(textOutput("indicatorName")),br()),
-                   uiOutput("tfpTable")
+                   uiOutput("TableCOU")
                  )
                )   
       ),
-      tabPanel(title = "All sectors across countries",
+      tabPanel(title = "Sector level",
                
                # Application title
                titlePanel("ES Innovation and Productivity Indicators"),

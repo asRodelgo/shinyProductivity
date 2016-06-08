@@ -44,12 +44,7 @@
   removeOutliers <- 1
   
   # Filter original data by sector
-  if (sector == "Manufacturing") {
-    data <- filter(data, sector_MS %in% sector)
-  } 
-  if (sector == "Services") {
-    data <- filter(data, sector_MS %in% sector)
-  }
+  data <- filter(data, sector_MS %in% sector)
   # Filter original data by industry
   if (!(industryDesc == "All industries")){
     #data <- filter(data, isic == .industryToCode(industryDesc))
@@ -315,7 +310,7 @@
   
   # if number of firms is less than 5, return an empty dataset  
   } else {
-    data2 <- data.frame(country,income=NA,OPcov=NA,OPcovNoWeights=NA,
+    data2 <- data.frame(countryYear,income=NA,OPcov=NA,OPcovNoWeights=NA,
                         ratio_median_emp90_50=NA,ratio_median_emp10_50=NA,outliersOut=NA,None=NA)
   }
   # output Indirect Allocative Efficiency
@@ -344,11 +339,12 @@
   }
   
   # Add country regions
-  countryRegions <- select(countryRegions, country,region,countryDes,incomeLevel)
-  dataBlock <- mutate(dataBlock, countryOnly = substr(country,1,nchar(country)-4),
-                      yearOnly = substr(country,nchar(country)-3,nchar(country)))
-  dataBlock <- merge(dataBlock, countryRegions, by.x="countryOnly",by.y="country", all.x = TRUE)
-  
+  if (nrow(dataBlock)>0){
+    countryRegions <- select(countryRegions, country,region,countryDes,incomeLevel)
+    dataBlock <- mutate(dataBlock, countryOnly = substr(country,1,nchar(country)-4),
+                        yearOnly = substr(country,nchar(country)-3,nchar(country)))
+    dataBlock <- merge(dataBlock, countryRegions, by.x="countryOnly",by.y="country", all.x = TRUE)
+  }
   return(dataBlock)
 
 }

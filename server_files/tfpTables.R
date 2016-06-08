@@ -1,78 +1,78 @@
 # TFP Tables ---------------------------------
 
-v2 <- reactiveValues(showTFPTable = TRUE)
+v2 <- reactiveValues(showCOUTable = TRUE)
 
-observeEvent(input$goTFPButton, {
-  v2$showTFPTable <- input$goTFPButton
+observeEvent(input$goButtonCOU, {
+  v2$showCOUTable <- input$goButtonCOU
 })
 
 observeEvent(input$inIndicatorSum, {
-  v2$showTFPTable <- FALSE
+  v2$showCOUTable <- FALSE
 })
-observeEvent(input$inFirmTypeTFP, {
-  v2$showTFPTable <- FALSE
+observeEvent(input$inFirmTypeCOU, {
+  v2$showCOUTable <- FALSE
 })
-observeEvent(input$inCountryTFP, {
-  v2$showTFPTable <- FALSE
+observeEvent(input$inCountryCOU, {
+  v2$showCOUTable <- FALSE
 })
 
-tfpAllFirms <- eventReactive(input$goTFPButton,{
+AllFirmsCOU <- eventReactive(input$goButtonCOU,{
   
-  do.call(".tfpTable", args = list(
-    cou <- input$inCountryTFP,
-    indicatorDesc <- input$inIndicatorTFP,
-    firmType <- input$inFirmTypeTFP
+  do.call(".COUTable", args = list(
+    cou <- input$inCountryCOU,
+    indicatorDesc <- input$inIndicatorCOU,
+    firmType <- input$inFirmTypeCOU
   ))
   
 })
-tfpByAge <- eventReactive(input$goTFPButton,{
+ByAgeCOU <- eventReactive(input$goButtonCOU,{
   
-  do.call(".tfpTable", args = list(
-    cou <- input$inCountryTFP,
-    indicatorDesc <- input$inIndicatorTFP,
-    firmType <- input$inFirmTypeTFP
+  do.call(".COUTable", args = list(
+    cou <- input$inCountryCOU,
+    indicatorDesc <- input$inIndicatorCOU,
+    firmType <- input$inFirmTypeCOU
   ))
   
 })
-tfpBySize <- eventReactive(input$goTFPButton,{
+BySizeCOU <- eventReactive(input$goButtonCOU,{
   
-  do.call(".tfpTable", args = list(
-    cou <- input$inCountryTFP,
-    indicatorDesc <- input$inIndicatorTFP,
-    firmType <- input$inFirmTypeTFP
+  do.call(".COUTable", args = list(
+    cou <- input$inCountryCOU,
+    indicatorDesc <- input$inIndicatorCOU,
+    firmType <- input$inFirmTypeCOU
   ))
   
 })
-tfpByExpStatus <- eventReactive(input$goTFPButton,{
+ByExpStatusCOU <- eventReactive(input$goButtonCOU,{
   
-  do.call(".tfpTable", args = list(
-    cou <- input$inCountryTFP,
-    indicatorDesc <- input$inIndicatorTFP,
-    firmType <- input$inFirmTypeTFP
+  do.call(".COUTable", args = list(
+    cou <- input$inCountryCOU,
+    indicatorDesc <- input$inIndicatorCOU,
+    firmType <- input$inFirmTypeCOU
   ))
   
 })
-tfpByImpStatus <- eventReactive(input$goTFPButton,{
+ByImpStatusCOU <- eventReactive(input$goButtonCOU,{
   
-  do.call(".tfpTable", args = list(
-    cou <- input$inCountryTFP,
-    indicatorDesc <- input$inIndicatorTFP,
-    firmType <- input$inFirmTypeTFP
+  do.call(".COUTable", args = list(
+    cou <- input$inCountryCOU,
+    indicatorDesc <- input$inIndicatorCOU,
+    firmType <- input$inFirmTypeCOU
   ))
   
 })
-tfpByForeignOwner <- eventReactive(input$goTFPButton,{
+ByForeignOwnerCOU <- eventReactive(input$goButtonCOU,{
   
-  do.call(".tfpTable", args = list(
-    cou <- input$inCountryTFP,
-    indicatorDesc <- input$inIndicatorTFP,
-    firmType <- input$inFirmTypeTFP
+  do.call(".COUTable", args = list(
+    cou <- input$inCountryCOU,
+    indicatorDesc <- input$inIndicatorCOU,
+    firmType <- input$inFirmTypeCOU
   ))
   
 })
 
 # Custom table containers
-headTFPAge = htmltools::withTags(table(
+headCOUAge = htmltools::withTags(table(
   class = 'display',
   thead(
     tr(
@@ -88,7 +88,7 @@ headTFPAge = htmltools::withTags(table(
   )
 ))
 
-headTFPSize = htmltools::withTags(table(
+headCOUSize = htmltools::withTags(table(
   class = 'display',
   thead(
     tr(
@@ -103,7 +103,7 @@ headTFPSize = htmltools::withTags(table(
     )
   )
 ))
-headTFPExpStatus = htmltools::withTags(table(
+headCOUExpStatus = htmltools::withTags(table(
   class = 'display',
   thead(
     tr(
@@ -117,7 +117,7 @@ headTFPExpStatus = htmltools::withTags(table(
     )
   )
 ))
-headTFPImpStatus = htmltools::withTags(table(
+headCOUImpStatus = htmltools::withTags(table(
   class = 'display',
   thead(
     tr(
@@ -131,7 +131,7 @@ headTFPImpStatus = htmltools::withTags(table(
     )
   )
 ))
-headTFPForeignOwner = htmltools::withTags(table(
+headCOUForeignOwner = htmltools::withTags(table(
   class = 'display',
   thead(
     tr(
@@ -147,59 +147,59 @@ headTFPForeignOwner = htmltools::withTags(table(
 ))
 
 # try to customize withTags table headers
-output$tfpTable <- renderUI({
+output$TableCOU <- renderUI({
   
-  #if (is.null(input$inFirmTypeTFP))
+  #if (is.null(input$inFirmTypeCOU))
   #  return()
   
-  if (v2$showTFPTable == FALSE) return(div(br(),br(),br(),
+  if (v2$showCOUTable == FALSE) return(div(br(),br(),br(),
                                        h3("Make your selection and click on 'Show Results'")))
   
   isolate({
     
-      switch(input$inFirmTypeTFP,
-             "All firms" = {output$tfpAllFirms <- DT::renderDataTable({
-               .tfpTable(input$inCountryTFP,
-                         input$inIndicatorTFP,
-                         input$inFirmTypeTFP
+      switch(input$inFirmTypeCOU,
+             "All firms" = {output$AllFirmsCOU <- DT::renderDataTable({
+               .COUTable(input$inCountryCOU,
+                         input$inIndicatorCOU,
+                         input$inFirmTypeCOU
                )
              },rownames = FALSE,options = list(dom = 't'))
-             dataTableOutput("tfpAllFirms")},
-             "By age" = {output$tfpByAge <- DT::renderDataTable({
-               .tfpTable(input$inCountryTFP,
-                         input$inIndicatorTFP,
-                         input$inFirmTypeTFP
+             dataTableOutput("AllFirmsCOU")},
+             "By age" = {output$ByAgeCOU <- DT::renderDataTable({
+               .COUTable(input$inCountryCOU,
+                         input$inIndicatorCOU,
+                         input$inFirmTypeCOU
                )
-             },rownames = FALSE,container = headTFPAge,options = list(dom = 't'))
-             dataTableOutput("tfpByAge")},
-             "By size" = {output$tfpBySize <- DT::renderDataTable({
-               .tfpTable(input$inCountryTFP,
-                         input$inIndicatorTFP,
-                         input$inFirmTypeTFP
+             },rownames = FALSE,container = headCOUAge,options = list(dom = 't'))
+             dataTableOutput("ByAgeCOU")},
+             "By size" = {output$BySizeCOU <- DT::renderDataTable({
+               .COUTable(input$inCountryCOU,
+                         input$inIndicatorCOU,
+                         input$inFirmTypeCOU
                )
-             },rownames = FALSE,container = headTFPSize,options = list(dom = 't'))
-             dataTableOutput("tfpBySize")},
-             "By exports status" = {output$tfpByExpStatus <- DT::renderDataTable({
-               .tfpTable(input$inCountryTFP,
-                         input$inIndicatorTFP,
-                         input$inFirmTypeTFP
+             },rownames = FALSE,container = headCOUSize,options = list(dom = 't'))
+             dataTableOutput("BySizeCOU")},
+             "By exports status" = {output$ByExpStatusCOU <- DT::renderDataTable({
+               .COUTable(input$inCountryCOU,
+                         input$inIndicatorCOU,
+                         input$inFirmTypeCOU
                )
-             },rownames = FALSE,container = headTFPExpStatus,options = list(dom = 't'))
-             dataTableOutput("tfpByExpStatus")},
-             "By imports status" = {output$tfpByImpStatus <- DT::renderDataTable({
-               .tfpTable(input$inCountryTFP,
-                         input$inIndicatorTFP,
-                         input$inFirmTypeTFP
+             },rownames = FALSE,container = headCOUExpStatus,options = list(dom = 't'))
+             dataTableOutput("ByExpStatusCOU")},
+             "By imports status" = {output$ByImpStatusCOU <- DT::renderDataTable({
+               .COUTable(input$inCountryCOU,
+                         input$inIndicatorCOU,
+                         input$inFirmTypeCOU
                )
-             },rownames = FALSE,container = headTFPImpStatus,options = list(dom = 't'))
-             dataTableOutput("tfpByImpStatus")},
-             "By foreign ownership" = {output$tfpByForeignOwner <- DT::renderDataTable({
-               .tfpTable(input$inCountryTFP,
-                         input$inIndicatorTFP,
-                         input$inFirmTypeTFP
+             },rownames = FALSE,container = headCOUImpStatus,options = list(dom = 't'))
+             dataTableOutput("ByImpStatusCOU")},
+             "By foreign ownership" = {output$ByForeignOwnerCOU <- DT::renderDataTable({
+               .COUTable(input$inCountryCOU,
+                         input$inIndicatorCOU,
+                         input$inFirmTypeCOU
                )
-             },rownames = FALSE,container = headTFPForeignOwner,options = list(dom = 't'))
-             dataTableOutput("tfpByForeignOwner")}
+             },rownames = FALSE,container = headCOUForeignOwner,options = list(dom = 't'))
+             dataTableOutput("ByForeignOwnerCOU")}
              
       )
   })

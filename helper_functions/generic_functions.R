@@ -36,14 +36,11 @@
   return(firmList)   
 }
 
-.industryList <- function(sector){
+.industryList <- function(sect){
   
-  if (sector == "Manufacturing"){
-    insdustryList <- industryList
-  } else {
-    industryList <- c("All industries")
-  }
-  return(industryList)   
+  indList <- filter(industryMaps,sector == sect)$industry
+  
+  return(indList)   
 }
 
 .industryToCode <- function(industryDesc){
