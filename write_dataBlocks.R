@@ -9,9 +9,9 @@ for (sect in c("All sectors")){
   for (type in c("all")){
     for (ind in .indicatorList(sect)) {
     #for (ind in c("Finished goods share")){
-      for (indus in .industryList(sect)) {
+      for (indus in c("All industries",.industryList(sect))) {
       #for (indus in c("Machinery and equipment (29 and 30)")) {  
-        isicCode <- "" #.industryToCode(indus)
+        isicCode <- ifelse(indus == "All industries","", .industryToCode(indus))
         indCode <- .indicatorToCodeAllIndustries(ind)
         sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))
         dataBlock[[paste(sectCode,type,indCode,isicCode,sep="_")]] <- .calculateDataBlock(type,sect,ind,indus)

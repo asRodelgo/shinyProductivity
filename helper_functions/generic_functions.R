@@ -7,11 +7,11 @@
 .indicatorList <- function(sector){
   
   if (sector == "Manufacturing"){
-    indList <- filter(summaryMaps, manufacturing == 1)$indicator
+    indList <- filter(summaryMaps, manufacturing == 1 & sectorLevel == 1)$indicator
   } else if (sector == "Services"){
-    indList <- filter(summaryMaps, services == 1)$indicator
+    indList <- filter(summaryMaps, services == 1 & sectorLevel == 1)$indicator
   } else {
-    indList <- filter(summaryMaps, allSectors == 1)$indicator
+    indList <- filter(summaryMaps, allSectors == 1 & sectorLevel == 1)$indicator
   }
   return(indList)   
 }

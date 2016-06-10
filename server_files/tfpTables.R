@@ -6,7 +6,7 @@ observeEvent(input$goButtonCOU, {
   v2$showCOUTable <- input$goButtonCOU
 })
 
-observeEvent(input$inIndicatorSum, {
+observeEvent(input$inIndicatorCOU, {
   v2$showCOUTable <- FALSE
 })
 observeEvent(input$inFirmTypeCOU, {
