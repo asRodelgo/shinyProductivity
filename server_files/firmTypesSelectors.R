@@ -41,6 +41,14 @@ observe({
     shinyjs::hide(id="firmTypesSum")
   }
 })
+observe({
+  if(input$inSectorCOU=="Manufacturing"){
+    shinyjs::show(id="firmTypeCOU")
+  } else {
+    shinyjs::hide(id="firmTypeCOU")
+  }
+})
+
 # If tfp indicator then show the industry type panel, else hide it
 observe({
   if(substr(input$inIndicatorSum,1,5) == "Total"){

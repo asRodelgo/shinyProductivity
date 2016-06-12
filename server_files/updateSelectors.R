@@ -93,6 +93,70 @@ observe({
   
 })
 
+# -----------------------------------------------
+# Country level presentation --------------------
+
+# update indicator selector based on sector selected
+indicatorListCOU <- reactive({
+  
+  if (input$inSectorCOU == "All sectors") {
+    selectedSectorCOU <- filter(summaryMaps, allSectors == 1 & sectorLevel==1)
+  } else if (input$inSectorCOU == "Manufacturing") {
+    selectedSectorCOU <- filter(summaryMaps, manufacturing == 1 & sectorLevel==1)
+  } else {
+    selectedSectorCOU <- filter(summaryMaps, services == 1 & sectorLevel==1)
+  }
+  
+  indListCOU <- sort(unique(selectedSectorCOU$indicator))
+  
+  return(indListCOU)
+  
+})
+
+observe({
+  
+  updateSelectInput(session, "inIndicatorCOU",
+                    choices = indicatorListCOU())
+  
+})
+
+# update firm type selector based on sector selected
+firmTypeListCOU <- reactive({
+  
+  if (!(input$inSectorCOU == "Manufacturing")) {
+    selectedFirmTypeCOU <- c("All firms")
+  } else {
+    selectedFirmTypeCOU <- firmTypeList
+  }
+  
+  firmTypeListCOU <- selectedFirmTypeCOU
+  
+  return(firmTypeListCOU)
+  
+})
+
+observe({
+  
+  updateSelectInput(session, "inFirmTypeCOU",
+                    selected = firmTypeListCOU())
+  
+})
+
+# update industry selector based on sector selected
+industryListCOU <- reactive({
+  
+    industryListCOU <- c("All industries",.industryList(input$inSectorCOU))
+  
+  return(industryListCOU)
+  
+})
+
+observe({
+  
+  updateSelectInput(session, "inIndustryCOU",
+                    selected = industryListCOU())
+  
+})
 
 # Firm list selector
 # firmListSum <- reactive({

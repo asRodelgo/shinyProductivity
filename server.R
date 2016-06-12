@@ -180,19 +180,19 @@ shinyServer(function(input, output,session) {
   
   output$countryName <- renderText({
     
-    input$goTFPButton
+    input$goButtonCOU
     
     isolate({
-      countryRegions[countryRegions$country==input$inCountryTFP,]$countryDes
+      countryRegions[countryRegions$country==input$inCountryCOU,]$countryDes
     })
   })
   
   output$indicatorName <- renderText({
     
-    input$goTFPButton
+    input$goButtonCOU
     
     isolate({
-      input$inIndicatorTFP
+      input$inIndicatorCOU
     })
   })
   

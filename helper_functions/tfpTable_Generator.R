@@ -47,12 +47,13 @@
             #thisBlock <- thisBlock[-1,]
             # bind to tfpBlock
             COUBlock <- bind_rows(COUBlock,thisBlock)
-            print(paste(sectCode,type,indCode,isicCode,sep="_"))
+            #print(paste(sectCode,type,indCode,isicCode,sep="_"))
           }
         }
       }
    # }
   #}
+  return(COUBlock)
 }
 
 # filter data ----------------------

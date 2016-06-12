@@ -4,13 +4,13 @@
 #takes about 1/2 min per dataBlock. Creates list with all dataBlocks and saves it in disk
 dataBlock <- list()
 #for (sect in sectorList){
-for (sect in c("All sectors")){  
+for (sect in c("Manufacturing")){  
   #for (type in .firmTypeList(sect)[-1]){
-  for (type in c("all")){
-    for (ind in .indicatorList(sect)) {
-    #for (ind in c("Finished goods share")){
+  for (type in c("forOwner")){
+    for (ind in .indicatorList(sect)[-c(7,8)]) {
+    #for (ind in c("Labor share")){
       for (indus in c("All industries",.industryList(sect))) {
-      #for (indus in c("Machinery and equipment (29 and 30)")) {  
+      #for (indus in c("Food")) {  
         isicCode <- ifelse(indus == "All industries","", .industryToCode(indus))
         indCode <- .indicatorToCodeAllIndustries(ind)
         sectCode <- ifelse(sect=="All sectors","AllSect",ifelse(sect=="Manufacturing","Manuf","Serv"))

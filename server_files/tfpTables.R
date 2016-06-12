@@ -20,6 +20,7 @@ AllFirmsCOU <- eventReactive(input$goButtonCOU,{
   
   do.call(".COUTable", args = list(
     cou <- input$inCountryCOU,
+    sect <- input$inSectorCOU,
     indicatorDesc <- input$inIndicatorCOU,
     firmType <- input$inFirmTypeCOU
   ))
@@ -28,7 +29,8 @@ AllFirmsCOU <- eventReactive(input$goButtonCOU,{
 ByAgeCOU <- eventReactive(input$goButtonCOU,{
   
   do.call(".COUTable", args = list(
-    cou <- input$inCountryCOU,
+    cou <- input$inCountryCOU,     
+    sect <- input$inSectorCOU,
     indicatorDesc <- input$inIndicatorCOU,
     firmType <- input$inFirmTypeCOU
   ))
@@ -37,7 +39,8 @@ ByAgeCOU <- eventReactive(input$goButtonCOU,{
 BySizeCOU <- eventReactive(input$goButtonCOU,{
   
   do.call(".COUTable", args = list(
-    cou <- input$inCountryCOU,
+    cou <- input$inCountryCOU,     
+    sect <- input$inSectorCOU,
     indicatorDesc <- input$inIndicatorCOU,
     firmType <- input$inFirmTypeCOU
   ))
@@ -46,7 +49,8 @@ BySizeCOU <- eventReactive(input$goButtonCOU,{
 ByExpStatusCOU <- eventReactive(input$goButtonCOU,{
   
   do.call(".COUTable", args = list(
-    cou <- input$inCountryCOU,
+    cou <- input$inCountryCOU,     
+    sect <- input$inSectorCOU,
     indicatorDesc <- input$inIndicatorCOU,
     firmType <- input$inFirmTypeCOU
   ))
@@ -55,7 +59,8 @@ ByExpStatusCOU <- eventReactive(input$goButtonCOU,{
 ByImpStatusCOU <- eventReactive(input$goButtonCOU,{
   
   do.call(".COUTable", args = list(
-    cou <- input$inCountryCOU,
+    cou <- input$inCountryCOU,     
+    sect <- input$inSectorCOU,
     indicatorDesc <- input$inIndicatorCOU,
     firmType <- input$inFirmTypeCOU
   ))
@@ -64,7 +69,8 @@ ByImpStatusCOU <- eventReactive(input$goButtonCOU,{
 ByForeignOwnerCOU <- eventReactive(input$goButtonCOU,{
   
   do.call(".COUTable", args = list(
-    cou <- input$inCountryCOU,
+    cou <- input$inCountryCOU,     
+    sect <- input$inSectorCOU,
     indicatorDesc <- input$inIndicatorCOU,
     firmType <- input$inFirmTypeCOU
   ))
@@ -160,6 +166,7 @@ output$TableCOU <- renderUI({
       switch(input$inFirmTypeCOU,
              "All firms" = {output$AllFirmsCOU <- DT::renderDataTable({
                .COUTable(input$inCountryCOU,
+                         input$inSectorCOU,
                          input$inIndicatorCOU,
                          input$inFirmTypeCOU
                )
@@ -167,6 +174,7 @@ output$TableCOU <- renderUI({
              dataTableOutput("AllFirmsCOU")},
              "By age" = {output$ByAgeCOU <- DT::renderDataTable({
                .COUTable(input$inCountryCOU,
+                         input$inSectorCOU,
                          input$inIndicatorCOU,
                          input$inFirmTypeCOU
                )
@@ -174,6 +182,7 @@ output$TableCOU <- renderUI({
              dataTableOutput("ByAgeCOU")},
              "By size" = {output$BySizeCOU <- DT::renderDataTable({
                .COUTable(input$inCountryCOU,
+                         input$inSectorCOU,
                          input$inIndicatorCOU,
                          input$inFirmTypeCOU
                )
@@ -181,6 +190,7 @@ output$TableCOU <- renderUI({
              dataTableOutput("BySizeCOU")},
              "By exports status" = {output$ByExpStatusCOU <- DT::renderDataTable({
                .COUTable(input$inCountryCOU,
+                         input$inSectorCOU,
                          input$inIndicatorCOU,
                          input$inFirmTypeCOU
                )
@@ -188,6 +198,7 @@ output$TableCOU <- renderUI({
              dataTableOutput("ByExpStatusCOU")},
              "By imports status" = {output$ByImpStatusCOU <- DT::renderDataTable({
                .COUTable(input$inCountryCOU,
+                         input$inSectorCOU,
                          input$inIndicatorCOU,
                          input$inFirmTypeCOU
                )
@@ -195,6 +206,7 @@ output$TableCOU <- renderUI({
              dataTableOutput("ByImpStatusCOU")},
              "By foreign ownership" = {output$ByForeignOwnerCOU <- DT::renderDataTable({
                .COUTable(input$inCountryCOU,
+                         input$inSectorCOU,
                          input$inIndicatorCOU,
                          input$inFirmTypeCOU
                )

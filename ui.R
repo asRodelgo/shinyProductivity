@@ -26,8 +26,11 @@ source("global_utils.R", local=TRUE)
                    selectInput("inCountryCOU", "Country:", countryOnlyList, selected="Afghanistan"),
                    selectInput("inSectorCOU", "Sector:", sectorList, selected="All sectors"),
                    selectInput("inIndicatorCOU","Indicator:",indicatorList,selected = "Labor productivity"),
-                   selectInput("inFirmTypeCOU", "Firm characteristic:", firmTypeList, selected="All firms"),
-                   selectInput("inIndustryCOU", "Industry:", industryList, selected="All industries"),
+                   shinyjs::hidden( # hide firm Types by default until Manufacturing is selected
+                     div(id="firmTypeCOU",
+                         selectInput("inFirmTypeCOU", "Firm characteristic:", firmTypeList, selected="All firms")
+                     )),
+                   #selectInput("inIndustryCOU", "Industry:", industryList, selected="All industries"),
                    actionButton("goButtonCOU","Show results"),
                    h6("Download: ",downloadLink("DownTableCOU","data"))
                  ),
