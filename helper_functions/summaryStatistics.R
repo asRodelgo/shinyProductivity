@@ -430,11 +430,11 @@
     refDataBlock <- manufDataBlock
 
   } else if (sector == "Services"){
-    firmType == "All firms"
+    firmType <- "All firms"
     thisDataBlock <- dataBlock[[paste("Serv","all",indicatorCode,sep="_")]]
     refDataBlock <- thisDataBlock
   } else {
-    firmType == "All firms"
+    firmType <- "All firms"
     thisDataBlock <- dataBlock[[paste("AllSect","all",indicatorCode,sep="_")]]
     refDataBlock <- thisDataBlock
   }
@@ -497,7 +497,7 @@
     countryStats <- dataBlock %>%
       select(countryOnly,yearOnly,outliersOut,starts_with("N"),#starts_with("mean"),
              starts_with("median"),starts_with("sd"),starts_with("iqr")
-             ,starts_with("OPcov_") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
+             ,starts_with("OPcov") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
       )
     countryStats <- as.data.frame(countryStats)
     # final table formatting
@@ -524,7 +524,7 @@
     incomeStats <- dataBlock %>%
       select(incomeLevel,starts_with("N"),#starts_with("mean"),
              starts_with("median"),starts_with("sd"),starts_with("iqr")
-             ,starts_with("OPcov_") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
+             ,starts_with("OPcov") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
              ) %>%
       #select(incomeLevel,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
       group_by(incomeLevel) %>%
@@ -575,7 +575,7 @@
     regionStats <- dataBlock %>%
       select(region,starts_with("N"),#starts_with("mean"),
              starts_with("median"),starts_with("sd"),starts_with("iqr")
-             ,starts_with("OPcov_") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
+             ,starts_with("OPcov") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
              ) %>%
       #select(region,N,mean,median,sd,OPcov,OPcovNoWeights,indAlloc) %>%
       group_by(region) %>%
@@ -641,9 +641,9 @@
     # Calculate country statistics
     # -------------------
     countryStats <- dataBlock %>%
-      select(countryOnly,yearOnly,outliersOut,starts_with("N"),#starts_with("mean"),
+      dplyr::select(countryOnly,yearOnly,outliersOut,starts_with("N"),#starts_with("mean"),
              starts_with("median"),starts_with("sd"),starts_with("iqr")
-             ,starts_with("OPcov_") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
+             ,starts_with("OPcov") #,starts_with("OPcovNoWeights"),starts_with("indAlloc")
       )
     countryStats <- as.data.frame(countryStats)
     # final table formatting

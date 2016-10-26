@@ -223,19 +223,41 @@
   if (nrow(data[data$country==countryYear,])>=5){
     # prepare plots
     if (removeOutliers==1){
-      data2 <- data %>%
-        filter(country==countryYear) %>%
-        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
-               indicatorQuantile = one_of(indicatorQuantileCode))
-      data2 <- as.data.frame(data2)
-      data2 <- filter(data2, (indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
-               & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
-        ) # remove outliers
+      if (indicatorCode==indicatorQuantileCode){
+        data2 <- data %>%
+          filter(country==countryYear) %>%
+          select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode)) %>%
+          filter(!is.na(indicator)) %>%
+          mutate(indicatorQuantile = indicator)
+        data2 <- as.data.frame(data2)
+        data2 <- filter(data2, (indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+                 & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+          ) # remove outliers
+      } else {
+        data2 <- data %>%
+          filter(country==countryYear) %>%
+          select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
+                 indicatorQuantile = one_of(indicatorQuantileCode))
+        data2 <- as.data.frame(data2)
+        data2 <- filter(data2, (indicator < wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)+outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+                        & (indicator > wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)-outlierIQRfactor*(wtd.quantile(indicator,100*round(wt,1),0.75,na.rm=TRUE)-wtd.quantile(indicator,100*round(wt,1),0.25,na.rm=TRUE)))
+        )
+      }
     } else{
-      data2 <- data %>%
-        filter(country==countryYear) %>%
-        select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
-               indicatorQuantile = one_of(indicatorQuantileCode))
+      if (indicatorCode==indicatorQuantileCode){
+        data2 <- data %>%
+          filter(country==countryYear) %>%
+          select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode)) %>%
+          filter(!is.na(indicator)) %>%
+          mutate(indicatorQuantile = indicator)
+      } else {
+        data2 <- data %>%
+          filter(country==countryYear) %>%
+          select(idstd,country,wt,sector_MS,income,l1,indicator = one_of(indicatorCode),
+                 indicatorQuantile = one_of(indicatorQuantileCode)) %>%
+          filter(!is.na(indicator))
+      }
+      data2 <- as.data.frame(data2)
     }
     par(mfrow = c(2,2))
     hist(data2$indicator, main = indicatorCode,xlab=indicatorCode,col="lightgreen")

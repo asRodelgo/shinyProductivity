@@ -1,5 +1,19 @@
 # Download data ------------------
 
+output$DownTableCOU <- downloadHandler(
+  filename = function() { 
+    paste0("ProductivityCountryTable.csv")
+  },
+  content = function(file) {
+    #write.csv(.GVA_Table(input$inCouSel), file)
+    write.csv(.COUTable(input$inCountryCOU,
+                        input$inSectorCOU,
+                        input$inIndicatorCOU,
+                        input$inFirmTypeCOU
+    ), file, row.names = TRUE)
+  }
+)
+
 # Summary data
 output$summaryDownTable <- downloadHandler(
   filename = function() { 

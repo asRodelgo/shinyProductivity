@@ -31,13 +31,16 @@ source("global_utils.R", local=TRUE)
                          selectInput("inFirmTypeCOU", "Firm characteristic:", firmTypeList, selected="All firms")
                      )),
                    #selectInput("inIndustryCOU", "Industry:", industryList, selected="All industries"),
-                   actionButton("goButtonCOU","Show results"),
-                   h6("Download: ",downloadLink("DownTableCOU","data"))
+                   actionButton("goButtonCOU","Show results")
                  ),
                  #              
                  mainPanel(
-                   div(h3(textOutput("countryName")),
-                   h4(textOutput("indicatorName")),br()),
+                   fluidRow(
+                     column(6,
+                     div(h3(textOutput("countryName")),
+                     h4(textOutput("indicatorName")),br())),
+                     column(6,div(h3(""),h5("Download: ",downloadLink("DownTableCOU","data"))))
+                   ),
                    uiOutput("TableCOU")
                  )
                )   

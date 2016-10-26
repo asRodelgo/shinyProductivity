@@ -33,7 +33,7 @@
           if (nrow(thisBlock)>0){ # empty dataBlock will return errors
             thisBlock <- select(thisBlock, countryOnly,outliersOut,starts_with("N"),
                                 starts_with("median"),starts_with("sd"),starts_with("iqr")
-                                ,starts_with("OPcov_"))
+                                ,starts_with("OPcov"))
             thisBlock <- filter(thisBlock, !is.na(countryOnly))
             col_names <- thisBlock$countryOnly
             # remove columns generated from NA adCountry to avoid errors
@@ -120,17 +120,17 @@
   if (lenVar==3){
     COUTable <- thisCountry2 %>%
       select(industry,starts_with("N"),starts_with("median"),starts_with("sd"),starts_with("iqr")
-             ,starts_with("OPcov_"),outliersOut) %>%
+             ,starts_with("OPcov"),outliersOut) %>%
       select(industry,ends_with(thisList[2]),ends_with(thisList[3]),ends_with(thisList[4]),outliersOut)
   } else if (lenVar==2){
     COUTable <- thisCountry2 %>%
       select(industry,starts_with("N"),starts_with("median"),starts_with("sd"),starts_with("iqr")
-             ,starts_with("OPcov_"),outliersOut) %>%
+             ,starts_with("OPcov"),outliersOut) %>%
       select(industry,ends_with(thisList[2]),ends_with(thisList[3]),outliersOut)
   } else{
     COUTable <- thisCountry2 %>%
       select(industry,starts_with("N"),starts_with("median"),starts_with("sd"),starts_with("iqr")
-             ,starts_with("OPcov_"),outliersOut)
+             ,starts_with("OPcov"),outliersOut)
   }
   
   # remove NAs
